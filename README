@@ -1,0 +1,24 @@
+                  IMAGE CATEGORIZATION DEMONSTATION
+                   Andrea Vedaldi  Andrew Zisserman
+                     {vedaldi,az}@robots.ox.ac.uk
+
+The package contains the following MATLAB functions:
+
+standardizeImage.m -- rescale an image to a standard size
+computeFeatures.m -- compute dense SIFT keypoints and descriptors
+quantizeDescriptors.m -- quantize visual descriptors into visual words
+computeHistogram.m -- compute a spatial histogram of visual words (starting from the features)
+computeHistogramFromImage.m -- compute a histogram of visual words (starting from an image)
+computeHistogramsFromImageList.m -- applies the above to a list of images
+learnLinaerSVM.m -- learn a linear support vector machine
+
+Demo scripts:
+
+experiment1.m -- learn and test an image classifier
+
+APPENDX (INSTALLATION)
+
+Run MATLAB and execute the command PREPROCESS(). This will download
+the VLFeat library (http://www.vlfeat.org) and the Caltech-4 image
+collection. Then, it will compute a visual vocabulary and spatial
+histograms of visual words for the Caltech-4 images.
