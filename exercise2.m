@@ -1,47 +1,81 @@
-% EXPERIMENT2: Effect of the training set size
+% EXERCISE2: learn your own model
 
 % add required search paths
 setup ;
 
-% load a dataset to be used as positives
-positives = load('data/face-histograms.mat') ;
-negatives = load('data/background-histograms.mat') ;
-names = {positives.names{:}, negatives.names{:}};
-histograms = [positives.histograms, negatives.histograms] ;
-labels = [ones(1,numel(positives.names)), - ones(1,numel(negatives.names))] ;
+% --------------------------------------------------------------------
+% Stage A: Data Preparation
+% --------------------------------------------------------------------
+
+vocabulary = load('data/vocabulary.mat') ;
+
+% Compute positive histograms from your own images
+pos.names = getImageSet('data/my_horse') ;
+pos.histograms = computeHistogramsFromImageList(vocabulary, pos.names) ;
+
+
+% Add default background images
+neg = load('data/background_train_hist.mat') ;
+names = {pos.names{:}, neg.names{:}};
+histograms = [pos.histograms, neg.histograms] ;
+labels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
+clear pos neg ;
+
+% Load testing data
+pos = load('data/horse_val_hist.mat') ;
+neg = load('data/background_val_hist.mat') ;
+testNames = {pos.names{:}, neg.names{:}};
+testHistograms = [pos.histograms, neg.histograms] ;
+testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
+clear pos neg ;
+
+% count how many images are there
+fprintf('number of training images: %d positive, %d negative\n', ...
+        sum(labels > 0), sum(labels < 0)) ;
+fprintf('number of testing images: %d positive, %d negative\n', ...
+        sum(testLabels > 0), sum(testLabels < 0)) ;
+
+% For Stage E: Vary the image representation
+% histograms = removeSpatialInformation(histograms) ;
+
+% For Stage F: Vary the classifier (Hellinger kernel)
+% histograms = sqrt(histograms) ;
+% testHistograms = sqrt(testHistograms) ;
 
 % L2 normalize the histograms before running the linear SVM
 histograms = bsxfun(@times, histograms, 1./sqrt(sum(histograms.^2,1))) ;
+testHistograms = bsxfun(@times, testHistograms, 1./sqrt(sum(testHistograms.^2,1))) ;
 
-% split the data into train and test
-selTrain = vl_colsubset(1:numel(labels), .5, 'uniform') ;
-selTest = setdiff(1:numel(labels), selTrain) ;
+% --------------------------------------------------------------------
+% Stage B: Training a classifier
+% --------------------------------------------------------------------
 
-% train and test with increasing number of positive examples
-figure(1) ; clf ;
-range = [1 2 5 10 100 500 +inf] ;
-colors = jet(numel(range)) ;
-for i = 1:length(range)
-  selPosTrain = selTrain(labels(selTrain) > 0) ;
-  selNegTrain = selTrain(labels(selTrain) < 0) ;
-  reducedTrain = [vl_colsubset(selPosTrain, range(i), 'beginning') selNegTrain] ;
+% Train the linear SVM
+C = 100 ;
+[w, bias] = trainLinearSVM(histograms, labels, C) ;
 
-  x = histograms(:, reducedTrain) ;
-  y = labels(reducedTrain) ;
-  C = 10 ;
-  [w,bias] = trainLinearSVM(x, y, C) ;
+% Evaluate the scores on the training data
+scores = w' * histograms + bias ;
 
-  x = histograms(:, selTest) ;
-  y = labels(selTest) ;
-  scores = w'*x + bias ;
+% Visualize the precision-recall curve
+figure(1) ; clf ; set(1,'name','Precision-recall on train data') ;
+vl_pr(labels, scores) ;
 
-  [rc,pr,info] = vl_pr(y, scores) ;
+% Visualize the ranked list of images
+figure(2) ; clf ; set(2,'name','Ranked training images (subset)') ;
+displayRankedImageList(names, scores)  ;
 
-  hold on ;
-  plot(rc,pr,'linewidth', 2, 'color', colors(i,:)) ;
-  leg{i} = sprintf('num pos: %d, AP: %.2f', range(i), info.auc*100) ;
-end
-axis square ; grid on ;
-xlabel('recall') ;
-ylabel('precision') ;
-legend(leg{:}, 'location','sw') ;
+% --------------------------------------------------------------------
+% Stage C: Classify the test images and assess the performance
+% --------------------------------------------------------------------
+
+% Test the linar SVM
+testScores = w' * testHistograms + bias ;
+
+% Visualize the precision-recall curve
+figure(3) ; clf ; set(3,'name','Precision-recall on test data') ;
+vl_pr(testLabels, testScores) ;
+
+% Visualize the ranked list of images
+figure(4) ; clf ; set(4,'name','Ranked test images (subset)') ;
+displayRankedImageList(testNames, testScores)  ;

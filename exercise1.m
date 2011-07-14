@@ -1,4 +1,4 @@
-% EXPERIMENT1: basic training and testing of a classifier
+% EXERCSIE1: basic training and testing of a classifier
 
 % add the required search paths
 setup ;
@@ -9,6 +9,8 @@ setup ;
 
 % Load training data
 pos = load('data/aeroplane_train_hist.mat') ;
+%pos = load('data/car_train_hist.mat') ;
+%pos = load('data/person_train_hist.mat') ;
 neg = load('data/background_train_hist.mat') ;
 names = {pos.names{:}, neg.names{:}};
 histograms = [pos.histograms, neg.histograms] ;
@@ -17,6 +19,8 @@ clear pos neg ;
 
 % Load testing data
 pos = load('data/aeroplane_val_hist.mat') ;
+%pos = load('data/car_val_hist.mat') ;
+%pos = load('data/person_val_hist.mat') ;
 neg = load('data/background_val_hist.mat') ;
 testNames = {pos.names{:}, neg.names{:}};
 testHistograms = [pos.histograms, neg.histograms] ;
@@ -24,9 +28,9 @@ testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
 clear pos neg ;
 
 % For stage F: thorw away part of the training data
-fraction = +inf ;
 % fraction = .1 ;
 % fraction = .5 ;
+fraction = +inf ;
 
 sel = vl_colsubset(1:numel(labels), fraction, 'uniform') ;
 names = names(sel) ;
