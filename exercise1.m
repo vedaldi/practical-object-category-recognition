@@ -27,7 +27,7 @@ testHistograms = [pos.histograms, neg.histograms] ;
 testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
 clear pos neg ;
 
-% For stage F: thorw away part of the training data
+% For stage F: throw away part of the training data
 % fraction = .1 ;
 % fraction = .5 ;
 fraction = +inf ;
