@@ -1,5 +1,12 @@
 function histogram = computeHistogram(width, height, keypoints, words)
 % COMPUTEHISTOGRAM Compute a spatial histogram of visual words
+%   HISTOGRAM = COMPUTEHISTOGRAM(WIDTH, HEIGHT, KEYPOINTS, WORDS)
+%   computes a 2x2 spatial histogram of the N visual words
+%   WORDS. KEYPOINTS is a 2 x N matrix of x,y coordinates of the
+%   visual words and WIDTH and HEIGHT are the image dimensions; these
+%   quantities are needed for the geometric tiling.
+
+% Author: Andrea Vedaldi
 
 numWords = 1000 ;
 numSpatialX = 2 ;

@@ -1,24 +1,73 @@
-                  IMAGE CATEGORIZATION DEMONSTATION
+                    IMAGE CLASSIFICATION PRACTICAL
                    Andrea Vedaldi  Andrew Zisserman
                      {vedaldi,az}@robots.ox.ac.uk
 
+CONTENTS:
+
 The package contains the following MATLAB functions:
 
-standardizeImage.m -- rescale an image to a standard size
-computeFeatures.m -- compute dense SIFT keypoints and descriptors
-quantizeDescriptors.m -- quantize visual descriptors into visual words
-computeHistogram.m -- compute a spatial histogram of visual words (starting from the features)
-computeHistogramFromImage.m -- compute a histogram of visual words (starting from an image)
-computeHistogramsFromImageList.m -- applies the above to a list of images
-learnLinaerSVM.m -- learn a linear support vector machine
+standardizeImage.m
+        Rescale an image to a standard size.
+
+computeFeatures.m
+        Compute dense SIFT keypoints and descriptors.
+
+quantizeDescriptors.m
+        Qquantize visual descriptors into visual words.
+
+computeHistogram.m
+        Compute a spatial histogram of visual words (starting from the
+        features).
+
+removeSpatialInformation
+        Reduce a spatial histogram to a simple one.
+
+computeHistogramFromImage.m
+        Compute a histogram of visual words (starting from an image).
+
+computeHistogramsFromImageList.m
+        Applies computeHistogramFromImage to a list of images.
+
+learnLinaerSVM.m
+        Learn a linear support vector machine.
+
+visualizeRankedImagelist
+        Visulaize a subset of a ranked list of images.
 
 Demo scripts:
 
-experiment1.m -- learn and test an image classifier
+experiment1.m -- learns and test an image classifier
+experiment2.m -- shows the effect of the training set size on performance
+experiment3.m -- shows the spatial pyramid and normalization on the performance
+experiment4.m -- shows the effect of the square root kernel on the performance
+experiment5.m -- displays informative visual words
 
-APPENDX (INSTALLATION)
+APPENDX (INSTALLATION):
 
 Run MATLAB and execute the command PREPROCESS(). This will download
 the VLFeat library (http://www.vlfeat.org) and the Caltech-4 image
 collection. Then, it will compute a visual vocabulary and spatial
 histograms of visual words for the Caltech-4 images.
+
+LICENSE:
+
+Copyright (c) 2011 Andrea Vedaldi and Andrew Zisserman
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

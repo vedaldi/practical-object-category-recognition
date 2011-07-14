@@ -1,4 +1,4 @@
-% EXPERIMENT4: Effect of the kernel
+% EXPERIMENT3: Effect of the spatial histogram
 
 % add required search paths
 setup ;
@@ -11,23 +11,37 @@ histograms = [positives.histograms, negatives.histograms] ;
 labels = [ones(1,numel(positives.names)), - ones(1,numel(negatives.names))] ;
 
 % split the data into train and test
-selTrain = vl_colsubset(1:numel(labels), 5/100, 'uniform') ;
+selTrain = vl_colsubset(1:numel(labels), .5, 'uniform') ;
 selTest = setdiff(1:numel(labels), selTrain) ;
 
 % train and test with increasing number of positive examples
 figure(1) ; clf ;
 clear leg ;
-experiments = {'linear-kernel', 'non-linear-kernel'} ;
+experiments = {'with-spatial', 'without-spatial', 'with-spatial-l1-norm', 'without-spatial-l1-norm'} ;
 colors = jet(numel(experiments)) ;
 for i = 1:length(experiments)
   switch experiments{i}
-    case 'linear-kernel'
+    case 'with-spatial'
       temp = histograms ;
       temp = bsxfun(@times, temp, 1./sqrt(sum(temp.^2,1))) ;
 
-    case 'non-linear-kernel'
+    case 'without-spatial'
       % remove spatial subdivisons by merging them
-      temp = sqrt(histograms) ;
+      temp = histograms(1:4:end,:) + ...
+             histograms(2:4:end,:) + ...
+             histograms(3:4:end,:) + ...
+             histograms(4:4:end,:) / 4 ;
+      temp = bsxfun(@times, temp, 1./sqrt(sum(temp.^2,1))) ;
+
+    case 'with-spatial-l1-norm'
+      temp = histograms ;
+
+    case 'without-spatial-l1-norm'
+      % remove spatial subdivisons by merging them
+      temp = histograms(1:4:end,:) + ...
+             histograms(2:4:end,:) + ...
+             histograms(3:4:end,:) + ...
+             histograms(4:4:end,:) / 4 ;
   end
 
   x = temp(:, selTrain) ;
@@ -47,6 +61,5 @@ for i = 1:length(experiments)
 end
 axis square ; grid on ;
 xlabel('recall') ;
-ylabel('precision') ;
+label('precision') ;
 legend(leg{:}, 'location','sw') ;
-title('Note: using only 5/100 of the training data to illustrate') ;

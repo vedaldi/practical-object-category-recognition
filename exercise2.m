@@ -1,4 +1,4 @@
-% EXPERIMENT3: Effect of the training set size
+% EXPERIMENT2: Effect of the training set size
 
 % add required search paths
 setup ;

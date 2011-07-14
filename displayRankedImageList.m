@@ -9,12 +9,11 @@ function displayRankedImageList(names, scores, varargin)
 
 % Author: Andrea Vedaldi
 
-opts.numImages = 100 ;
+opts.numImages = 81 ;
 opts = vl_argparse(opts,varargin) ;
 
 [drop, perm] = sort(scores, 'descend') ;
 perm = vl_colsubset(perm, opts.numImages, 'uniform') ;
-figure(2) ; clf ;
 for i = 1:length(perm)
   vl_tightsubplot(length(perm),i,'box','outer') ;
   imagesc(imread(names{perm(i)})) ;
