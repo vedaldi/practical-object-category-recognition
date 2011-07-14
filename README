@@ -47,10 +47,10 @@ getImageSet.m
 
 APPENDX (INSTALLATION):
 
-Run MATLAB and execute the command PREPROCESS(). This will download
-the VLFeat library (http://www.vlfeat.org) and the Caltech-4 image
-collection. Then, it will compute a visual vocabulary and spatial
-histograms of visual words for the Caltech-4 images.
+Run MATLAB and execute the command PREPROCESS() in extra/. This will
+download the VLFeat library (http://www.vlfeat.org) and the Caltech-4
+image collection. Then, it will compute a visual vocabulary and
+spatial histograms of visual words for the Caltech-4 images.
 
 LICENSE:
 

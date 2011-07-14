@@ -10,9 +10,8 @@ setup ;
 vocabulary = load('data/vocabulary.mat') ;
 
 % Compute positive histograms from your own images
-pos.names = getImageSet('data/my_horse') ;
+pos.names = getImageSet('data/myImages') ;
 pos.histograms = computeHistogramsFromImageList(vocabulary, pos.names) ;
-
 
 % Add default background images
 neg = load('data/background_train_hist.mat') ;
