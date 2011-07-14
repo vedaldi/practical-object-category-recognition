@@ -88,3 +88,7 @@ vl_pr(testLabels, testScores) ;
 % Visualize the ranked list of images
 figure(4) ; clf ; set(4,'name','Ranked test images (subset)') ;
 displayRankedImageList(testNames, testScores)  ;
+
+% Visualize visual words
+% [drop,perm] = sort(w,'descend') ;
+% displayVisualWordsFromImageList(names([1:10, end-10:end]) , perm) ;

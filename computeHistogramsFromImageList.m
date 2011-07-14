@@ -8,7 +8,7 @@ function histograms = computeHistogramsFromImageList(vocabulary, names)
 
 start = tic ;
 histograms = cell(1,numel(names)) ;
-for i = 1:length(names)
+parfor i = 1:length(names)
   if exist(names{i}, 'file')
     fullPath = names{i} ;
   else

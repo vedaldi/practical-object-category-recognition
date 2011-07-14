@@ -4,7 +4,14 @@
 
 CONTENTS:
 
-The package contains the following MATLAB functions:
+The package contains two exercises:
+
+exercise1.m -- learns and test an image classifier on benchmark data
+exercise2.m -- learns your own classifier
+
+The computer vision algorithms are implemented by VLFeat
+(http://www.vlfeat.org). This package contains the following MATLAB
+functions:
 
 standardizeImage.m
         Rescale an image to a standard size.
@@ -31,16 +38,12 @@ computeHistogramsFromImageList.m
 learnLinaerSVM.m
         Learn a linear support vector machine.
 
-visualizeRankedImagelist
+displayRankedImagelist.m
         Visulaize a subset of a ranked list of images.
 
-Demo scripts:
+getImageSet.m
+        Scan a directory for images.
 
-experiment1.m -- learns and test an image classifier
-experiment2.m -- shows the effect of the training set size on performance
-experiment3.m -- shows the spatial pyramid and normalization on the performance
-experiment4.m -- shows the effect of the square root kernel on the performance
-experiment5.m -- displays informative visual words
 
 APPENDX (INSTALLATION):
 

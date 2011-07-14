@@ -21,7 +21,7 @@ numFeatures = numWords * 100 ;
 % slow down computation.
 
 descriptors = cell(1,numel(names)) ;
-for i = 1:numel(names)
+parfor i = 1:numel(names)
   if exist(names{i}, 'file')
     fullPath = names{i} ;
   else
