@@ -1,11 +1,12 @@
 function displayRankedImageList(names, scores, varargin)
 % DISPLAYRANKEDIMAGELIST  Display a (subset of a) ranked list of images
-%   DISPLAYRANKEDIMAGELIST(NAMES, SCORES) displays 100 images from
+%   DISPLAYRANKEDIMAGELIST(NAMES, SCORES) displays 36 images from
 %   the list of image names NAMES sorted by decreasing scores
 %   SCORES.
 %
 %   Use DISPLAYRANKEDIMAGELIST(..., 'numImages', N) to display N
-%   images.
+%   images. Use DSIPLAYRANMEDIMAGELIST(..., 'uniform', true) to select
+%   images uniformly in the list, rather than from the top.
 
 % Author: Andrea Vedaldi
 

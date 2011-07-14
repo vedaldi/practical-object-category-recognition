@@ -91,4 +91,4 @@ displayRankedImageList(testNames, testScores)  ;
 
 % Visualize visual words
 % [drop,perm] = sort(w,'descend') ;
-% displayVisualWordsFromImageList(names([1:10, end-10:end]) , perm) ;
+% displayVisualWordsFromImageList(names([1:10, end-10:end]), perm) ;

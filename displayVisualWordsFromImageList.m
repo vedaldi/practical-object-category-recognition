@@ -1,5 +1,11 @@
 function displayVisualWordsFromImageList(names, selection)
-% DISPLAYVISUALWORDSFROMIMAGELIST
+% DISPLAYVISUALWORDSFROMIMAGELIST  Display visual words
+%   DISPLATVISUALWORDSFROMIMAGELIST(NAMES, SELECTION) displays in
+%   sequence the visual words in the vector SELECTION. A visual word
+%   is displayed as a sample of the patches in the images NAMES whose
+%   descriptor projects to that visual word.
+
+% Author: Andrea Vedaldi
 
 vocabulary = load('data/vocabulary.mat') ;
 numWords = size(vocabulary.words,2) ;
