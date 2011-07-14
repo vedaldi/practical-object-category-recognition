@@ -20,9 +20,15 @@ end
 setup ;
 
 % from 50 background images
-names = textread('data/background_train.txt','%s') ;
+names{1} = textread('data/background_train.txt','%s') ;
+names{2} = textread('data/aeroplane_train.txt','%s') ;
+names{3} = textread('data/motorbike_train.txt','%s') ;
+names{4} = textread('data/person_train.txt','%s') ;
+names{5} = textread('data/car_train.txt','%s') ;
+names{6} = textread('data/horse_train.txt','%s') ;
+names = cat(1,names{:})' ;
 if ~exist('data/vocabulary.mat')
-  vocabulary = computeVocabularyFromImageList(names(1:50)) ;
+  vocabulary = computeVocabularyFromImageList(vl_colsubset(names,200,'uniform')) ;
   save('data/vocabulary.mat', '-STRUCT', 'vocabulary') ;
 else
   vocabulary = load('data/vocabulary.mat') ;

@@ -7,76 +7,80 @@ setup ;
 % Stage A: Data Preparation
 % --------------------------------------------------------------------
 
-% load the positive (relevant) data
-%positives = load('data/airplane-histograms.mat') ;
-positives = load('data/face-histograms.mat') ;
-%positives = load('data/motorbike-histograms.mat') ;
-%positives = load('data/car-histograms.mat') ;
+% Load training data
+pos = load('data/aeroplane_train_hist.mat') ;
+neg = load('data/background_train_hist.mat') ;
+names = {pos.names{:}, neg.names{:}};
+histograms = [pos.histograms, neg.histograms] ;
+labels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
+clear pos neg ;
 
-% load the negative (distractor) data
-negatives = load('data/background-histograms.mat') ;
+% Load testing data
+pos = load('data/aeroplane_val_hist.mat') ;
+neg = load('data/background_val_hist.mat') ;
+testNames = {pos.names{:}, neg.names{:}};
+testHistograms = [pos.histograms, neg.histograms] ;
+testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
+clear pos neg ;
 
-% extract the names of the images, the histograms, and the labels
-% (positive and negative)
-names = {positives.names{:}, negatives.names{:}};
-histograms = [positives.histograms, negatives.histograms] ;
-labels = [ones(1,numel(positives.names)), - ones(1,numel(negatives.names))] ;
+% For stage F: thorw away part of the training data
+fraction = +inf ;
+% fraction = .1 ;
+% fraction = .5 ;
 
-% Use half of the images for test.
-selTest = vl_colsubset(1:numel(labels), .5, 'uniform') ;
-
-% Make active only a fraction of the training images.
-trainSetFraction = 5/100 ;
-% trainSetFraction = 10/100 ; For stage F
-% trainSetFraction = +inf ; % use 100%
-selTrain = vl_colsubset(setdiff(1:numel(labels), selTest), ...
-                        trainSetFraction, 'uniform') ;
+sel = vl_colsubset(1:numel(labels), fraction, 'uniform') ;
+names = names(sel) ;
+histograms = histograms(:,sel) ;
+labels = labels(:,sel) ;
+clear sel ;
 
 % count how many images are there
 fprintf('number of training images: %d positive, %d negative\n', ...
-        sum(labels(selTrain) > 0), sum(labels(selTrain) < 0)) ;
+        sum(labels > 0), sum(labels < 0)) ;
 fprintf('number of testing images: %d positive, %d negative\n', ...
-        sum(labels(selTest) > 0), sum(labels(selTest) < 0)) ;
-
-% --------------------------------------------------------------------
-% Stage B: Training a classifier
-% --------------------------------------------------------------------
+        sum(testLabels > 0), sum(testLabels < 0)) ;
 
 % For Stage E: Vary the image representation
 % histograms = removeSpatialInformation(histograms) ;
 
 % For Stage F: Vary the classifier (Hellinger kernel)
 % histograms = sqrt(histograms) ;
+% testHistograms = sqrt(testHistograms) ;
 
 % L2 normalize the histograms before running the linear SVM
 histograms = bsxfun(@times, histograms, 1./sqrt(sum(histograms.^2,1))) ;
+testHistograms = bsxfun(@times, testHistograms, 1./sqrt(sum(testHistograms.^2,1))) ;
+
+% --------------------------------------------------------------------
+% Stage B: Training a classifier
+% --------------------------------------------------------------------
 
 % Train the linear SVM
-x = histograms(:, selTrain) ;
-y = labels(selTrain) ;
-C = 10 ;
-[w,bias] = trainLinearSVM(x, y, C) ;
+C = 100 ;
+[w, bias] = trainLinearSVM(histograms, labels, C) ;
 
 % Evaluate the scores on the training data
-scores = w'*x + bias ;
+scores = w' * histograms + bias ;
+
+% Visualize the precision-recall curve
+figure(1) ; clf ; set(1,'name','Precision-recall on train data') ;
+vl_pr(labels, scores) ;
 
 % Visualize the ranked list of images
-figure(1) ; clf ; set(1,'name','Ranked training images (subset)') ;
-displayRankedImageList(names(selTrain), scores)  ;
+figure(2) ; clf ; set(2,'name','Ranked training images (subset)') ;
+displayRankedImageList(names, scores)  ;
 
 % --------------------------------------------------------------------
 % Stage C: Classify the test images and assess the performance
 % --------------------------------------------------------------------
 
 % Test the linar SVM
-x = histograms(:, selTest) ;
-y = labels(selTest) ;
-scores = w'*x + bias ;
+testScores = w' * testHistograms + bias ;
 
 % Visualize the precision-recall curve
-figure(2) ; clf ; set(2,'name','Precision-recall on test data') ;
-vl_pr(y, scores) ;
+figure(3) ; clf ; set(3,'name','Precision-recall on test data') ;
+vl_pr(testLabels, testScores) ;
 
 % Visualize the ranked list of images
-figure(3) ; clf ; set(3,'name','Ranked test images (subset)') ;
-displayRankedImageList(names(selTest), scores)  ;
+figure(4) ; clf ; set(4,'name','Ranked test images (subset)') ;
+displayRankedImageList(testNames, testScores)  ;

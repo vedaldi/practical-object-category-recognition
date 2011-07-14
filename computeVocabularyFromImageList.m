@@ -13,7 +13,7 @@ function vocabulary = computeVocabularyFromImageList(names)
 % Author: Andrea Vedaldi
 
 numWords = 1000 ;
-numFeatures = numWords * 50 ;
+numFeatures = numWords * 100 ;
 
 % This extracts a number of visual descriptors from the specified
 % images. Only NUMFEATURES overall descriptors are retrieved as more

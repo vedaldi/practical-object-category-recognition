@@ -12,8 +12,11 @@ function [w,bias] = trainLinearSVM(x,y,C)
 % Auhtor: Andrea Vedaldi
 
 lambda = 1 / (C * numel(y)) ;
-w = vl_pegasos(single(x),int8(y),lambda,'NumIterations',numel(y)*50,'BiasMultiplier',1) ;
+vl_twister('state',0) ;
+w = vl_pegasos(single(x), ...
+               int8(y), ...
+               lambda, ...
+               'NumIterations', numel(y) * 100, ...
+               'BiasMultiplier', 10) ;
 bias = w(end) ;
 w = w(1:end-1) ;
-
-

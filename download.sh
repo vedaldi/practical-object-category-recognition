@@ -1,4 +1,4 @@
-voc=~/Data/VOCdevkit_2007/VOC2007
+voc=/data/pascal/VOCdevkit_2007/VOC2007
 
 mkdir -p data
 
