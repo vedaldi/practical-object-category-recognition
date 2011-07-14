@@ -9,8 +9,13 @@ function histograms = computeHistogramsFromImageList(vocabulary, names)
 start = tic ;
 histograms = cell(1,numel(names)) ;
 for i = 1:length(names)
-  fprintf('Extracting histogram from %s (time remaining %.2fs)\n', names{i}, ...
+  if exist(names{i}, 'file')
+    fullPath = names{i} ;
+  else
+    fullPath = fullfile('data','images',[names{i} '.jpg']) ;
+  end
+  fprintf('Extracting histogram from %s (time remaining %.2fs)\n', fullPath, ...
           (length(names)-i) * toc(start)/i) ;
-  histograms{i} = computeHistogramFromImage(vocabulary, names{i}) ;
+  histograms{i} = computeHistogramFromImage(vocabulary, fullPath) ;
 end
 histograms = [histograms{:}] ;

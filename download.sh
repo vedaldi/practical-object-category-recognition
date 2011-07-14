@@ -1,13 +1,33 @@
-mkdir -p data/download
-wget -nc http://www.robots.ox.ac.uk/~vgg/data/motorbikes_side/motorbikes_side.tar -o data/download/motorbike.tar
-wget -nc http://www.robots.ox.ac.uk/~vgg/data/airplanes_side/airplanes_side.tar -o data/download/airplane.tar
-wget -nc http://www.robots.ox.ac.uk/~vgg/data/faces/faces.tar -o data/download/face.tar
-wget -nc http://www.robots.ox.ac.uk/~vgg/data/background/background.tar -o data/download/background.tar
-wget -nc http://www.robots.ox.ac.uk/~vgg/data/cars_brad/cars_brack.tar -o data/car.tar
+voc=~/Data/VOCdevkit_2007/VOC2007
 
-for i in car face airplane motorbike background
+mkdir -p data
+
+for j in train val
 do
-    mkdir -p data/$i
-    tar -C data/$i -xvf data/download/$i.tar --include='*.jpg' 
-done
+    for i in aeroplane person car motorbike horse
+    do
+        grep -E '.*\ 1$' $voc/ImageSets/Main/${i}_${j}.txt | \
+            cut -f1 -d\  > data/${i}_${j}.txt
+        grep -E '.*\-1$' $voc/ImageSets/Main/${i}_${j}.txt | \
+            cut -f1 -d\  > data/${i}_background_${j}.txt
+    done
 
+    # intersect negative sets and create indexes
+    cp data/aeroplane_background_${j}.txt data/background_${j}.txt
+    for i in aeroplane person car motorbike horse
+    do
+        sort data/background_${j}.txt data/${i}_background_${j}.txt | \
+            uniq -d > data/background_${j}_inters.txt
+        rm -f data/${i}_background_${j}.txt
+        mv data/background_${j}_inters.txt data/background_${j}.txt
+    done
+
+    # make all index
+    sort data/*_{train,val}.txt | uniq > data/all.txt
+
+    # copy images
+    mkdir -p data/images
+    cat data/all.txt | sed 's/\(.*\)/\1.jpg/' > data/temp.txt
+    rsync --delete -v $voc/JPEGImages/ --files-from=data/temp.txt data/images/
+    # rm data/temp.txt
+done

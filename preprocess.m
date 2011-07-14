@@ -3,28 +3,8 @@
 %   'vlfeat/', and precompute the histograms for the dataset.
 
 % --------------------------------------------------------------------
-%                                                    Download the data
+%                                                      Download VLFeat
 % --------------------------------------------------------------------
-
-if ~exist('data','dir'), mkdir('data') ; end
-
-baseURL = 'http://www.robots.ox.ac.uk/~vgg/data' ;
-pairs = {...
-  {'motorbikes_side', 'motorbike'}, ...
-  {'faces', 'face'}, ...
-  {'airplanes_side', 'airplane'}, ...
-  {'cars_brad', 'car'}, ...
-  {'background', 'background'}} ;
-
-for pair = pairs
-  pair = pair{1} ;
-  if exist(fullfile('data',pair{2}),'dir'), continue ; end
-  mkdir(fullfile('data',pair{2})) ;
-  from = sprintf('%s/%s/%s.tar', baseURL, pair{1}, pair{1}) ;
-  to = fullfile('data', pair{2}) ;
-  fprintf('Downloading %s to %s\n', from, to) ;
-  untar(from, to) ;
-end
 
 if ~exist('vlfeat', 'dir')
   from = 'http://www.vlfeat.org/download/vlfeat-0.9.13-bin.tar.gz' ;
@@ -40,7 +20,7 @@ end
 setup ;
 
 % from 50 background images
-names = getImageSet('data/background') ;
+names = textread('data/background_train.txt','%s') ;
 if ~exist('data/vocabulary.mat')
   vocabulary = computeVocabularyFromImageList(names(1:50)) ;
   save('data/vocabulary.mat', '-STRUCT', 'vocabulary') ;
@@ -52,8 +32,20 @@ end
 %                                                   Compute histograms
 % --------------------------------------------------------------------
 
-for subset = {'background', 'face', 'motorbike', 'car', 'airplane'}
-  names = getImageSet(fullfile('data', char(subset))) ;
+for subset = {'background_train', ...
+              'background_val', ...
+              'aeroplane_train', ...
+              'aeroplane_val', ...
+              'motorbike_train', ...
+              'motorbike_val', ...
+              'person_train', ...
+              'person_val', ...
+              'car_train', ...
+              'car_val', ...
+              'horse_train', ...
+              'horse_val'}
+  fprintf('Processing %s\n', char(subset)) ;
+  names = textread(fullfile('data', [char(subset) '.txt']), '%s') ;
   histograms = computeHistogramsFromImageList(vocabulary, names) ;
-  save(fullfile('data',[char(subset) '-histograms.mat']), 'names', 'histograms') ;
+  save(fullfile('data',[char(subset) '_hist.mat']), 'names', 'histograms') ;
 end

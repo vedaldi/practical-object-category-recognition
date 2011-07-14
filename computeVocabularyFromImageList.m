@@ -22,8 +22,13 @@ numFeatures = numWords * 50 ;
 
 descriptors = cell(1,numel(names)) ;
 for i = 1:numel(names)
-  fprintf('Extracting features from %s\n', names{i}) ;
-  im = imread(names{i}) ;
+  if exist(names{i}, 'file')
+    fullPath = names{i} ;
+  else
+    fullPath = fullfile('data','images',[names{i} '.jpg']) ;
+  end
+  fprintf('Extracting features from %s\n', fullPath) ;
+  im = imread(fullPath) ;
   [drop, d] = computeFeatures(im) ;
   descriptors{i} = vl_colsubset(d, round(numFeatures / numel(names)), 'uniform') ;
 end
