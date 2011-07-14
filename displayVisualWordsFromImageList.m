@@ -70,8 +70,8 @@ for k = 1:length(selection)
   figure(100) ; clf ;
   composite = cat(4,patches{:}) ;
   composite = max(0,min(1,composite)) ;
-  %[drop, perm] = sort(patchesScore, 'descend') ;
-  %composite = composite(:,:,:,perm) ;
+  [drop, perm] = sort(patchesScore, 'descend') ;
+  composite = composite(:,:,:,perm) ;
   vl_imarray(composite) ;
   set(gca,'xtick',[],'ytick',[]) ; axis image ;
   axis image ;

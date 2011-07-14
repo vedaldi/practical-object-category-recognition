@@ -9,7 +9,7 @@ setup ;
 
 % Load training data
 pos = load('data/aeroplane_train_hist.mat') ;
-%pos = load('data/car_train_hist.mat') ;
+%pos = load('data/motorbike_train_hist.mat') ;
 %pos = load('data/person_train_hist.mat') ;
 neg = load('data/background_train_hist.mat') ;
 names = {pos.names{:}, neg.names{:}};
@@ -19,7 +19,7 @@ clear pos neg ;
 
 % Load testing data
 pos = load('data/aeroplane_val_hist.mat') ;
-%pos = load('data/car_val_hist.mat') ;
+%pos = load('data/motorbike_val_hist.mat') ;
 %pos = load('data/person_val_hist.mat') ;
 neg = load('data/background_val_hist.mat') ;
 testNames = {pos.names{:}, neg.names{:}};
@@ -39,13 +39,14 @@ labels = labels(:,sel) ;
 clear sel ;
 
 % count how many images are there
-fprintf('number of training images: %d positive, %d negative\n', ...
+fprintf('Number of training images: %d positive, %d negative\n', ...
         sum(labels > 0), sum(labels < 0)) ;
-fprintf('number of testing images: %d positive, %d negative\n', ...
+fprintf('Number of testing images: %d positive, %d negative\n', ...
         sum(testLabels > 0), sum(testLabels < 0)) ;
 
 % For Stage E: Vary the image representation
 % histograms = removeSpatialInformation(histograms) ;
+% testHistograms = removeSpatialInformation(testHistograms) ;
 
 % For Stage F: Vary the classifier (Hellinger kernel)
 % histograms = sqrt(histograms) ;
@@ -66,13 +67,17 @@ C = 100 ;
 % Evaluate the scores on the training data
 scores = w' * histograms + bias ;
 
-% Visualize the precision-recall curve
-figure(1) ; clf ; set(1,'name','Precision-recall on train data') ;
-vl_pr(labels, scores) ;
+% Visualize visual words
+% [drop,perm] = sort(w,'descend') ;
+% displayVisualWordsFromImageList(names([1:10, end-10:end]), perm) ;
 
 % Visualize the ranked list of images
-figure(2) ; clf ; set(2,'name','Ranked training images (subset)') ;
+figure(1) ; clf ; set(1,'name','Ranked training images (subset)') ;
 displayRankedImageList(names, scores)  ;
+
+% Visualize the precision-recall curve
+figure(2) ; clf ; set(2,'name','Precision-recall on train data') ;
+vl_pr(labels, scores) ;
 
 % --------------------------------------------------------------------
 % Stage C: Classify the test images and assess the performance
@@ -81,14 +86,17 @@ displayRankedImageList(names, scores)  ;
 % Test the linar SVM
 testScores = w' * testHistograms + bias ;
 
-% Visualize the precision-recall curve
-figure(3) ; clf ; set(3,'name','Precision-recall on test data') ;
-vl_pr(testLabels, testScores) ;
-
 % Visualize the ranked list of images
-figure(4) ; clf ; set(4,'name','Ranked test images (subset)') ;
+figure(3) ; clf ; set(3,'name','Ranked test images (subset)') ;
 displayRankedImageList(testNames, testScores)  ;
 
-% Visualize visual words
-% [drop,perm] = sort(w,'descend') ;
-% displayVisualWordsFromImageList(names([1:10, end-10:end]), perm) ;
+% Visualize the precision-recall curve
+figure(4) ; clf ; set(4,'name','Precision-recall on test data') ;
+vl_pr(testLabels, testScores) ;
+
+% Print results
+[drop,drop,info] = vl_pr(testLabels, testScores) ;
+fprintf('Test AP: %.2f\n', info.auc) ;
+
+[drop,perm] = sort(testScores,'descend') ;
+fprintf('Correctly retrieved in the top 36: %d\n', sum(testLabels(perm(1:36)) > 0)) ;
