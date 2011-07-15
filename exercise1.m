@@ -67,9 +67,8 @@ C = 100 ;
 % Evaluate the scores on the training data
 scores = w' * histograms + bias ;
 
-% Visualize visual words
-% [drop,perm] = sort(w,'descend') ;
-% displayVisualWordsFromImageList(names([1:10, end-10:end]), perm) ;
+% Visualize visual words by relevance on the first image
+% displayRelevantVisualWords(names{1},w)
 
 % Visualize the ranked list of images
 figure(1) ; clf ; set(1,'name','Ranked training images (subset)') ;

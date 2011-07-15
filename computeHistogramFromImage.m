@@ -9,7 +9,15 @@ function histogram = computeHistogramFromImage(vocabulary,im)
 
 % Author: Andrea Vedaldi
 
-if isstr(im), im = imread(im) ; end
+if isstr(im)
+  if exist(im, 'file')
+    fullPath = im ;
+  else
+    fullPath = fullfile('data','images',[im '.jpg']) ;
+  end
+  im = imread(im) ;
+end
+
 width = size(im,2) ;
 height= size(im,1) ;
 [keypoints, descriptors] = computeFeatures(im) ;
