@@ -40,7 +40,7 @@ for k = 1:length(perm)
   inds = find(words == word0) ;
   if isempty(inds), continue ; end
 
-  [~, perm_] = sort(distances(inds), 'descend') ;
+  [drop, perm_] = sort(distances(inds), 'descend') ;
   perm_ = vl_colsubset(perm_, 25*25, 'beginning') ;
 
   patches = cell(1, numel(perm_)) ;
@@ -68,7 +68,11 @@ for k = 1:length(perm)
   composite = max(0,min(1,composite)) ;
   [drop, perm__] = sort(distances(inds(perm_)), 'descend') ;
   composite = composite(:,:,:,perm__) ;
-  vl_imarray(composite) ;
+  if ndims(composite) > 3
+    vl_imarray(composite) ;
+  else
+    image(composite) ;
+  end
   set(gca,'xtick',[],'ytick',[]) ; axis image ;
   axis image ;
   title(sprintf('Visual word %d (rank %d, weight * count %f)', word0, k, scores(perm_(j))));

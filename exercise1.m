@@ -60,7 +60,9 @@ testHistograms = bsxfun(@times, testHistograms, 1./sqrt(sum(testHistograms.^2,1)
 % Stage B: Training a classifier
 % --------------------------------------------------------------------
 
-% Train the linear SVM
+% Train the linear SVM. The SVM paramter C should be
+% cross-validated. Here for simplicity we pick a valute that works
+% well with all kernels.
 C = 100 ;
 [w, bias] = trainLinearSVM(histograms, labels, C) ;
 
