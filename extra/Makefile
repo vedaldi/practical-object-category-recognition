@@ -4,16 +4,25 @@ pack:
 	tar -C .. -czvf $(name).tar.gz \
 	  --exclude '*/.git' \
 	  --exclude '*/data/cache' \
-	  --exclude '*/data/myImages' \
+	  --exclude '*/data/myOtherImages' \
 	  --exclude '*/*.tar.gz' \
+	  --exclude '*DS_Store*' \
 	  $(name)
 	cp $(name).tar.gz ~/Desktop/Dropbox/Public
 
-pack-no-data:
-	tar -C .. -czvf $(name)-no-data.tar.gz \
+pack-data:
+	tar -czvf $(name)-data-only.tar.gz \
+	  --exclude '*/cache' \
+	  --exclude '*/myOtherImages' \
+	  --exclude '*DS_Store*' \
+	  data
+	cp $(name)-data-only.tar.gz ~/Desktop/Dropbox/Public
+
+pack-code:
+	tar -C .. -czvf $(name)-code-only.tar.gz \
 	  --exclude '*/.git' \
 	  --exclude '*/data' \
 	  --exclude '*/*.tar.gz' \
+	  --exclude '*DS_Store*' \
 	  $(name)
-	cp $(name)-no-data.tar.gz ~/Desktop/Dropbox/Public
-
+	cp $(name)-code-only.tar.gz ~/Desktop/Dropbox/Public
