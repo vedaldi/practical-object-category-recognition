@@ -27,7 +27,7 @@ testHistograms = [pos.histograms, neg.histograms] ;
 testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
 clear pos neg ;
 
-% For stage F: throw away part of the training data
+% For stage G: throw away part of the training data
 % fraction = .1 ;
 % fraction = .5 ;
 fraction = +inf ;
@@ -49,8 +49,8 @@ fprintf('Number of testing images: %d positive, %d negative\n', ...
 % testHistograms = removeSpatialInformation(testHistograms) ;
 
 % For Stage F: Vary the classifier (Hellinger kernel)
-% histograms = sqrt(histograms) ;
-% testHistograms = sqrt(testHistograms) ;
+% ** insert code here for the Hellinger kernel using  **
+% ** the training histograms and testHistograms       **
 
 % L2 normalize the histograms before running the linear SVM
 histograms = bsxfun(@times, histograms, 1./sqrt(sum(histograms.^2,1))) ;
