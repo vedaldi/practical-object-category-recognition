@@ -35,11 +35,11 @@ computeHistogramFromImage.m
 computeHistogramsFromImageList.m
         Applies computeHistogramFromImage to a list of images.
 
-learnLinaerSVM.m
+trainLinearSVM.m
         Learn a linear support vector machine.
 
 displayRankedImagelist.m
-        Visulaize a subset of a ranked list of images.
+        Visualize a subset of a ranked list of images.
 
 getImageSet.m
         Scan a directory for images.
@@ -48,9 +48,9 @@ getImageSet.m
 APPENDX (INSTALLATION):
 
 Run MATLAB and execute the command PREPROCESS() in extra/. This will
-download the VLFeat library (http://www.vlfeat.org) and the Caltech-4
-image collection. Then, it will compute a visual vocabulary and
-spatial histograms of visual words for the Caltech-4 images.
+download the VLFeat library (http://www.vlfeat.org), then, it will
+compute a visual vocabulary and spatial histograms of visual words for
+the images.
 
 LICENSE:
 
