@@ -1,4 +1,4 @@
-% PREPROCESS Download data and vlfeat, precompute histograms
+% PREPROCESS  Build vocabulary and compute histograms
 %   PREPROCESS() download an image dataset into 'data/', VLFeat into
 %   'vlfeat/', and precompute the histograms for the dataset.
 
