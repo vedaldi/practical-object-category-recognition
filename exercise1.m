@@ -1,6 +1,6 @@
 % EXERCSIE1: basic training and testing of a classifier
 
-% add the required search paths
+% setup MATLAB to use our software
 setup ;
 
 % --------------------------------------------------------------------
