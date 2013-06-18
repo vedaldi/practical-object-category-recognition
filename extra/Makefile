@@ -27,7 +27,8 @@ getImageSet.m \
 removeSpatialInformation.m \
 setup.m \
 standardizeImage.m \
-trainLinearSVM.m
+trainLinearSVM.m \
+vlfeat
 
 code:=$(addprefix $(CURDIR)/,$(code))
 data:=$(addprefix $(CURDIR)/,$(data))
