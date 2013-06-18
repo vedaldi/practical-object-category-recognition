@@ -29,7 +29,7 @@ exercise3.m \
 getImageSet.m \
 quantizeDescriptors.m \
 removeSpatialInformation.m \
-setup.m\ \
+setup.m \
 standardizeImage.m \
 trainLinearSVM.m
 
