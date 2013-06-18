@@ -7,23 +7,23 @@ setup ;
 % Stage A: Data Preparation
 % --------------------------------------------------------------------
 
-vocabulary = load('data/vocabulary.mat') ;
+encoder = load('data/encoder_bovw.mat') ;
 
 % Compute positive histograms from your own images
 pos.names = getImageSet('data/myImages') ;
-pos.histograms = computeHistogramsFromImageList(vocabulary, pos.names, 'data/cache') ;
+pos.histograms = encodeImage(encoder, pos.names, 'data/cache') ;
 
 % Add default background images
-neg = load('data/background_train_hist.mat') ;
+neg = load('data/background_train_bovw.mat') ;
 names = {pos.names{:}, neg.names{:}};
 histograms = [pos.histograms, neg.histograms] ;
 labels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
 clear pos neg ;
 
 % Load testing data
-pos = load('data/horse_val_hist.mat') ;
-%pos = load('data/car_val_hist.mat') ;
-neg = load('data/background_val_hist.mat') ;
+pos = load('data/horse_val_bovw.mat') ;
+%pos = load('data/car_val_bovw.mat') ;
+neg = load('data/background_val_bovw.mat') ;
 testNames = {pos.names{:}, neg.names{:}};
 testHistograms = [pos.histograms, neg.histograms] ;
 testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;

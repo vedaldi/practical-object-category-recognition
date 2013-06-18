@@ -9,8 +9,8 @@ setup ;
 
 % Load training data
 encoding = 'bovw' ;
-encoding = 'vlad' ;
-encoding = 'fv' ;
+%encoding = 'vlad' ;
+%encoding = 'fv' ;
 
 category = 'aeroplane' ;
 %category = 'motorbike' ;
@@ -25,8 +25,8 @@ labels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
 clear pos neg ;
 
 % Load testing data
-pos = load(['data/' category '_test_' encoding '.mat']) ;
-neg = load(['data/background_test_' encoding '.mat']) ;
+pos = load(['data/' category '_val_' encoding '.mat']) ;
+neg = load(['data/background_val_' encoding '.mat']) ;
 
 testNames = {pos.names{:}, neg.names{:}};
 testHistograms = [pos.histograms, neg.histograms] ;
@@ -69,7 +69,7 @@ testHistograms = bsxfun(@times, testHistograms, 1./sqrt(sum(testHistograms.^2,1)
 % Train the linear SVM. The SVM paramter C should be
 % cross-validated. Here for simplicity we pick a valute that works
 % well with all kernels.
-C = 100 ;
+C = 10 ;
 [w, bias] = trainLinearSVM(histograms, labels, C) ;
 
 % Evaluate the scores on the training data

@@ -2,6 +2,10 @@
                    Andrea Vedaldi  Andrew Zisserman
                      {vedaldi,az}@robots.ox.ac.uk
 
+The student instructions and downloads are located at https://sites.google.com/site/vggpracticals.
+
+If you are interested in developing the practical further, the complete source code can be obtained from  https://github.com/vedaldi/practical-object-category-recognition.
+
 CONTENTS:
 
 The package contains three exercises:
@@ -20,21 +24,11 @@ standardizeImage.m
 computeFeatures.m
         Compute dense SIFT keypoints and descriptors.
 
-quantizeDescriptors.m
-        Qquantize visual descriptors into visual words.
+encodeImage.m
+        Compute an image encoding: BoVW, VLAD, FV.
 
-computeHistogram.m
-        Compute a spatial histogram of visual words (starting from the
-        features).
-
-removeSpatialInformation
-        Reduce a spatial histogram to a simple one.
-
-computeHistogramFromImage.m
-        Compute a histogram of visual words (starting from an image).
-
-computeHistogramsFromImageList.m
-        Applies computeHistogramFromImage to a list of images.
+removeSpatialInformation.m
+        Reduces and encoding using spatial subdivisions to a simple one.
 
 trainLinearSVM.m
         Learn a linear support vector machine.
@@ -45,6 +39,8 @@ displayRankedImagelist.m
 getImageSet.m
         Scan a directory for images.
 
+trainEncoder.m
+        Train a BoVW, VLAD, or FV encoder (i.e., learn visual word dictionary).
 
 APPENDX (INSTALLATION):
 

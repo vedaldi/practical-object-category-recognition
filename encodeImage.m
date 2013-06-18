@@ -16,8 +16,12 @@ if ~iscell(im), im = {im} ; end
 if nargin <= 2, cache = [] ; end
 
 psi = cell(1,numel(im)) ;
-for i = 1:numel(im)
-  psi{i} = processOne(encoder, im{i}, cache) ;
+if numel(im) > 1
+  parfor i = 1:numel(im)
+    psi{i} = processOne(encoder, im{i}, cache) ;
+  end
+else
+  psi{1} = processOne(encoder, im{1}, cache) ;
 end
 psi = cat(2, psi{:}) ;
 
@@ -49,10 +53,10 @@ im = standardizeImage(im) ;
 imageSize = size(im) ;
 psi = {} ;
 for i = 1:size(encoder.subdivisions,2)
-  minx = encoder.subdivisions(1,i) * imageSize(1) ;
-  miny = encoder.subdivisions(2,i) * imageSize(2) ;
-  maxx = encoder.subdivisions(3,i) * imageSize(1) ;
-  maxy = encoder.subdivisions(4,i) * imageSize(2) ;
+  minx = encoder.subdivisions(1,i) * imageSize(2) ;
+  miny = encoder.subdivisions(2,i) * imageSize(1) ;
+  maxx = encoder.subdivisions(3,i) * imageSize(2) ;
+  maxy = encoder.subdivisions(4,i) * imageSize(1) ;
 
   ok = ...
     minx <= keypoints(1,:) & keypoints(1,:) < maxx  & ...

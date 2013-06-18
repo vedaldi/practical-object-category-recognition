@@ -4,28 +4,23 @@ function displayRelevantVisualWords(im, w)
 %   words in the vector SELECTION. A visual word is displayed as a
 %   sample of the patches in the image IM that match the most relevant
 %   visual words according to the calssifier W.
+%
+%   This function assummes that W corresponds to a BoVW model
+%   without spatial subdivisions.
 
 % Author: Andrea Vedaldi
 
-if isstr(im)
-  if exist(im, 'file')
-    fullPath = im ;
-  else
-    fullPath = fullfile('data','images',[im '.jpg']) ;
-  end
-  im = imread(fullPath) ;
-end
-im0 = standardizeImage(im) ;
+im = standardizeImage(im) ;
+encoder = load('data/encoder_bovw.mat') ;
+numWords = size(encoder.words,2) ;
 
-vocabulary = load('data/vocabulary.mat') ;
-numWords = size(vocabulary.words,2) ;
-
-width = size(im,2) ;
-height= size(im,1) ;
 [keypoints, descriptors] = computeFeatures(im) ;
-[words, distances] = quantizeDescriptors(vocabulary, descriptors) ;
-histogram = computeHistogram(width, height, keypoints, words) ;
+
+[words,distances] = vl_kdtreequery(encoder.kdtree, encoder.words, ...
+                                   descriptors, 'MaxComparisons', 15) ;
+histogram = vl_binsum(zeros(numWords,1), 1, double(words)) ;
 % histogram = sqrt(histogram) ;
+histogram = histogram / sum(histogram.^2) ;
 
 weights = w .* histogram ;
 
@@ -51,10 +46,10 @@ for k = 1:length(perm)
 
     delta = round(s0*2) ;
     u1 = max(1,u0-delta) ;
-    u2 = min(size(im0,2),u0+delta) ;
+    u2 = min(size(im,2),u0+delta) ;
     v1 = max(1,v0-delta) ;
-    v2 = min(size(im0,1),v0+delta) ;
-    patches{j} = imresize(im0(v1:v2,u1:u2,:),[32 32]) ;
+    v2 = min(size(im,1),v0+delta) ;
+    patches{j} = imresize(im(v1:v2,u1:u2,:),[32 32]) ;
   end
 
   if isempty(patches)
@@ -75,16 +70,16 @@ for k = 1:length(perm)
   end
   set(gca,'xtick',[],'ytick',[]) ; axis image ;
   axis image ;
-  title(sprintf('Visual word %d (rank %d, weight * count %f)', word0, k, scores(perm_(j))));
+  title(sprintf('Visual word %d: rank: %d, weight * count: %g', word0, k, scores(k)));
 
   subplot(1,2,2) ;
-  imagesc(im0) ; hold on ;
+  imagesc(im) ; hold on ;
   kp = keypoints([1 2 4], inds) ;
   kp(3,:) = kp(3,:) * 2 ;
   vl_plotframe(kp, 'linewidth', 2) ;
   axis image ;
 
   drawnow ;
-  fprintf('Press any key to advance. Press Ctrl-C to stop.\n') ;
+  fprintf('Press any key to display the next word. Press Ctrl-C to stop.\n') ;
   pause ;
 end
