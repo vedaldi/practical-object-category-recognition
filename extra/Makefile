@@ -13,21 +13,18 @@ data=\
 /data/{aeroplane,background,car,horse,motorbike,person}_val.txt \
 /data/images/ \
 /data/myImages \
-/data/vocabulary.mat
+/data/encoder_{bovw,vlad,fv}.mat
 
 code=\
 computeFeatures.m \
-computeHistogramFromImage.m \
-computeHistogram.m \
-computeHistogramsFromImageList.m \
-computeVocabularyFromImageList.m \
+trainEncoder.m \
+encodeImage.m \
 displayRankedImageList.m \
 displayRelevantVisualWords.m \
 exercise1.m \
 exercise2.m \
 exercise3.m \
 getImageSet.m \
-quantizeDescriptors.m \
 removeSpatialInformation.m \
 setup.m \
 standardizeImage.m \
