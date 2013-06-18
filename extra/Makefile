@@ -7,9 +7,9 @@ DST = vgg@login.robots.ox.ac.uk:WWW/share
 pack-all: pack-data pack-code pack
 
 data=\
-/data/{aeroplane,background,car,horse,motorbike,person}_train_hist.mat \
+/data/{aeroplane,background,car,horse,motorbike,person}_train_{bovw,vlad,fv}.mat \
 /data/{aeroplane,background,car,horse,motorbike,person}_train.txt \
-/data/{aeroplane,background,car,horse,motorbike,person}_val_hist.mat \
+/data/{aeroplane,background,car,horse,motorbike,person}_val_{bovw,vlad,fv}.mat \
 /data/{aeroplane,background,car,horse,motorbike,person}_val.txt \
 /data/images/ \
 /data/myImages \

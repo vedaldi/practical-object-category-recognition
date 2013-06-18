@@ -39,7 +39,7 @@ end
 psi = encodeOne(encoder, im) ;
 
 if isstr(im) & ~isempty(cache)
-  psi = storeToCache(im, cache, psi) ;
+  storeToCache(im, cache, psi) ;
 end
 
 % --------------------------------------------------------------------
@@ -102,7 +102,7 @@ end
 % --------------------------------------------------------------------
 function storeToCache(name, cache, psi)
 % --------------------------------------------------------------------
-[drop, name] = fileparts(name)
+[drop, name] = fileparts(name) ;
 cachePath = fullfile(cache, [name '.mat']) ;
 vl_xmkdir(cache) ;
 data.psi = psi ;

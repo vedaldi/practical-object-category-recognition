@@ -7,23 +7,27 @@ setup ;
 % Stage A: Data Preparation
 % --------------------------------------------------------------------
 
-encoder = load('data/encoder_bovw.mat') ;
+encoding = 'bovw' ;
+%encoding = 'vlad' ;
+%encoding = 'fv' ;
+
+encoder = load(sprintf('data/encoder_%s.mat',encoding)) ;
 
 % Compute positive histograms from your own images
 pos.names = getImageSet('data/myImages') ;
-pos.histograms = encodeImage(encoder, pos.names, 'data/cache') ;
+pos.histograms = encodeImage(encoder, pos.names, ['data/cache_' encoding]) ;
 
 % Add default background images
-neg = load('data/background_train_bovw.mat') ;
+neg = load(sprintf('data/background_train_%s.mat',encoding)) ;
 names = {pos.names{:}, neg.names{:}};
 histograms = [pos.histograms, neg.histograms] ;
 labels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
 clear pos neg ;
 
 % Load testing data
-pos = load('data/horse_val_bovw.mat') ;
-%pos = load('data/car_val_bovw.mat') ;
-neg = load('data/background_val_bovw.mat') ;
+pos = load(sprintf('data/horse_val_%s.mat',encoding)) ;
+%pos = load(sprintf('data/car_val_%s.mat',encoding)) ;
+neg = load(sprintf('data/background_val_%s.mat',encoding)) ;
 testNames = {pos.names{:}, neg.names{:}};
 testHistograms = [pos.histograms, neg.histograms] ;
 testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
@@ -35,16 +39,20 @@ fprintf('Number of training images: %d positive, %d negative\n', ...
 fprintf('Number of testing images: %d positive, %d negative\n', ...
         sum(testLabels > 0), sum(testLabels < 0)) ;
 
-% Hellinger's kernel (histograms are l1 normalized)
-histograms = sqrt(histograms) ;
-testHistograms = sqrt(testHistograms) ;
+% Hellinger's kernel
+histograms = sign(histograms).*sqrt(abs(histograms)) ;
+testHistograms = sign(testHistograms).*sqrt(abs(testHistograms)) ;
+
+% L2 normalize the histograms before running the linear SVM
+histograms = bsxfun(@times, histograms, 1./sqrt(sum(histograms.^2,1))) ;
+testHistograms = bsxfun(@times, testHistograms, 1./sqrt(sum(testHistograms.^2,1))) ;
 
 % --------------------------------------------------------------------
 % Stage B: Training a classifier
 % --------------------------------------------------------------------
 
 % Train the linear SVM
-C = 100 ;
+C = 10 ;
 [w, bias] = trainLinearSVM(histograms, labels, C) ;
 
 % Evaluate the scores on the training data
