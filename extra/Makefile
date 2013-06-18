@@ -23,7 +23,6 @@ displayRankedImageList.m \
 displayRelevantVisualWords.m \
 exercise1.m \
 exercise2.m \
-exercise3.m \
 getImageSet.m \
 removeSpatialInformation.m \
 setup.m \
