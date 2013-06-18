@@ -8,20 +8,26 @@ setup ;
 % --------------------------------------------------------------------
 
 % Load training data
-pos = load('data/aeroplane_train_hist.mat') ;
-%pos = load('data/motorbike_train_hist.mat') ;
-%pos = load('data/person_train_hist.mat') ;
-neg = load('data/background_train_hist.mat') ;
+encoding = 'bovw' ;
+encoding = 'vlad' ;
+encoding = 'fv' ;
+
+category = 'aeroplane' ;
+%category = 'motorbike' ;
+%category = 'person' ;
+
+pos = load(['data/' category '_train_' encoding '.mat']) ;
+neg = load(['data/background_train_' encoding '.mat']) ;
+
 names = {pos.names{:}, neg.names{:}};
 histograms = [pos.histograms, neg.histograms] ;
 labels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
 clear pos neg ;
 
 % Load testing data
-pos = load('data/aeroplane_val_hist.mat') ;
-%pos = load('data/motorbike_val_hist.mat') ;
-%pos = load('data/person_val_hist.mat') ;
-neg = load('data/background_val_hist.mat') ;
+pos = load(['data/' category '_test_' encoding '.mat']) ;
+neg = load(['data/background_test_' encoding '.mat']) ;
+
 testNames = {pos.names{:}, neg.names{:}};
 testHistograms = [pos.histograms, neg.histograms] ;
 testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
