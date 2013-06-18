@@ -12,26 +12,32 @@ function histograms = computeHistogramsFromImageList(vocabulary, names, cache)
 
 start = tic ;
 histograms = cell(1,numel(names)) ;
+if nargin <= 2
+  cache = [] ;
+end
+
 parfor i = 1:length(names)
-  if exist(names{i}, 'file')
-    fullPath = names{i} ;
-  else
-    fullPath = fullfile('data','images',[names{i} '.jpg']) ;
-  end
-  if nargin > 1
-    % try to retrieve from cache
-    histograms{i} = getFromCache(fullPath, cache) ;
-    if ~isempty(histograms{i}), continue ; end
-  end
-  fprintf('Extracting histogram from %s (time remaining %.2fs)\n', fullPath, ...
-          (length(names)-i) * toc(start)/i) ;
-  histograms{i} = computeHistogramFromImage(vocabulary, fullPath) ;
-  if nargin > 1
-    % save to cache
-    storeToCache(fullPath, cache, histograms{i}) ;
-  end
+  histograms{i} = doOne(vocabulary, names{i}, cache) ;
 end
 histograms = [histograms{:}] ;
+
+function histogram = doOne(vocabulary, name, cache)
+if exist(name, 'file')
+  fullPath = name ;
+else
+  fullPath = fullfile('data','images',[name '.jpg']) ;
+end
+if ~isempty(cache)
+  % try to retrieve from cache
+  histogram = getFromCache(fullPath, cache) ;
+  if ~isempty(histograms), return ; end
+end
+fprintf('Extracting histogram from %s\n', fullPath) ;
+histogram = computeHistogramFromImage(vocabulary, fullPath) ;
+if ~isempty(cache)
+  % save to cache
+  storeToCache(fullPath, cache, histogram) ;
+end
 
 function histogram = getFromCache(fullPath, cache)
 [drop, name] = fileparts(fullPath) ;

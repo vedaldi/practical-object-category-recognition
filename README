@@ -1,13 +1,14 @@
-                    IMAGE CLASSIFICATION PRACTICAL
+                 OBJECT CATEGORY RECOGNITION PRACTICAL
                    Andrea Vedaldi  Andrew Zisserman
                      {vedaldi,az}@robots.ox.ac.uk
 
 CONTENTS:
 
-The package contains two exercises:
+The package contains three exercises:
 
 exercise1.m -- learns and test an image classifier on benchmark data
 exercise2.m -- learns your own classifier
+exercise3.m -- experiment with different image  encoding methods
 
 The computer vision algorithms are implemented by VLFeat
 (http://www.vlfeat.org). This package contains the following MATLAB
@@ -51,6 +52,12 @@ Run MATLAB and execute the command PREPROCESS() in extra/. This will
 download the VLFeat library (http://www.vlfeat.org), then, it will
 compute a visual vocabulary and spatial histograms of visual words for
 the images.
+
+CHANGES:
+
+2013a - Switches to VLFeat 0.9.17. Adds VLAD and FV.
+2012  - Minor cleanups.
+2011  - Initial version.
 
 LICENSE:
 
