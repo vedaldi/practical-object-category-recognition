@@ -15,7 +15,7 @@ if isstr(im)
   else
     fullPath = fullfile('data','images',[im '.jpg']) ;
   end
-  im = imread(im) ;
+  im = imread(fullPath) ;
 end
 
 width = size(im,2) ;

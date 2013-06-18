@@ -1,4 +1,4 @@
-function vocabulary = computeVocabularyFromImageList(names)
+function vocabulary = computeVocabularyFromImageList(names, varargin)
 % COMPUTEVOCABULARYFROMIMAGELIST Compute a visual word vocabulary
 %   VOCABULARY = COMPUTEVOCABULARYFROMIMAGELIST(NAMES) computes a
 %   visual word vocabulary from a list of image names (paths)
@@ -12,8 +12,10 @@ function vocabulary = computeVocabularyFromImageList(names)
 
 % Author: Andrea Vedaldi
 
-numWords = 1000 ;
-numFeatures = numWords * 100 ;
+opts.numWords = 1000 ;
+opts.numFeatures = opts.numWords * 100 ;
+opts.type = 'vq' ;
+opts = vl_argparse(opts, varargin) ;
 
 % This extracts a number of visual descriptors from the specified
 % images. Only NUMFEATURES overall descriptors are retrieved as more
@@ -30,14 +32,25 @@ parfor i = 1:numel(names)
   fprintf('Extracting features from %s\n', fullPath) ;
   im = imread(fullPath) ;
   [drop, d] = computeFeatures(im) ;
-  descriptors{i} = vl_colsubset(d, round(numFeatures / numel(names)), 'uniform') ;
+  descriptors{i} = vl_colsubset(d, round(opts.numFeatures / numel(names)), 'uniform') ;
 end
 
-% This clusters the descriptors into NUMWORDS visual words by using
-% KMEANS. It then compute a KDTREE to index them. The use of a KDTREE
-% is optional, but speeds-up quantization significantly.
+switch opts.type
+  case 'vq'
+    % This clusters the descriptors into NUMWORDS visual words by using
+    % KMEANS. It then compute a KDTREE to index them. The use of a KDTREE
+    % is optional, but speeds-up quantization significantly.
 
-fprintf('Computing visual words and kdtree\n') ;
-descriptors = single([descriptors{:}]) ;
-vocabulary.words = vl_kmeans(descriptors, numWords, 'verbose', 'algorithm', 'elkan') ;
-vocabulary.kdtree = vl_kdtreebuild(vocabulary.words) ;
+    fprintf('Computing visual words and kdtree\n') ;
+    descriptors = single([descriptors{:}]) ;
+    vocabulary.words = vl_kmeans(descriptors, opts.numWords, 'verbose', 'algorithm', 'elkan') ;
+    vocabulary.kdtree = vl_kdtreebuild(vocabulary.words) ;
+
+  case 'gmm'
+    fprintf('Computing GMM\n') ;
+    descriptors = single([descriptors{:}]) ;
+    [vocabulary.means, vocabulary.covariances, vocabulary.priors] = ...
+        vl_gmm(descriptors, opts.numWords, 'verbose') ;
+end
+
+
