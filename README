@@ -2,9 +2,12 @@
                    Andrea Vedaldi  Andrew Zisserman
                      {vedaldi,az}@robots.ox.ac.uk
 
-The student instructions and downloads are located at https://sites.google.com/site/vggpracticals.
+The student instructions and downloads are located at
+https://sites.google.com/site/vggpracticals.
 
-If you are interested in developing the practical further, the complete source code can be obtained from  https://github.com/vedaldi/practical-object-category-recognition.
+If you are interested in developing or modifying the practical, the
+complete source code can be obtained from
+https://github.com/vedaldi/practical-object-category-recognition.
 
 CONTENTS:
 
@@ -45,9 +48,8 @@ trainEncoder.m
 APPENDX (INSTALLATION):
 
 Run MATLAB and execute the command PREPROCESS() in extra/. This will
-download the VLFeat library (http://www.vlfeat.org), then, it will
-compute a visual vocabulary and spatial histograms of visual words for
-the images.
+download the VLFeat library (http://www.vlfeat.org), train
+the various encoders, and pre-compute the image descriptors.
 
 CHANGES:
 
