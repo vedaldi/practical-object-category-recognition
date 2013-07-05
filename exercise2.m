@@ -81,7 +81,6 @@ displayRankedImageList(testNames, testScores)  ;
 figure(4) ; clf ; set(4,'name','Precision-recall on test data') ;
 vl_pr(testLabels, testScores) ;
 
-
 % Print results
 [drop,drop,info] = vl_pr(testLabels, testScores) ;
 fprintf('Test AP: %.2f\n', info.auc) ;
