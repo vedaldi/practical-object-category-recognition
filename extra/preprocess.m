@@ -27,20 +27,20 @@ names{4} = textread('data/person_train.txt','%s') ;
 names{5} = textread('data/car_train.txt','%s') ;
 names{6} = textread('data/horse_train.txt','%s') ;
 names = cat(1,names{:})' ;
-names = vl_colsubset(names,200,'uniform') ;
+names = vl_colsubset(names,2000,'uniform') ;
 
 if ~exist('data/encoder_bovw.mat')
-  encoder = trainEncoder(names, 'type', 'bovw', 'numWords', 2048) ;
+  encoder = trainEncoder(names, 'type', 'bovw', 'numWords', 512) ;
   save('data/encoder_bovw.mat', '-STRUCT', 'encoder') ;
 end
 
 if ~exist('data/encoder_vlad.mat')
-  encoder = trainEncoder(names, 'type', 'vlad', 'numWords', 16) ;
+  encoder = trainEncoder(names, 'type', 'vlad', 'numWords', 32, 'pcaDimension', 80) ;
   save('data/encoder_vlad.mat', '-STRUCT', 'encoder') ;
 end
 
 if ~exist('data/encoder_fv.mat')
-  encoder = trainEncoder(names, 'type', 'fv', 'numWords', 16) ;
+  encoder = trainEncoder(names, 'type', 'fv', 'numWords', 32, 'pcaDimension', 80) ;
   save('data/encoder_fv.mat', '-STRUCT', 'encoder') ;
 end
 

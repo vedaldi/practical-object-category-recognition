@@ -20,7 +20,8 @@ encoder.subdivisions = opts.subdivisions ;
 %% Step 1: obtain sample image descriptors
 descrs = sampleLocalFeatures(images, opts.numWords * 400) ;
 
-%% Step 1 (optional): learn PCA projection
+%% Step 2 (optional): learn PCA projection
+numDescriptors = size(descrs,2) ;
 if opts.pcaDimension > 0
   fprintf('%s: learning PCA rotation/projection\n', mfilename) ;
   x = bsxfun(@minus, descrs, mean(descrs,2)) ;
@@ -29,16 +30,15 @@ if opts.pcaDimension > 0
   d = diag(D) ;
   [d,perm] = sort(d,'descend') ;
   V = V(:,perm) ;
-  endocer.projection = V(:,1:opts.pcaDimension)' ;
+  encoder.projection = V(:,1:opts.pcaDimension)' ;
   clear X V D d ;
 else
   encoder.projection = 1 ;
 end
 descrs = encoder.projection * descrs ;
 
-%% Step 2: lear VQ or GMM vocabulary
+%% Step 3: lear VQ or GMM vocabulary
 dimension = size(descrs,1) ;
-numDescriptors = size(descrs,2) ;
 
 switch encoder.type
   case {'bovw', 'vlad'}

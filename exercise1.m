@@ -1,4 +1,4 @@
-% EXERCSIE1: basic training and testing of a classifier
+% EXERCISE1: basic training and testing of a classifier
 
 % setup MATLAB to use our software
 setup ;
@@ -75,9 +75,6 @@ C = 10 ;
 % Evaluate the scores on the training data
 scores = w' * histograms + bias ;
 
-% Visualize visual words by relevance on the first image
-% displayRelevantVisualWords(names{1},w)
-
 % Visualize the ranked list of images
 figure(1) ; clf ; set(1,'name','Ranked training images (subset)') ;
 displayRankedImageList(names, scores)  ;
@@ -96,6 +93,10 @@ testScores = w' * testHistograms + bias ;
 % Visualize the ranked list of images
 figure(3) ; clf ; set(3,'name','Ranked test images (subset)') ;
 displayRankedImageList(testNames, testScores)  ;
+
+% Visualize visual words by relevance on the first image
+% [~,best] = max(testScores) ;
+% displayRelevantVisualWords(testNames{best},w)
 
 % Visualize the precision-recall curve
 figure(4) ; clf ; set(4,'name','Precision-recall on test data') ;

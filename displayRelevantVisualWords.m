@@ -4,9 +4,6 @@ function displayRelevantVisualWords(im, w)
 %   words in the vector SELECTION. A visual word is displayed as a
 %   sample of the patches in the image IM that match the most relevant
 %   visual words according to the calssifier W.
-%
-%   This function assummes that W corresponds to a BoVW model
-%   without spatial subdivisions.
 
 % Author: Andrea Vedaldi
 
@@ -19,9 +16,13 @@ numWords = size(encoder.words,2) ;
 [words,distances] = vl_kdtreequery(encoder.kdtree, encoder.words, ...
                                    descriptors, 'MaxComparisons', 15) ;
 histogram = vl_binsum(zeros(numWords,1), 1, double(words)) ;
-% histogram = sqrt(histogram) ;
-histogram = histogram / sum(histogram.^2) ;
+histogram = sqrt(histogram) ; % needed for Hellinger's kernel
+histogram = histogram / sqrt(sum(histogram.^2)) ;
 
+% fold the w vetor, which may have been computed with spatial subdivisions
+w = mean(reshape(w, numel(histogram), []), 2) ;
+
+% get the weight of the visual words
 weights = w .* histogram ;
 
 [scores, perm] = sort(weights, 'descend') ;

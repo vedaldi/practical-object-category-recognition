@@ -42,6 +42,10 @@ displayRankedImagelist.m
 getImageSet.m
         Scan a directory for images.
 
+sampleLocalFeatures.m
+        Sample local features from a set of images in order to train
+        and encoder.
+
 trainEncoder.m
         Train a BoVW, VLAD, or FV encoder (i.e., learn visual word dictionary).
 
