@@ -62,6 +62,10 @@ for i = 1:size(encoder.subdivisions,2)
     minx <= keypoints(1,:) & keypoints(1,:) < maxx  & ...
     miny <= keypoints(2,:) & keypoints(2,:) < maxy ;
 
+  % Note: while one must remove the mean from the descriptor to
+  % compute the PCA projection, the mean is irrelevant for the
+  % encoding and therefore it is not subtracted here.
+
   switch encoder.type
     case 'bovw'
       [words,distances] = vl_kdtreequery(encoder.kdtree, encoder.words, ...

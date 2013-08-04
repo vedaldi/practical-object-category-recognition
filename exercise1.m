@@ -87,7 +87,7 @@ vl_pr(labels, scores) ;
 % Stage C: Classify the test images and assess the performance
 % --------------------------------------------------------------------
 
-% Test the linar SVM
+% Test the linear SVM
 testScores = w' * testHistograms + bias ;
 
 % Visualize the ranked list of images
