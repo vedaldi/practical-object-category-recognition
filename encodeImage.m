@@ -20,7 +20,7 @@ if numel(im) > 1
   parfor i = 1:numel(im)
     psi{i} = processOne(encoder, im{i}, cache) ;
   end
-else
+elseif numel(im) == 1
   psi{1} = processOne(encoder, im{1}, cache) ;
 end
 psi = cat(2, psi{:}) ;

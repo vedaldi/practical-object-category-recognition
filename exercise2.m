@@ -15,6 +15,7 @@ encoder = load(sprintf('data/encoder_%s.mat',encoding)) ;
 
 % Compute positive histograms from your own images
 pos.names = getImageSet('data/myImages') ;
+if numel(pos.names) == 0, error('Please add some images to data/myImages before running this exercise') ; end
 pos.histograms = encodeImage(encoder, pos.names, ['data/cache_' encoding]) ;
 
 % Add default background images
