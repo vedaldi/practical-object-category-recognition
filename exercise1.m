@@ -12,8 +12,8 @@ encoding = 'bovw' ;
 %encoding = 'vlad' ;
 %encoding = 'fv' ;
 
-category = 'aeroplane' ;
-%category = 'motorbike' ;
+category = 'motorbike' ;
+%category = 'aeroplane' ;
 %category = 'person' ;
 
 pos = load(['data/' category '_train_' encoding '.mat']) ;
