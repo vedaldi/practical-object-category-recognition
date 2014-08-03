@@ -230,7 +230,7 @@ If there is a significant difference between the training and test performance, 
 * Bug correction due to Oleg Tishutin.
 * Funding from ERC grant VisRec Grant No. 228180, and a PASCAL Harvest Grant.
 
-<img src="images/erc.jpeg" alt="erc" style="height: 100px;"/><img src="images/pascal2.png" alt="pascal2" style="height: 100px;"/>
+<img src="images/erc.jpg" alt="erc" style="height: 100px;"/><img src="images/pascal2.png" alt="pascal2" style="height: 100px;"/>
 
 ## History
 
