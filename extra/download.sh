@@ -1,10 +1,21 @@
-voc=/data/pascal/VOCdevkit_2007/VOC2007
+#!/bin/bash
 
-mkdir -p data
+voc=data/tmp/VOCdevkit/VOC2007
+
+mkdir -p data/tmp
+
+if test ! -d data/tmp/VOCdevkit
+then
+    (
+        cd data/tmp
+        wget -c -nc http://pascallin.ecs.soton.ac.uk/challenges/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
+        tar xzvf VOCtrainval_06-Nov-2007.tar
+    )
+fi
 
 for j in train val
 do
-    for i in aeroplane person car motorbike horse
+    for i in aeroplane person car motorbike horse 
     do
         grep -E '.*\ 1$' $voc/ImageSets/Main/${i}_${j}.txt | \
             cut -f1 -d\  > data/${i}_${j}.txt

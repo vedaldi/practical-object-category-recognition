@@ -1,19 +1,10 @@
-name = practical-category-recognition-2013a
-DST = vgg@login.robots.ox.ac.uk:WWW/share
-%DST = ~/d/Dropbox/Public
+name = practical-category-recognition-2014a
+DST = vgg@login.robots.ox.ac.uk:
+WWW/shareDSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/category-recognition
 
 .PHONY: prepack, pack, pack-data, pack-code, post, clean, distclean
 
 pack-all: pack-data pack-code pack
-
-data=\
-/data/{aeroplane,background,car,horse,motorbike,person}_train_{bovw,vlad,fv}.mat \
-/data/{aeroplane,background,car,horse,motorbike,person}_train.txt \
-/data/{aeroplane,background,car,horse,motorbike,person}_val_{bovw,vlad,fv}.mat \
-/data/{aeroplane,background,car,horse,motorbike,person}_val.txt \
-/data/images/ \
-/data/myImages \
-/data/encoder_{bovw,vlad,fv}.mat
 
 code=\
 computeFeatures.m \
@@ -30,27 +21,46 @@ standardizeImage.m \
 trainLinearSVM.m \
 vlfeat
 
+doc=\
+doc/images \
+doc/instructions.html
+
+data=\
+/data/{aeroplane,background,car,horse,motorbike,person}_train_{bovw,vlad,fv}.mat \
+/data/{aeroplane,background,car,horse,motorbike,person}_train.txt \
+/data/{aeroplane,background,car,horse,motorbike,person}_val_{bovw,vlad,fv}.mat \
+/data/{aeroplane,background,car,horse,motorbike,person}_val.txt \
+/data/images/ \
+/data/myImages \
+/data/encoder_{bovw,vlad,fv}.mat
+
 code:=$(addprefix $(CURDIR)/,$(code))
 data:=$(addprefix $(CURDIR)/,$(data))
 
 pack:
 	rm -rf data/$(name)
-	mkdir -p data/$(name)/data
-	ln -sft data/$(name)/data/ $(data)
-	ln -sft data/$(name)/ $(code)
+	mkdir -p data/$(name)/{data,doc}
+	ln -sf $(data) data/$(name)/data/
+	ln -sf $(doc) data/$(name)/doc/
+	ln -sf $(code) data/$(name)/
 	tar -C data -czvhf data/$(name).tar.gz $(name)/
 
 pack-data:
 	rm -rf data/$(name)
-	mkdir -p data/$(name)/data
-	ln -sft data/$(name)/data/ $(data)
+	mkdir -p data/$(name)/{data,doc}
+	ln -sf $(data) data/$(name)/data/
 	tar -C data -czvhf data/$(name)-data-only.tar.gz $(name)/
 
 pack-code:
 	rm -rf data/$(name)
-	mkdir -p data/$(name)/data
-	ln -sft data/$(name)/ $(code)
+	mkdir -p data/$(name)/{data,doc}
+	ln -sf $(doc) data/$(name)/doc/
+	ln -sf $(code) data/$(name)/
 	tar -C data -czvhf data/$(name)-code-only.tar.gz $(name)/
+
+post-doc:
+	rsync -rv doc/images $(DSTDOC)/
+	rsync -v doc/instructions.html $(DSTDOC)/index.html
 
 post: pack-all
 	rsync -v data/$(name).tar.gz $(DST)/
@@ -58,7 +68,7 @@ post: pack-all
 	rsync -v data/$(name)-code-only.tar.gz $(DST)/
 
 clean:
-	find -name '*~' -delete
+	find . -name '*~' -delete
 
 distclean: clean
 	rm -f data/$(name)*.tar.gz

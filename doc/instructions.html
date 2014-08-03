@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Category recognition practical</title>
+<link rel="stylesheet" href="https://stackedit.io/res-min/themes/base.css" />
+<script type="text/javascript" src="https://stackedit.io/libs/MathJax/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body><div class="container"><h1 id="recognition-of-object-categories-practical">Recognition of object categories practical</h1>
+
+<p>This is an <a href="http://www.robots.ox.ac.uk/~vgg">Oxford Visual Geometry Group</a> computer vision practical, authored by <a href="http://www.robots.ox.ac.uk/~vedaldi/">Andrea Vedaldi</a> and Andrew Zisserman (Release 2014a).</p>
+
+<p><img src="images/cover.jpeg" alt="cover" style="width: 500px;"></p>
+
+<p>This practical is on image classification, where an image is classified according to its visual content. For example, does it contain an airplane or not. Important applications are image retrieval - searching through an image dataset to obtain (or retrieve) those images with particular visual content, and image annotatvion - adding tags to images if they contain particular object categories.</p>
+
+<p>The goal of this session is to get basic practical experience with image classification. It includes: (i) training a visual classifier for five different image classes (airplanes, motorbikes, people, horses and cars); (ii) assessing the performance of the classifier by computing a precision-recall curve; (iii) varying the visual representation used for the feature vector, and the feature map used for the classifier; and (iv) obtaining training data for new classifiers using Bing image search and using the classifiers to retrieve images from a dataset.</p>
+
+<p><div class="toc"><div class="toc">
+<ul>
+<li><a href="#recognition-of-object-categories-practical">Recognition of object categories practical</a><ul>
+<li><a href="#getting-started">Getting started</a></li>
+<li><a href="#part1">Part 1: Training and testing an Image Classifier</a><ul>
+<li><a href="#stage-1a-data-preparation">Stage 1.A: Data Preparation</a></li>
+<li><a href="#stage-1b-train-a-classifier-for-images-containing-motorbikes">Stage 1.B: Train a classifier for images containing motorbikes</a></li>
+<li><a href="#stage-1c-classify-the-test-images-and-assess-the-performance">Stage 1.C: Classify the test images and assess the performance</a></li>
+<li><a href="#stage-1d-learn-a-classifier-for-the-other-classes-and-assess-its-performance">Stage 1.D: Learn a classifier for the other classes and assess its performance</a></li>
+<li><a href="#stage-1e-vary-the-image-representation">Stage 1.E: Vary the image representation</a></li>
+<li><a href="#stage-1f-vary-the-classifier">Stage 1.F: Vary the classifier</a></li>
+<li><a href="#stage-1g-vary-the-number-of-training-images">Stage 1.G: Vary the number of training images</a></li>
+</ul>
+</li>
+<li><a href="#part-2-training-an-image-classifier-for-retrieval-using-bing-images">Part 2: Training an Image Classifier for Retrieval using Bing images</a></li>
+<li><a href="#part-3-advanced-encoding-methods">Part 3: Advanced Encoding Methods</a><ul>
+<li><a href="#stage-h-first-order-methods">Stage H: First order methods</a></li>
+<li><a href="#stage-i-second-order-methods">Stage I: Second order methods</a></li>
+</ul>
+</li>
+<li><a href="#links-and-further-work">Links and further work</a></li>
+<li><a href="#acknowledgements">Acknowledgements</a></li>
+<li><a href="#history">History</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</p>
+
+<h2 id="getting-started">Getting started</h2>
+
+<p>Read and understand the requirements and installation instructions. The download links for this practical are:</p>
+
+<ul>
+<li>Code and data: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2014a.tar.gz">practical-category-recognition-2014a.tar.gz</a> 914MB   </li>
+<li>Code only: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2014a-code-only.tar.gz">practical-category-recognition-2014a-code-only.tar.gz</a> 12MB</li>
+<li>Data only: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2014a-data-only.tar.gz">practical-category-recognition-2014a-data-only.tar.gz</a> 902MB</li>
+<li><a href="https://github.com/vedaldi/practical-object-category-recognition">Git repository</a> (for lab setters and developers)</li>
+</ul>
+
+<p>After the installation is complete, open and edit the script exercise1.m in the MATLAB editor. The script contains commented code and a description for all steps of this exercise, relative to <a href="#part1">Part I</a> of this document. You can cut and paste this code into the MATLAB window to run it, and will need to modify it as you go through the session. Other files such as <code>exercise2.m</code>, contain the code for other parts of the practical, as indicated below.</p>
+
+<p>Note: the student packages contain only the code required to run the practical. The complete package, including code to preprocess the data, is available on GitHub.</p>
+
+<h2 id="part1">Part 1: Training and testing an Image Classifier</h2>
+
+<h3 id="stage-1a-data-preparation">Stage 1.A: Data Preparation</h3>
+
+<p>The data provided in the directory data consists of images and pre-computed descriptors for each image. The JPEG images are contained in data/images. The data consists of three image classes (containing airplanes, motorbikes or persons) and`background’ images (i.e. images that do not contain these three classes). In the data preparation stage, this data is divided as:</p>
+
+<table>
+<thead>
+<tr>
+  <th>aeroplane</th>
+  <th>motorbike</th>
+  <th>person</th>
+  <th>background</th>
+</tr>
+</thead>
+<tbody><tr>
+  <td>train</td>
+  <td>112</td>
+  <td>120</td>
+  <td>1025</td>
+</tr>
+<tr>
+  <td>test</td>
+  <td>126</td>
+  <td>125</td>
+  <td>983</td>
+</tr>
+<tr>
+  <td>total</td>
+  <td>238</td>
+  <td>245</td>
+  <td>2008</td>
+</tr>
+</tbody></table>
+
+
+<p>A descriptor for an image is obtained as a statistics of local image features, which in turn capture the appearance of a large number of local image regions. Mapping local features to a single descriptor vector is often regarded as an encoding step, and the resulting descriptor is sometimes called a code. Compared to sets of local features, a main benefit of working with codes is that codes can be compared by simple vectorial metrics such as the Euclidean distance. For the same reason, they are also much easier to use in learning an image classifier.</p>
+
+<p>In this part we will use the Bag of Visual Words (BoVW) encoding. The process of constructing a BoVW descriptor starting from an image is summarized next: </p>
+
+<p><img src="images/system.png" alt="cover" style="width: 500px;"></p>
+
+<p>First, SIFT features are computed on a regular grid across the image (”dense SIFT”) and vector quantized into visual words. The frequency of each visual word is then recorded in a histogram for each tile of a spatial tiling as shown. The final feature vector for the image is a concatenation of these histograms.</p>
+
+<blockquote>
+  <p><strong>Question:</strong> The spatial tiling is an optional step. Why do you think this is useful?</p>
+</blockquote>
+
+<h3 id="stage-1b-train-a-classifier-for-images-containing-motorbikes">Stage 1.B: Train a classifier for images containing motorbikes</h3>
+
+<p>We will start by training a classifier for images that contain motorbikes. The files <code>data/motorbike_train.txt</code> and <code>data/motorbike_val.txt</code> list images that contain motorbikes. </p>
+
+<blockquote>
+  <p><strong>Task:</strong> Look through example images of the motorbike class and the background images by browsing the image files in the data directory.</p>
+</blockquote>
+
+<p>The motorbike training images will be used as the positives, and the background  <br>
+images as negatives. The classifier is a linear Support Vector Machine (SVM). </p>
+
+<blockquote>
+  <p><strong>Task:</strong> Train the classifier by following the steps in <code>exercise1.m</code>.</p>
+</blockquote>
+
+<p>We will first assess qualitatively how well the classifier works by using it to rank all the training images. </p>
+
+<blockquote>
+  <p><strong>Question:</strong> What do you expect to happen?  <br>
+  <strong>Task:</strong> View the ranked list using the provided function <code>displayRankedImageList</code> as shown in <code>excercise1.m</code>.</p>
+</blockquote>
+
+<p>You can use the function <code>displayRelevantVisualWords</code> to display the image patches that correspond to the visual words which the classifier thinks are most related to the class (see the example embedded in <code>exercise1.m</code>).</p>
+
+<blockquote>
+  <p><strong>Queston:</strong> Do the words correspond to patches you would expect to be selected?</p>
+</blockquote>
+
+<h3 id="stage-1c-classify-the-test-images-and-assess-the-performance">Stage 1.C: Classify the test images and assess the performance</h3>
+
+<p>Now apply the learnt classifier to the test images. Again, you can look at the qualitative performance by using the classifier score to rank all the test images. Note the bias term is not needed for this ranking, only the classification vector w.</p>
+
+<blockquote>
+  <p><strong>Question:</strong> Why is the bias term not needed?</p>
+</blockquote>
+
+<p>Now we will measure the retrieval performance quantitatively by computing a Precision-Recall curve. Recall the definitions of Precision and Recall:</p>
+
+<p><img src="images/pr1.png" alt="pr1" style="width: 500px;"></p>
+
+<p>The Precision-Recall curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the Average Precision (AP, the area under the curve) is often computed. <br>
+ Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results</p>
+
+<h3 id="stage-1d-learn-a-classifier-for-the-other-classes-and-assess-its-performance">Stage 1.D: Learn a classifier for the other classes and assess its performance</h3>
+
+<p><em>Skip to <a href="#stage1e">Stage 1.E</a> on fast track</em></p>
+
+<p>Now repeat Stage B and C for each of the other two classes: airplanes and people. To do this you can simply rerun exercise1.m after changing the dataset loaded at the beginning in stage (A). Remember to change both the training and test data. In each case record the AP performance measure.</p>
+
+<blockquote>
+  <p><strong>Question:</strong> Does the AP performance match your expectations based on the variation of the class images?</p>
+</blockquote>
+
+<h3 id="stage-1e-vary-the-image-representation">Stage 1.E: Vary the image representation</h3>
+
+<p>An important practical aspect of image descriptors is the one of their normalization. For example, BoVW descriptors are histograms, and regarding them as discrete probability distributions it would seem natural that their elements should sum to 1. This is the same as normalizing the BoVW descriptor vectors in L1 norm. However, in <code>exercise1.m</code> L2 normalization (sum of squares) is used instead.</p>
+
+<blockquote>
+  <p><strong>Task:</strong> Modify <code>exercise1.m</code> to use L1 normalization and no normalization and measure the performance change.</p>
+</blockquote>
+
+<p>A linear SVM can be thought of as using a linear kernel <br>
+<span class="MathJax_Preview"></span><div class="MathJax_Display" role="textbox" aria-readonly="true" style="text-align: center;"><span class="MathJax" id="MathJax-Element-1-Frame" style=""><nobr><span class="math" id="MathJax-Span-1" style="width: 9.446em; display: inline-block;"><span style="display: inline-block; position: relative; width: 7.792em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(0.578em 1000em 3.973em -0.524em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-2"><span class="mi" id="MathJax-Span-3" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mo" id="MathJax-Span-4" style="font-family: STIXGeneral-Regular;">(</span><span class="texatom" id="MathJax-Span-5"><span class="mrow" id="MathJax-Span-6"><span class="mi" id="MathJax-Span-7" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span class="mo" id="MathJax-Span-8" style="font-family: STIXGeneral-Regular;">,</span><span class="msup" id="MathJax-Span-9" style="padding-left: 0.188em;"><span style="display: inline-block; position: relative; width: 0.96em; height: 0px;"><span style="position: absolute; clip: rect(1.685em 1000em 2.715em -0.516em); top: -2.538em; left: 0em;"><span class="texatom" id="MathJax-Span-10"><span class="mrow" id="MathJax-Span-11"><span class="mi" id="MathJax-Span-12" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span><span style="position: absolute; top: -2.597em; left: 0.59em;"><span class="mo" id="MathJax-Span-13" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span><span class="mo" id="MathJax-Span-14" style="font-family: STIXGeneral-Regular;">)</span><span class="mo" id="MathJax-Span-15" style="font-family: STIXGeneral-Regular; padding-left: 0.313em;">=</span><span class="munderover" id="MathJax-Span-16" style="padding-left: 0.313em;"><span style="display: inline-block; position: relative; width: 1.299em; height: 0px;"><span style="position: absolute; clip: rect(1.799em 1000em 3.604em -0.441em); top: -2.952em; left: 0em;"><span class="mo" id="MathJax-Span-17" style="font-family: STIXSizeOneSym; vertical-align: -0.524em;">∑</span><span style="display: inline-block; width: 0px; height: 2.952em;"></span></span><span style="position: absolute; clip: rect(1.529em 1000em 2.469em -0.497em); top: -1.034em; left: 0.118em;"><span class="texatom" id="MathJax-Span-18"><span class="mrow" id="MathJax-Span-19"><span class="mi" id="MathJax-Span-20" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">i</span><span class="mo" id="MathJax-Span-21" style="font-size: 70.7%; font-family: STIXGeneral-Regular;">=</span><span class="mn" id="MathJax-Span-22" style="font-size: 70.7%; font-family: STIXGeneral-Regular;">1</span></span></span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span><span style="position: absolute; clip: rect(1.424em 1000em 2.37em -0.521em); top: -3.384em; left: 0.472em;"><span class="mi" id="MathJax-Span-23" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">d<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.019em;"></span></span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span><span class="msubsup" id="MathJax-Span-24" style="padding-left: 0.188em;"><span style="display: inline-block; position: relative; width: 0.842em; height: 0px;"><span style="position: absolute; clip: rect(1.678em 1000em 2.724em -0.512em); top: -2.538em; left: 0em;"><span class="mi" id="MathJax-Span-25" style="font-family: STIXGeneral-Italic;">h</span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span><span style="position: absolute; top: -2.034em; left: 0.531em;"><span class="mi" id="MathJax-Span-26" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">i</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span><span class="msubsup" id="MathJax-Span-27"><span style="display: inline-block; position: relative; width: 0.901em; height: 0px;"><span style="position: absolute; clip: rect(1.678em 1000em 2.724em -0.512em); top: -2.538em; left: 0em;"><span class="mi" id="MathJax-Span-28" style="font-family: STIXGeneral-Italic;">h</span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span><span style="position: absolute; clip: rect(1.608em 1000em 2.341em -0.5em); top: -2.594em; left: 0.531em;"><span class="mo" id="MathJax-Span-29" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span><span style="position: absolute; clip: rect(1.545em 1000em 2.369em -0.497em); top: -1.937em; left: 0.531em;"><span class="mi" id="MathJax-Span-30" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">i</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 3.822em; vertical-align: -1.593em;"></span></span></nobr></span></div><script type="math/tex; mode=display" id="MathJax-Element-1">
+ K(\mathbf{h},\mathbf{h}') = \sum_{i=1}^d h_i h'_i
+</script> <br>
+to measure the similarity between pair of objects <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-2-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-31" style="width: 0.661em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.531em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.678em 1000em 2.724em -0.512em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-32"><span class="mi" id="MathJax-Span-33" style="font-family: STIXGeneral-Italic;">h</span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.98em; vertical-align: -0.082em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-2">h</script> and <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-3-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-34" style="width: 1.089em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.885em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.139em 1000em 2.311em -0.512em); top: -2.125em; left: 0em;"><span class="mrow" id="MathJax-Span-35"><span class="msup" id="MathJax-Span-36"><span style="display: inline-block; position: relative; width: 0.901em; height: 0px;"><span style="position: absolute; clip: rect(1.678em 1000em 2.724em -0.512em); top: -2.538em; left: 0em;"><span class="mi" id="MathJax-Span-37" style="font-family: STIXGeneral-Italic;">h</span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span><span style="position: absolute; top: -2.594em; left: 0.531em;"><span class="mo" id="MathJax-Span-38" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.125em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1.133em; vertical-align: -0.082em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-3">h'</script> (in this case pairs of BoVW descriptors).</p>
+
+<blockquote>
+  <p><strong>Question:</strong> What can you say about the self-similarity,<span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-4-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-39" style="width: 3.375em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.919em; height: 0px; font-size: 115%;"><span style="position: absolute; clip: rect(1.622em 1000em 2.848em -0.552em); top: -2.484em; left: 0em;"><span class="mrow" id="MathJax-Span-40"><span class="mi" id="MathJax-Span-41" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mo" id="MathJax-Span-42" style="font-family: STIXGeneral-Regular;">(</span><span class="texatom" id="MathJax-Span-43"><span class="mrow" id="MathJax-Span-44"><span class="mi" id="MathJax-Span-45" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span class="mo" id="MathJax-Span-46" style="font-family: STIXGeneral-Regular;">,</span><span class="texatom" id="MathJax-Span-47" style="padding-left: 0.188em;"><span class="mrow" id="MathJax-Span-48"><span class="mi" id="MathJax-Span-49" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span class="mo" id="MathJax-Span-50" style="font-family: STIXGeneral-Regular;">)</span></span><span style="display: inline-block; width: 0px; height: 2.484em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1.124em; vertical-align: -0.275em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-4">K(\mathbf{h},\mathbf{h})</script>, of a BoVW histogram <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-5-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-51" style="width: 0.661em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.559em; height: 0px; font-size: 115%;"><span style="position: absolute; clip: rect(1.622em 1000em 2.671em -0.544em); top: -2.484em; left: 0em;"><span class="mrow" id="MathJax-Span-52"><span class="texatom" id="MathJax-Span-53"><span class="mrow" id="MathJax-Span-54"><span class="mi" id="MathJax-Span-55" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span></span><span style="display: inline-block; width: 0px; height: 2.484em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.92em; vertical-align: -0.071em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-5">\mathbf{h}</script> that is L2 normalized?</p>
+</blockquote>
+
+<p>Compare <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-6-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-56" style="width: 3.518em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.893em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.685em 1000em 2.892em -0.524em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-57"><span class="mi" id="MathJax-Span-58" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mo" id="MathJax-Span-59" style="font-family: STIXGeneral-Regular;">(</span><span class="texatom" id="MathJax-Span-60"><span class="mrow" id="MathJax-Span-61"><span class="mi" id="MathJax-Span-62" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span class="mo" id="MathJax-Span-63" style="font-family: STIXGeneral-Regular;">,</span><span class="texatom" id="MathJax-Span-64" style="padding-left: 0.188em;"><span class="mrow" id="MathJax-Span-65"><span class="mi" id="MathJax-Span-66" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span class="mo" id="MathJax-Span-67" style="font-family: STIXGeneral-Regular;">)</span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1.175em; vertical-align: -0.286em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-6">K(\mathbf{h},\mathbf{h})</script> to the similarity, <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-7-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-68" style="width: 4.018em; display: inline-block;"><span style="display: inline-block; position: relative; width: 3.306em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.559em 1000em 2.892em -0.524em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-69"><span class="mi" id="MathJax-Span-70" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mo" id="MathJax-Span-71" style="font-family: STIXGeneral-Regular;">(</span><span class="texatom" id="MathJax-Span-72"><span class="mrow" id="MathJax-Span-73"><span class="mi" id="MathJax-Span-74" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span class="mo" id="MathJax-Span-75" style="font-family: STIXGeneral-Regular;">,</span><span class="msup" id="MathJax-Span-76" style="padding-left: 0.188em;"><span style="display: inline-block; position: relative; width: 0.96em; height: 0px;"><span style="position: absolute; clip: rect(1.685em 1000em 2.715em -0.516em); top: -2.538em; left: 0em;"><span class="texatom" id="MathJax-Span-77"><span class="mrow" id="MathJax-Span-78"><span class="mi" id="MathJax-Span-79" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span><span style="position: absolute; top: -2.587em; left: 0.59em;"><span class="mo" id="MathJax-Span-80" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span><span class="mo" id="MathJax-Span-81" style="font-family: STIXGeneral-Regular;">)</span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1.328em; vertical-align: -0.286em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-7">K(\mathbf{h},\mathbf{h}')</script>,of two different L2 normalized BoVW histograms <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-8-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-82" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.59em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.685em 1000em 2.715em -0.516em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-83"><span class="texatom" id="MathJax-Span-84"><span class="mrow" id="MathJax-Span-85"><span class="mi" id="MathJax-Span-86" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.961em; vertical-align: -0.071em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-8">\mathbf{h}</script> and <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-9-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-87" style="width: 1.161em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.945em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.146em 1000em 2.302em -0.516em); top: -2.125em; left: 0em;"><span class="mrow" id="MathJax-Span-88"><span class="msup" id="MathJax-Span-89"><span style="display: inline-block; position: relative; width: 0.96em; height: 0px;"><span style="position: absolute; clip: rect(1.685em 1000em 2.715em -0.516em); top: -2.538em; left: 0em;"><span class="texatom" id="MathJax-Span-90"><span class="mrow" id="MathJax-Span-91"><span class="mi" id="MathJax-Span-92" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span><span style="position: absolute; top: -2.587em; left: 0.59em;"><span class="mo" id="MathJax-Span-93" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.125em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1.114em; vertical-align: -0.071em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-9">\mathbf{h}'</script></p>
+
+<blockquote>
+  <p><strong>Questions:</strong></p>
+  
+  <ul>
+  <li>Can you say the same for unnormalized or L1 normalized histograms?</li>
+  <li>Do you see a relation between the classification performance and L2 normalization?</li>
+  </ul>
+</blockquote>
+
+<p>A useful rule of thumb is that better performance is obtained if the vectors that are ultimately fed to a linear SVM (after any intermediate processing) are L2 normalized.</p>
+
+<p><strong>Skip to Stage F on fast track</strong></p>
+
+<p>Up to this point, the image feature vector has used spatial tiling. Now, we are going to ”turn this off” and see how the performance changes. In this part, the image will simply be represented by a single histogram recording the frequency of visual words (but not taking any account of their image position).</p>
+
+<p>A spatial histogram can be converted back to a simple histogram by merging the tiles. </p>
+
+<blockquote>
+  <p><strong>Task:</strong> Edit <code>exercise1.m</code> to turn on the part of the code that does so. Then evaluate the classifier performance on the test images. <br>
+  <strong>Question:</strong> Why is there a change in performance?</p>
+</blockquote>
+
+<h3 id="stage-1f-vary-the-classifier">Stage 1.F: Vary the classifier</h3>
+
+<p>Up to this point we have used a linear SVM, treating the histograms representing each image as vectors normalized to a unit Euclidean norm. Now we will use a Hellinger kernel classifier but instead of computing kernel values we will explicitly compute the feature map, so that the classifier remains linear (in the new feature space). The definition of the Hellinger kernel (also known as the Bhattacharyya coefficient) is <br>
+<span class="MathJax_Preview"></span><div class="MathJax_Display" role="textbox" aria-readonly="true" style="text-align: center;"><span class="MathJax" id="MathJax-Element-10-Frame" style=""><nobr><span class="math" id="MathJax-Span-94" style="width: 10.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 8.855em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(0.578em 1000em 3.973em -0.524em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-95"><span class="mi" id="MathJax-Span-96" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mo" id="MathJax-Span-97" style="font-family: STIXGeneral-Regular;">(</span><span class="texatom" id="MathJax-Span-98"><span class="mrow" id="MathJax-Span-99"><span class="mi" id="MathJax-Span-100" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span class="mo" id="MathJax-Span-101" style="font-family: STIXGeneral-Regular;">,</span><span class="msup" id="MathJax-Span-102" style="padding-left: 0.188em;"><span style="display: inline-block; position: relative; width: 0.96em; height: 0px;"><span style="position: absolute; clip: rect(1.685em 1000em 2.715em -0.516em); top: -2.538em; left: 0em;"><span class="texatom" id="MathJax-Span-103"><span class="mrow" id="MathJax-Span-104"><span class="mi" id="MathJax-Span-105" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span><span style="position: absolute; top: -2.597em; left: 0.59em;"><span class="mo" id="MathJax-Span-106" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span><span class="mo" id="MathJax-Span-107" style="font-family: STIXGeneral-Regular;">)</span><span class="mo" id="MathJax-Span-108" style="font-family: STIXGeneral-Regular; padding-left: 0.313em;">=</span><span class="munderover" id="MathJax-Span-109" style="padding-left: 0.313em;"><span style="display: inline-block; position: relative; width: 1.299em; height: 0px;"><span style="position: absolute; clip: rect(1.799em 1000em 3.604em -0.441em); top: -2.952em; left: 0em;"><span class="mo" id="MathJax-Span-110" style="font-family: STIXSizeOneSym; vertical-align: -0.524em;">∑</span><span style="display: inline-block; width: 0px; height: 2.952em;"></span></span><span style="position: absolute; clip: rect(1.529em 1000em 2.469em -0.497em); top: -1.034em; left: 0.118em;"><span class="texatom" id="MathJax-Span-111"><span class="mrow" id="MathJax-Span-112"><span class="mi" id="MathJax-Span-113" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">i</span><span class="mo" id="MathJax-Span-114" style="font-size: 70.7%; font-family: STIXGeneral-Regular;">=</span><span class="mn" id="MathJax-Span-115" style="font-size: 70.7%; font-family: STIXGeneral-Regular;">1</span></span></span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span><span style="position: absolute; clip: rect(1.424em 1000em 2.37em -0.521em); top: -3.384em; left: 0.472em;"><span class="mi" id="MathJax-Span-116" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">d<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.019em;"></span></span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span><span class="msqrt" id="MathJax-Span-117" style="padding-left: 0.188em;"><span style="display: inline-block; position: relative; width: 2.831em; height: 0px;"><span style="position: absolute; clip: rect(3.028em 1000em 4.446em -0.512em); top: -4.014em; left: 1.063em;"><span class="mrow" id="MathJax-Span-118"><span class="msubsup" id="MathJax-Span-119"><span style="display: inline-block; position: relative; width: 0.842em; height: 0px;"><span style="position: absolute; clip: rect(1.678em 1000em 2.724em -0.512em); top: -2.538em; left: 0em;"><span class="mi" id="MathJax-Span-120" style="font-family: STIXGeneral-Italic;">h</span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span><span style="position: absolute; top: -2.034em; left: 0.531em;"><span class="mi" id="MathJax-Span-121" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">i</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span><span class="msubsup" id="MathJax-Span-122"><span style="display: inline-block; position: relative; width: 0.901em; height: 0px;"><span style="position: absolute; clip: rect(1.678em 1000em 2.724em -0.512em); top: -2.538em; left: 0em;"><span class="mi" id="MathJax-Span-123" style="font-family: STIXGeneral-Italic;">h</span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span><span style="position: absolute; clip: rect(1.608em 1000em 2.341em -0.5em); top: -2.594em; left: 0.531em;"><span class="mo" id="MathJax-Span-124" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span><span style="position: absolute; clip: rect(1.545em 1000em 2.369em -0.497em); top: -1.937em; left: 0.531em;"><span class="mi" id="MathJax-Span-125" style="font-size: 70.7%; font-family: STIXGeneral-Italic;">i</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 4.014em;"></span></span><span style="position: absolute; clip: rect(3.017em 1000em 3.421em -0.531em); top: -4.384em; left: 1.063em;"><span style="display: inline-block; position: relative; width: 1.769em; height: 0px;"><span style="position: absolute; font-family: STIXGeneral-Regular; top: -4.014em; left: 0em;">‾<span style="display: inline-block; width: 0px; height: 4.014em;"></span></span><span style="position: absolute; font-family: STIXGeneral-Regular; top: -4.014em; left: 1.269em;">‾<span style="display: inline-block; width: 0px; height: 4.014em;"></span></span><span style="font-family: STIXGeneral-Regular; position: absolute; top: -4.014em; left: 0.406em;">‾<span style="display: inline-block; width: 0px; height: 4.014em;"></span></span><span style="font-family: STIXGeneral-Regular; position: absolute; top: -4.014em; left: 0.838em;">‾<span style="display: inline-block; width: 0px; height: 4.014em;"></span></span></span><span style="display: inline-block; width: 0px; height: 4.014em;"></span></span><span style="position: absolute; clip: rect(2.285em 1000em 4.486em -0.419em); top: -3.639em; left: 0em;"><span style="font-family: STIXSizeOneSym;">√</span><span style="display: inline-block; width: 0px; height: 4.014em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 3.822em; vertical-align: -1.593em;"></span></span></nobr></span></div><script type="math/tex; mode=display" id="MathJax-Element-10">
+ K(\mathbf{h},\mathbf{h}') = \sum_{i=1}^d \sqrt{h_i h'_i}
+</script> <br>
+where <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-11-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-126" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.59em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.685em 1000em 2.715em -0.516em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-127"><span class="texatom" id="MathJax-Span-128"><span class="mrow" id="MathJax-Span-129"><span class="mi" id="MathJax-Span-130" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.961em; vertical-align: -0.071em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-11">\mathbf{h}</script> and <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-12-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-131" style="width: 1.161em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.945em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.146em 1000em 2.302em -0.516em); top: -2.125em; left: 0em;"><span class="mrow" id="MathJax-Span-132"><span class="msup" id="MathJax-Span-133"><span style="display: inline-block; position: relative; width: 0.96em; height: 0px;"><span style="position: absolute; clip: rect(1.685em 1000em 2.715em -0.516em); top: -2.538em; left: 0em;"><span class="texatom" id="MathJax-Span-134"><span class="mrow" id="MathJax-Span-135"><span class="mi" id="MathJax-Span-136" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span><span style="position: absolute; top: -2.587em; left: 0.59em;"><span class="mo" id="MathJax-Span-137" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.125em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1.114em; vertical-align: -0.071em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-12">\mathbf{h}'</script> are normalized histograms. Compare this with the expression of the linear kernel given above: all that is involved in computing the feature map is taking the square root of the histogram values.</p>
+
+<blockquote>
+  <p><strong>Questions:</strong></p>
+  
+  <ul>
+  <li>Based on the rule of thumb introduced above, how should the BoVW histograms <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-13-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-138" style="width: 0.732em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.59em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.685em 1000em 2.715em -0.516em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-139"><span class="texatom" id="MathJax-Span-140"><span class="mrow" id="MathJax-Span-141"><span class="mi" id="MathJax-Span-142" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.961em; vertical-align: -0.071em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-13">\mathbf{h}</script> and <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-14-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-143" style="width: 1.161em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.945em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.146em 1000em 2.302em -0.516em); top: -2.125em; left: 0em;"><span class="mrow" id="MathJax-Span-144"><span class="msup" id="MathJax-Span-145"><span style="display: inline-block; position: relative; width: 0.96em; height: 0px;"><span style="position: absolute; clip: rect(1.685em 1000em 2.715em -0.516em); top: -2.538em; left: 0em;"><span class="texatom" id="MathJax-Span-146"><span class="mrow" id="MathJax-Span-147"><span class="mi" id="MathJax-Span-148" style="font-family: STIXGeneral; font-weight: bold;">h</span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span><span style="position: absolute; top: -2.587em; left: 0.59em;"><span class="mo" id="MathJax-Span-149" style="font-size: 70.7%; font-family: STIXVariants;">′</span><span style="display: inline-block; width: 0px; height: 2.184em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.125em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1.114em; vertical-align: -0.071em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-14">\mathbf{h}'</script> be normalized?</li>
+  <li>Should you apply this normalization before or after taking the square root?</li>
+  </ul>
+</blockquote>
+
+<p>Now we will again learn the image classifier using the Hellinger kernel instead of the linear one.</p>
+
+<blockquote>
+  <p><strong>Tasks:</strong></p>
+  
+  <ul>
+  <li>Edit <code>exercise1.m</code> so that the square root of the histograms are used for the feature vectors. Make sure that the proper normalization is used. In practice this involves writing one line of MATLAB code for the training and one for the test histograms.</li>
+  <li>Retrain the classifier for the motorbike class, and measure its performance on the test data.</li>
+  <li>Try the other histogram normalization options and check that your choice yields optimal performance.</li>
+  </ul>
+  
+  <p><strong>Questions:</strong></p>
+  
+  <ul>
+  <li>Why is this procedure equivalent to using the Hellinger kernel in the SVM classifier?</li>
+  <li>Why is it an advantage to keep the classifier linear, rather than using a non-linear kernel?</li>
+  </ul>
+</blockquote>
+
+<p><strong>Note:</strong> when learning the SVM, to save training time we are not changing the <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-15-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-150" style="width: 0.875em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.708em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.695em 1000em 2.733em -0.465em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-151"><span class="mi" id="MathJax-Span-152" style="font-family: STIXGeneral-Italic;">C<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.022em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.97em; vertical-align: -0.093em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-15">C</script> parameter. This parameter influences the generalization error and should be learnt on a validation set when the kernel is changed. However, in this case the influence of <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-16-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-153" style="width: 0.875em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.708em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.695em 1000em 2.733em -0.465em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-154"><span class="mi" id="MathJax-Span-155" style="font-family: STIXGeneral-Italic;">C<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.022em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.97em; vertical-align: -0.093em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-16">C</script> is small as can be verified experimentally.</p>
+
+<h3 id="stage-1g-vary-the-number-of-training-images">Stage 1.G: Vary the number of training images</h3>
+
+<p><strong>Skip to Part 2 on fast track</strong></p>
+
+<p>Up to this point we have used all the available training images. Now edit exercise1.m and change the fraction variable to use 10% and 50% of the training data.</p>
+
+<blockquote>
+  <p><strong>Question:</strong> What performance do you get with the linear kernel? And with the Hellinger kernel? <br>
+  <strong>Question:</strong> Do you think the performance has `saturated’ if all the training images are used, or would adding more training images give an improvement?</p>
+</blockquote>
+
+<h2 id="part-2-training-an-image-classifier-for-retrieval-using-bing-images">Part 2: Training an Image Classifier for Retrieval using Bing images</h2>
+
+<p>In Part 1 of this practical the training data was provided and all the feature vectors pre-computed. The goal of this second part is to choose the training data yourself in order to optimize the classifier performance. The task is the following: you are given a large corpus of images and asked to retrieve images of a certain class, e.g. those containing a bicycle. You then need to obtain training images, e.g. using Bing Image Search, in order to train a classifier for images containing bicycles and optimize its retrieval performance.</p>
+
+<p>The MATLAB code exercise2.m provides the following functionality: it uses the images in the directory data/myImages and the default negative list data/background_train.txt to train a classifier and rank the test images. To get started, we will train a classifier for horses:</p>
+
+<p>Use Bing image search with ”horses” as the text query (you can also set the photo option on)</p>
+
+<p>Pick 5 images and drag and drop (save) them into the directory <code>data/myImages</code>. These will provide the positive training examples.</p>
+
+<blockquote>
+  <p><strong>Tasks:</strong></p>
+  
+  <ul>
+  <li>Run the code exercise2.m and view the ranked list of images. Note, since feature vectors must be computed for all the training images, this may take a few moments.</li>
+  <li>Now, add in 5 more images and retrain the classifier.</li>
+  </ul>
+</blockquote>
+
+<p>The test data set contains 148 images with horses. Your goal is to train a classifier that can retrieve as many of these as possible in a high ranked position. You can measure your success by how many appear in the first 36 images (this performance measure is `precision at rank-36’). Here are some ways to improve the classifier:</p>
+
+<blockquote>
+  <p><strong>Tasks:</strong></p>
+  
+  <ul>
+  <li>Add more positive training images.</li>
+  <li>Add more positive training images, but choose these to be varied from those you already have.</li>
+  </ul>
+</blockquote>
+
+<p><strong>Note:</strong> all images are automatically normalized to a standard size, and descriptors are saved for each new image added in the data/cache directory. The test data also contains the category car. Train classifiers for it and compare the difficulty of this and the horse class.</p>
+
+<h2 id="part-3-advanced-encoding-methods">Part 3: Advanced Encoding Methods</h2>
+
+<p><strong>Skip to end on fast track</strong></p>
+
+<p>Up to this point we have used a BoVW representation of the original dense SIFT description of the image, together with spatial information coded by a spatial tiling of the image. The BoVW representation is simply a histogram of the number of SIFT vectors assigned to each visual word. The histogram has K bins, where K is the size of the vocabulary created by K-means, and each bin corresponds to a count of the SIFT vectors lying in the Voronoi cell associated with that visual word.</p>
+
+<p>The BoVW is an encoding of the dense SIFTs into a feature vector. One way to think about the encoding is that it aims to best represent the distribution of SIFT vectors of that image (in a manner that is useful for discriminative classification). BoVW is a hard-assignment of SIFTs to visual words, and alternative soft-assignment methods are possible where the count for a SIFT vector is distributed across several histogram bins. </p>
+
+<p>In this section we investigate a different encoding that records more than a simple count as a representation of the distribution of SIFT vectors. In particular we consider two encodings: one that records first moment information (such as the mean) of the distribution assigned to each Voronoi cell, and a second that records both the first and second moment (e.g. the mean and covariance of the distribution). The MATLAB code for computing these encodings in the file exercise1.m.</p>
+
+<h3 id="stage-h-first-order-methods">Stage H: First order methods</h3>
+
+<p>The vector of locally aggregated descriptors (VLAD) is an example of a first order encoding. It records the residuals of vectors within each Voronoi cell (i.e. the  difference between the SIFT vectors and the cluster centre (from the k-means) as illustrated below:</p>
+
+<p><img src="images/vor.png" alt="vor" style="width: 300px;"></p>
+
+<p>Suppose the SIFT descriptors have dimension <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-21-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-173" style="width: 0.946em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.767em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.708em 1000em 2.715em -0.539em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-174"><span class="mi" id="MathJax-Span-175" style="font-family: STIXGeneral-Italic;">D</span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.933em; vertical-align: -0.071em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-21">D</script>, then the total size of the VLAD vector is <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-22-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-176" style="width: 3.089em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.538em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.708em 1000em 2.74em -0.524em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-177"><span class="mi" id="MathJax-Span-178" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mo" id="MathJax-Span-179" style="font-family: STIXGeneral-Regular; padding-left: 0.25em;">×</span><span class="mi" id="MathJax-Span-180" style="font-family: STIXGeneral-Italic; padding-left: 0.25em;">D</span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.963em; vertical-align: -0.102em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-22">K \times D</script> (since a D-dimensional residual is recorded for each Voronoi cell). Typically, <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-23-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-181" style="width: 0.875em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.708em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.708em 1000em 2.715em -0.524em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-182"><span class="mi" id="MathJax-Span-183" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.933em; vertical-align: -0.071em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-23">K</script> is  between 16 and 512, and D is 128 or less.</p>
+
+<blockquote>
+  <p><strong>Question:</strong> Compare the dimension of VLAD and BoVW vectors for a given value of K. What should be the relation of the K in VLAD to the K in BoVW in order to obtain descriptors of the same dimension? <br>
+  <strong>Task:</strong> Replace the encoding used in exercise1 with the VLAD encoding, and repeat the classification experiments for the three classes of Part I.</p>
+</blockquote>
+
+<p>Note, the performance improvement obtained simply by changing the feature encoding.</p><div class="se-section-delimiter"></div>
+
+<h3 id="stage-i-second-order-methods">Stage I: Second order methods</h3>
+
+<p>The Fisher Vector (FV) is an example of second order encoding. It records both the residuals (as in VLAD) and also the covariance of the SIFTs assigned to each Voronoi cell. Its implementation uses a Gaussian Mixture Model (GMM) (instead of k-means) and consequently SIFTs are softly assigned to mixture components (rather than a hard assignment as in BoVW). Suppose there are k mixture components and the covariance is restricted to a diagonal matrix (i.e. only the variance of each component is recorded) then the total size of the Fisher vector is <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-20-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-167" style="width: 3.446em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.834em; height: 0px; font-size: 121%;"><span style="position: absolute; clip: rect(1.678em 1000em 2.74em -0.502em); top: -2.538em; left: 0em;"><span class="mrow" id="MathJax-Span-168"><span class="mn" id="MathJax-Span-169" style="font-family: STIXGeneral-Regular;">2</span><span class="mi" id="MathJax-Span-170" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mo" id="MathJax-Span-171" style="font-family: STIXGeneral-Regular; padding-left: 0.25em;">×</span><span class="mi" id="MathJax-Span-172" style="font-family: STIXGeneral-Italic; padding-left: 0.25em;">d<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.027em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.538em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 1em; vertical-align: -0.102em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-20">2K \times d</script>.</p>
+
+<p>Look through the computation of the FV</p>
+
+<blockquote>
+  <p><strong>Task:</strong> Replace the encoding used in exercise1 with the FV encoding, and repeat the classification experiments for the three classes of Part I.</p>
+</blockquote>
+
+<p>Note, the performance improvement obtained (over BoVW and VLAD) </p>
+
+<blockquote>
+  <p><strong>Question:</strong> What are the advantages or disadvantages of FV compared to VLAD in terms of computation time and storage/memory footprint - especially for a large number (hundreds of millions) of images.</p>
+</blockquote>
+
+<p>That completes this practical.</p>
+
+<h2 id="links-and-further-work">Links and further work</h2>
+
+<p>The code for this practical is written using the software package VLFeat. This is a software library written in MATLAB and C, and is freely available as source code and binary, see <a href="http://www.vlfeat.org/">http://www.vlfeat.org/</a>. <br>
+The images for this practical are taken from the PASCAL VOC 2007 benchmark, see <a href="http://pascallin.ecs.soton.ac.uk/challenges/VOC/voc2007/">http://pascallin.ecs.soton.ac.uk/challenges/VOC/voc2007/</a>. <br>
+For a tutorial on large scale image classification and references to the literature, see <a href="https://sites.google.com/site/lsvr13/">https://sites.google.com/site/lsvr13/</a>. <br>
+If there is a significant difference between the training and test performance, then that indicates over fitting. The difference can often be reduced, and the test performance (generalization) improved by changing the SVM C parameter. In Part I, vary the C parameter in the range 0.1 to 1000 (the default is C=100), and plot the AP on the training and test data as C varies for the linear and Hellinger kernels.</p>
+
+<h2 id="acknowledgements">Acknowledgements</h2>
+
+<ul>
+<li>Guidance from Ivan Laptev and Josef Sivic.</li>
+<li>Comments from Relja Arandjelovic, Yusuf Aytar and Varun Gulshan, Sobhan NaderiParizi, Elliot Crowley</li>
+<li>Bug correction due to Oleg Tishutin.</li>
+<li>Funding from ERC grant VisRec Grant No. 228180, and a PASCAL Harvest Grant.</li>
+</ul>
+
+<p><img src="images/erc.jpeg" alt="erc" style="height: 100px;"><img src="images/pascal2.png" alt="pascal2" style="height: 100px;"></p>
+
+<h2 id="history">History</h2>
+
+<ul>
+<li>Used at ENS/INRIA Visual Recognition and Machine Learning Summer School, 2012.</li>
+<li>Used at JHU Summer School on Human Language Technology, 2012.</li>
+<li>Used at ENS/INRIA Visual Recognition and Machine Learning Summer School, 2011.</li>
+<li>Used at Microsoft Computer Vision School, Moscow, 2011.</li>
+</ul></div></body>
+</html>
