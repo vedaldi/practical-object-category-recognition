@@ -1,6 +1,6 @@
 name = practical-category-recognition-2014a
 DST = vgg@login.robots.ox.ac.uk:
-WWW/shareDSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/category-recognition
+DSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/category-recognition
 
 .PHONY: prepack, pack, pack-data, pack-code, post, clean, distclean
 
@@ -30,30 +30,35 @@ data=\
 /data/{aeroplane,background,car,horse,motorbike,person}_train.txt \
 /data/{aeroplane,background,car,horse,motorbike,person}_val_{bovw,vlad,fv}.mat \
 /data/{aeroplane,background,car,horse,motorbike,person}_val.txt \
-/data/images/ \
+/data/images \
 /data/myImages \
 /data/encoder_{bovw,vlad,fv}.mat
 
 code:=$(addprefix $(CURDIR)/,$(code))
 data:=$(addprefix $(CURDIR)/,$(data))
+deps:=$(echo *.m) $(find $(data)) $(find $(doc)) $(find . vlfeat)
 
-pack:
+pack: data/$(name).tar.gz
+pack-data: data/$(name)-data-only.tar.gz
+pack-code: data/$(name)-code-only.tar.gz
+
+data/$(name).tar.gz: $(deps)
 	rm -rf data/$(name)
-	mkdir -p data/$(name)/{data,doc}
+	mkdir -p data/$(name)/{doc,data}
 	ln -sf $(data) data/$(name)/data/
 	ln -sf $(doc) data/$(name)/doc/
 	ln -sf $(code) data/$(name)/
 	tar -C data -czvhf data/$(name).tar.gz $(name)/
 
-pack-data:
+data/$(name)-data-only.tar.gz: $(deps)
 	rm -rf data/$(name)
-	mkdir -p data/$(name)/{data,doc}
-	ln -sf $(data) data/$(name)/data/
+	mkdir -p data/$(name)/{doc,data}
+	ln -sf $(data) data/$(name)/
 	tar -C data -czvhf data/$(name)-data-only.tar.gz $(name)/
 
-pack-code:
+data/$(name)-code-only.tar.gz: $(deps)
 	rm -rf data/$(name)
-	mkdir -p data/$(name)/{data,doc}
+	mkdir -p data/$(name)/{doc,data}
 	ln -sf $(doc) data/$(name)/doc/
 	ln -sf $(code) data/$(name)/
 	tar -C data -czvhf data/$(name)-code-only.tar.gz $(name)/

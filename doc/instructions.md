@@ -218,10 +218,10 @@ That completes this practical.
 
 ## Links and further work
 
-The code for this practical is written using the software package VLFeat. This is a software library written in MATLAB and C, and is freely available as source code and binary, see http://www.vlfeat.org/.
-The images for this practical are taken from the PASCAL VOC 2007 benchmark, see http://pascallin.ecs.soton.ac.uk/challenges/VOC/voc2007/.
-For a tutorial on large scale image classification and references to the literature, see https://sites.google.com/site/lsvr13/.
-If there is a significant difference between the training and test performance, then that indicates over fitting. The difference can often be reduced, and the test performance (generalization) improved by changing the SVM C parameter. In Part I, vary the C parameter in the range 0.1 to 1000 (the default is C=100), and plot the AP on the training and test data as C varies for the linear and Hellinger kernels.
+* The code for this practical is written using the software package [VLFeat](http://www.vlfeat.org). This is a software library written in MATLAB and C, and is freely available as source code and binary.
+* The images for this practical are taken from the [PASCAL VOC 2007 benchmark](http://pascallin.ecs.soton.ac.uk/challenges/VOC/voc2007/).
+* For a tutorial on large scale image classification and references to the literature, see [here](https://sites.google.com/site/lsvr13/).
+* If there is a significant difference between the training and test performance, then that indicates over fitting. The difference can often be reduced, and the test performance (generalization) improved by changing the SVM C parameter. In [Part I](#part1), vary the $C$ parameter in the range 0.1 to 1000 (the default is $C=100$), and plot the AP on the training and test data as C varies for the linear and Hellinger kernels.
 
 ## Acknowledgements
 
