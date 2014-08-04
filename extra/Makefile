@@ -19,6 +19,7 @@ removeSpatialInformation.m \
 setup.m \
 standardizeImage.m \
 trainLinearSVM.m \
+README.md \
 vlfeat
 
 doc=\
@@ -36,7 +37,7 @@ data=\
 
 code:=$(addprefix $(CURDIR)/,$(code))
 data:=$(addprefix $(CURDIR)/,$(data))
-deps:=$(echo *.m) $(find $(data)) $(find $(doc)) $(find . vlfeat)
+deps:=$(shell find $(code) $(doc) $(data) -type f | sed "s/ /\\\\ /g")
 
 pack: data/$(name).tar.gz
 pack-data: data/$(name)-data-only.tar.gz
