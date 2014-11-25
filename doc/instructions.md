@@ -12,7 +12,7 @@ The goal of this session is to get basic practical experience with image classif
 
 ## Getting started
 
-Read and understand the requirements and installation instructions. The download links for this practical are:
+Read and understand the [requirements and installation instructions](../overview/index.html#installation). The download links for this practical are:
 
 * Code and data: [practical-category-recognition-2014a.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2014a.tar.gz) 914MB   
 * Code only: [practical-category-recognition-2014a-code-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2014a-code-only.tar.gz) 12MB
