@@ -2,7 +2,7 @@
 
 This is an [Oxford Visual Geometry Group](http://www.robots.ox.ac.uk/~vgg) computer vision practical, authored by [Andrea Vedaldi](http://www.robots.ox.ac.uk/~vedaldi/) and Andrew Zisserman (Release 2014a).
 
-<img src="images/cover.jpeg" alt="cover" style="width: 500px;"/>
+<img height=400px src="images/cover.jpeg" alt="cover"/>
 
 This practical is on image classification, where an image is classified according to its visual content. For example, does it contain an airplane or not. Important applications are image retrieval - searching through an image dataset to obtain (or retrieve) those images with particular visual content, and image annotatvion - adding tags to images if they contain particular object categories.
 
@@ -39,7 +39,7 @@ A descriptor for an image is obtained as a statistics of local image features, w
 
 In this part we will use the Bag of Visual Words (BoVW) encoding. The process of constructing a BoVW descriptor starting from an image is summarized next: 
 
-<img src="images/system.png" alt="cover" style="width: 500px;"/>
+<img height=400px src="images/system.png" alt="cover"/>
 
 First, SIFT features are computed on a regular grid across the image (''dense SIFT'') and vector quantized into visual words. The frequency of each visual word is then recorded in a histogram for each tile of a spatial tiling as shown. The final feature vector for the image is a concatenation of these histograms.
 
@@ -73,7 +73,7 @@ Now apply the learnt classifier to the test images. Again, you can look at the q
 
 Now we will measure the retrieval performance quantitatively by computing a Precision-Recall curve. Recall the definitions of Precision and Recall:
 
-<img src="images/pr1.png" alt="pr1" style="width: 500px;"/>
+<img height=400px src="images/pr1.png" alt="pr1"/>
 
 The Precision-Recall curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the Average Precision (AP, the area under the curve) is often computed.
  Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results
@@ -193,7 +193,7 @@ In this section we investigate a different encoding that records more than a sim
 
 The vector of locally aggregated descriptors (VLAD) is an example of a first order encoding. It records the residuals of vectors within each Voronoi cell (i.e. the  difference between the SIFT vectors and the cluster centre (from the k-means) as illustrated below:
 
-<img src="images/vor.png" alt="vor" style="width: 300px;"/>
+<img height=200px src="images/vor.png" alt="vor" />
 
 Suppose the SIFT descriptors have dimension $D$, then the total size of the VLAD vector is $K \times D$ (since a D-dimensional residual is recorded for each Voronoi cell). Typically, $K$ is  between 16 and 512, and D is 128 or less.
 
@@ -230,7 +230,7 @@ That completes this practical.
 * Bug correction due to Oleg Tishutin.
 * Funding from ERC grant VisRec Grant No. 228180, and a PASCAL Harvest Grant.
 
-<img src="images/erc.jpg" alt="erc" style="height: 100px;"/><img src="images/pascal2.png" alt="pascal2" style="height: 100px;"/>
+<img height=100px src="images/erc.jpg" alt="erc" /><img height=100px src="images/pascal2.png" alt="pascal2" />
 
 ## History
 

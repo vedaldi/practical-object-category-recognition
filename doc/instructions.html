@@ -10,13 +10,13 @@
 
 <p>This is an <a href="http://www.robots.ox.ac.uk/~vgg">Oxford Visual Geometry Group</a> computer vision practical, authored by <a href="http://www.robots.ox.ac.uk/~vedaldi/">Andrea Vedaldi</a> and Andrew Zisserman (Release 2014a).</p>
 
-<p><img src="images/cover.jpeg" alt="cover"></p>
+<p><img height="400px" src="images/cover.jpeg" alt="cover"></p>
 
 <p>This practical is on image classification, where an image is classified according to its visual content. For example, does it contain an airplane or not. Important applications are image retrieval - searching through an image dataset to obtain (or retrieve) those images with particular visual content, and image annotatvion - adding tags to images if they contain particular object categories.</p>
 
 <p>The goal of this session is to get basic practical experience with image classification. It includes: (i) training a visual classifier for five different image classes (airplanes, motorbikes, people, horses and cars); (ii) assessing the performance of the classifier by computing a precision-recall curve; (iii) varying the visual representation used for the feature vector, and the feature map used for the classifier; and (iv) obtaining training data for new classifiers using Bing image search and using the classifiers to retrieve images from a dataset.</p>
 
-<p><div class="toc">
+<p><div class="toc"><div class="toc">
 <ul>
 <li><a href="#recognition-of-object-categories-practical">Recognition of object categories practical</a><ul>
 <li><a href="#getting-started">Getting started</a></li>
@@ -43,9 +43,8 @@
 </li>
 </ul>
 </div>
+</div>
 </p>
-
-
 
 <h2 id="getting-started">Getting started</h2>
 
@@ -106,15 +105,13 @@
 
 <p>In this part we will use the Bag of Visual Words (BoVW) encoding. The process of constructing a BoVW descriptor starting from an image is summarized next: </p>
 
-<p><img src="images/system.png" alt="cover"></p>
+<p><img height="400px" src="images/system.png" alt="cover"></p>
 
 <p>First, SIFT features are computed on a regular grid across the image (”dense SIFT”) and vector quantized into visual words. The frequency of each visual word is then recorded in a histogram for each tile of a spatial tiling as shown. The final feature vector for the image is a concatenation of these histograms.</p>
 
 <blockquote>
   <p><strong>Question:</strong> The spatial tiling is an optional step. Why do you think this is useful?</p>
 </blockquote>
-
-
 
 <h3 id="stage-1b-train-a-classifier-for-images-containing-motorbikes">Stage 1.B: Train a classifier for images containing motorbikes</h3>
 
@@ -156,12 +153,10 @@ images as negatives. The classifier is a linear Support Vector Machine (SVM). </
 
 <p>Now we will measure the retrieval performance quantitatively by computing a Precision-Recall curve. Recall the definitions of Precision and Recall:</p>
 
-<p><img src="images/pr1.png" alt="pr1"></p>
+<p><img height="400px" src="images/pr1.png" alt="pr1"></p>
 
 <p>The Precision-Recall curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the Average Precision (AP, the area under the curve) is often computed. <br>
  Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results</p>
-
-
 
 <h3 id="stage-1d-learn-a-classifier-for-the-other-classes-and-assess-its-performance">Stage 1.D: Learn a classifier for the other classes and assess its performance</h3>
 
@@ -322,9 +317,9 @@ where <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Ele
 
 <p>The vector of locally aggregated descriptors (VLAD) is an example of a first order encoding. It records the residuals of vectors within each Voronoi cell (i.e. the  difference between the SIFT vectors and the cluster centre (from the k-means) as illustrated below:</p>
 
-<p><img src="images/vor.png" alt="vor"></p>
+<p><img height="200px" src="images/vor.png" alt="vor"></p>
 
-<p>Suppose the SIFT descriptors have dimension <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-17-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-156" style="width: 0.847em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.744em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.678em, 1000em, 2.629em, -0.454em); top: -2.48em; left: 0em;"><span class="mrow" id="MathJax-Span-157"><span class="mi" id="MathJax-Span-158" style="font-family: STIXGeneral-Italic;">D</span></span><span style="display: inline-block; width: 0px; height: 2.48em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.842em; vertical-align: -0.056em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-17">D</script>, then the total size of the VLAD vector is <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-18-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-159" style="width: 2.903em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.579em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.678em, 1000em, 2.654em, -0.439em); top: -2.48em; left: 0em;"><span class="mrow" id="MathJax-Span-160"><span class="mi" id="MathJax-Span-161" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mo" id="MathJax-Span-162" style="font-family: STIXGeneral-Regular; padding-left: 0.25em;">×</span><span class="mi" id="MathJax-Span-163" style="font-family: STIXGeneral-Italic; padding-left: 0.25em;">D</span></span><span style="display: inline-block; width: 0px; height: 2.48em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.87em; vertical-align: -0.084em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-18">K \times D</script> (since a D-dimensional residual is recorded for each Voronoi cell). Typically, <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-19-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-164" style="width: 0.847em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.744em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.678em, 1000em, 2.629em, -0.439em); top: -2.48em; left: 0em;"><span class="mrow" id="MathJax-Span-165"><span class="mi" id="MathJax-Span-166" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.48em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.842em; vertical-align: -0.056em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-19">K</script> is  between 16 and 512, and D is 128 or less.</p>
+<p>Suppose the SIFT descriptors have dimension <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-32-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-214" style="width: 0.847em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.744em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.678em, 1000em, 2.629em, -0.454em); top: -2.48em; left: 0em;"><span class="mrow" id="MathJax-Span-215"><span class="mi" id="MathJax-Span-216" style="font-family: STIXGeneral-Italic;">D</span></span><span style="display: inline-block; width: 0px; height: 2.48em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.842em; vertical-align: -0.056em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-32">D</script>, then the total size of the VLAD vector is <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-33-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-217" style="width: 2.903em; display: inline-block;"><span style="display: inline-block; position: relative; width: 2.579em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.678em, 1000em, 2.654em, -0.439em); top: -2.48em; left: 0em;"><span class="mrow" id="MathJax-Span-218"><span class="mi" id="MathJax-Span-219" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span><span class="mo" id="MathJax-Span-220" style="font-family: STIXGeneral-Regular; padding-left: 0.25em;">×</span><span class="mi" id="MathJax-Span-221" style="font-family: STIXGeneral-Italic; padding-left: 0.25em;">D</span></span><span style="display: inline-block; width: 0px; height: 2.48em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.87em; vertical-align: -0.084em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-33">K \times D</script> (since a D-dimensional residual is recorded for each Voronoi cell). Typically, <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Element-34-Frame" role="textbox" aria-readonly="true" style=""><nobr><span class="math" id="MathJax-Span-222" style="width: 0.847em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.744em; height: 0px; font-size: 112%;"><span style="position: absolute; clip: rect(1.678em, 1000em, 2.629em, -0.439em); top: -2.48em; left: 0em;"><span class="mrow" id="MathJax-Span-223"><span class="mi" id="MathJax-Span-224" style="font-family: STIXGeneral-Italic;">K<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.055em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.48em;"></span></span></span><span style="border-left-width: 0em; border-left-style: solid; display: inline-block; overflow: hidden; width: 0px; height: 0.842em; vertical-align: -0.056em;"></span></span></nobr></span><script type="math/tex" id="MathJax-Element-34">K</script> is  between 16 and 512, and D is 128 or less.</p>
 
 <blockquote>
   <p><strong>Question:</strong> Compare the dimension of VLAD and BoVW vectors for a given value of K. What should be the relation of the K in VLAD to the K in BoVW in order to obtain descriptors of the same dimension? <br>
@@ -332,8 +327,6 @@ where <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Ele
 </blockquote>
 
 <p>Note, the performance improvement obtained simply by changing the feature encoding.</p>
-
-
 
 <h3 id="stage-i-second-order-methods">Stage I: Second order methods</h3>
 
@@ -375,9 +368,7 @@ where <span class="MathJax_Preview"></span><span class="MathJax" id="MathJax-Ele
 <li>Funding from ERC grant VisRec Grant No. 228180, and a PASCAL Harvest Grant.</li>
 </ul>
 
-<p><img src="images/erc.jpg" alt="erc"><img src="images/pascal2.png" alt="pascal2"></p>
-
-
+<p><img height="100px" src="images/erc.jpg" alt="erc"><img height="100px" src="images/pascal2.png" alt="pascal2"></p>
 
 <h2 id="history">History</h2>
 
