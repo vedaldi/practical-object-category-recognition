@@ -42,6 +42,10 @@ data:=$(addprefix $(CURDIR)/,$(data))
 doc:=$(addprefix $(CURDIR)/,$(doc))
 deps:=$(shell find $(code) $(doc) $(data) -type f | sed "s/ /\\\\ /g")
 
+pack: $(TMPDIR)/$(name).tar.gz
+pack-data: $(TMPDIR)/$(name)-data-only.tar.gz
+pack-code: $(TMPDIR)/$(name)-code-only.tar.gz
+
 $(TMPDIR)/$(name).tar.gz: $(deps)
 	rm -rf $(TMPDIR)/$(name)
 	mkdir -p $(TMPDIR)/$(name)/{doc,data}
