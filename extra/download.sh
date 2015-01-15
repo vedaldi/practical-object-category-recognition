@@ -3,6 +3,7 @@
 voc=data/tmp/VOCdevkit/VOC2007
 
 mkdir -p data/tmp
+mkdir -p data/myImages
 
 if test ! -d data/tmp/VOCdevkit
 then
