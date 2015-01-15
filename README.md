@@ -40,7 +40,7 @@ Appendix: Installing from scratch
 Changes
 -------
 
-* *2015a* - Switches to VLFeat 0.9.19.
+* *2015a* - Switches to VLFeat 0.9.20 (bugfixes).
 * *2014a* - Switches to VLFeat 0.9.18. Redone packaging and doc.
 * *2013a* - Switches to VLFeat 0.9.17. Adds VLAD and FV.
 * *2012* - Minor cleanups.
