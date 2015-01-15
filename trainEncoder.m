@@ -18,7 +18,7 @@ encoder.type = opts.type ;
 encoder.subdivisions = opts.subdivisions ;
 
 %% Step 1: obtain sample image descriptors
-descrs = sampleLocalFeatures(images, opts.numWords * 400) ;
+descrs = sampleLocalFeatures(images, opts.numWords * 800) ;
 
 %% Step 2 (optional): learn PCA projection
 numDescriptors = size(descrs,2) ;
@@ -37,7 +37,7 @@ else
 end
 descrs = encoder.projection * descrs ;
 
-%% Step 3: lear VQ or GMM vocabulary
+%% Step 3: learn VQ or GMM vocabulary
 dimension = size(descrs,1) ;
 
 switch encoder.type
@@ -50,5 +50,5 @@ switch encoder.type
   case {'fv'} ;
     vl_twister('state', opts.seed) ;
     [encoder.means, encoder.covariances, encoder.priors] = ...
-        vl_gmm(descrs, opts.numWords, 'verbose') ;
+        vl_gmm(descrs, opts.numWords, 'verbose', 'verbose') ;
 end

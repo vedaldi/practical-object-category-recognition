@@ -33,12 +33,14 @@ Appendix: Installing from scratch
 ---------------------------------
 
 1. From Bash, run `./extras/download.sh`. This will download the
-   PASCAL VOC data, extract a subsetof it , and install VLFeat.
-2. From MATLAB, run `addpath extras ; preprocess.m`.
+   PASCAL VOC data and extract a subsetof it.
+2. From MATLAB, run `addpath extras ; preprocess.m`. This will download VLFeat
+   and precompute the data for the practical.
 
 Changes
 -------
 
+* *2015a* - Switches to VLFeat 0.9.19.
 * *2014a* - Switches to VLFeat 0.9.18. Redone packaging and doc.
 * *2013a* - Switches to VLFeat 0.9.17. Adds VLAD and FV.
 * *2012* - Minor cleanups.

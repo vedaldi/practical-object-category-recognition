@@ -1,6 +1,6 @@
 # Recognition of object categories practical
 
-This is an [Oxford Visual Geometry Group](http://www.robots.ox.ac.uk/~vgg) computer vision practical, authored by [Andrea Vedaldi](http://www.robots.ox.ac.uk/~vedaldi/) and Andrew Zisserman (Release 2014a).
+This is an [Oxford Visual Geometry Group](http://www.robots.ox.ac.uk/~vgg) computer vision practical, authored by [Andrea Vedaldi](http://www.robots.ox.ac.uk/~vedaldi/) and Andrew Zisserman (Release 2015a).
 
 <img height=400px src="images/cover.jpeg" alt="cover"/>
 
@@ -14,9 +14,9 @@ The goal of this session is to get basic practical experience with image classif
 
 Read and understand the [requirements and installation instructions](../overview/index.html#installation). The download links for this practical are:
 
-* Code and data: [practical-category-recognition-2014a.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2014a.tar.gz) 914MB   
-* Code only: [practical-category-recognition-2014a-code-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2014a-code-only.tar.gz) 12MB
-* Data only: [practical-category-recognition-2014a-data-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2014a-data-only.tar.gz) 902MB
+* Code and data: [practical-category-recognition-2015a.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2015a.tar.gz) 914MB
+* Code only: [practical-category-recognition-2015a-code-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2015a-code-only.tar.gz) 12MB
+* Data only: [practical-category-recognition-2015a-data-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2015a-data-only.tar.gz) 902MB
 * [Git repository](https://github.com/vedaldi/practical-object-category-recognition) (for lab setters and developers)
 
 After the installation is complete, open and edit the script exercise1.m in the MATLAB editor. The script contains commented code and a description for all steps of this exercise, relative to [Part I](#part1) of this document. You can cut and paste this code into the MATLAB window to run it, and will need to modify it as you go through the session. Other files such as `exercise2.m`, contain the code for other parts of the practical, as indicated below.
@@ -234,6 +234,7 @@ That completes this practical.
 
 ## History
 
+* Used in the Oxford AIMS CDT, 2014-15
 * Used at ENS/INRIA Visual Recognition and Machine Learning Summer School, 2012.
 * Used at JHU Summer School on Human Language Technology, 2012.
 * Used at ENS/INRIA Visual Recognition and Machine Learning Summer School, 2011.
