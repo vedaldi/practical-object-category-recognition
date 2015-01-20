@@ -29,7 +29,7 @@ Note: the student packages contain only the code required to run the practical. 
 
 The data provided in the directory data consists of images and pre-computed descriptors for each image. The JPEG images are contained in data/images. The data consists of three image classes (containing airplanes, motorbikes or persons) and`background' images (i.e. images that do not contain these three classes). In the data preparation stage, this data is divided as:
 
-|        | aeroplane | motorbike | person | background |
+| --     | aeroplane | motorbike | person | background |
 |--------|-----------|-----------|--------|------------|
 | train  | 112       | 120       | 1025   | 1019       |
 | test   | 126       | 125       | 983    | 1077       |
