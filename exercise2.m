@@ -7,7 +7,7 @@ setup ;
 % Stage A: Data Preparation
 % --------------------------------------------------------------------
 
-encoding = 'bovw' ;
+encoding = 'vggm128' ;
 %encoding = 'vlad' ;
 %encoding = 'fv' ;
 

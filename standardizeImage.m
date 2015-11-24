@@ -15,4 +15,5 @@ if isstr(im)
 end
 
 im = im2single(im) ;
-if size(im,1) > 480, im = imresize(im, [480 NaN]) ; end
+s = 256/min(size(im,1),size(im,2)) ;
+im = imresize(im, round(s*[size(im,1) size(im,2)])) ;

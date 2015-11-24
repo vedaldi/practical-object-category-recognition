@@ -17,7 +17,9 @@ if nargin <= 2, cache = [] ; end
 
 psi = cell(1,numel(im)) ;
 if numel(im) > 1
-  parfor i = 1:numel(im)
+  %par
+  for i = 1:numel(im)
+    fprintf('%05d of %05d\n', i, numel(im)) ;
     psi{i} = processOne(encoder, im{i}, cache) ;
   end
 elseif numel(im) == 1
@@ -45,55 +47,10 @@ end
 % --------------------------------------------------------------------
 function psi = encodeOne(encoder, im)
 % --------------------------------------------------------------------
-
 im = standardizeImage(im) ;
-
-[keypoints, descriptors] = computeFeatures(im) ;
-
-imageSize = size(im) ;
-psi = {} ;
-for i = 1:size(encoder.subdivisions,2)
-  minx = encoder.subdivisions(1,i) * imageSize(2) ;
-  miny = encoder.subdivisions(2,i) * imageSize(1) ;
-  maxx = encoder.subdivisions(3,i) * imageSize(2) ;
-  maxy = encoder.subdivisions(4,i) * imageSize(1) ;
-
-  ok = ...
-    minx <= keypoints(1,:) & keypoints(1,:) < maxx  & ...
-    miny <= keypoints(2,:) & keypoints(2,:) < maxy ;
-
-  % Note: while one must remove the mean from the descriptor to
-  % compute the PCA projection, the mean is irrelevant for the
-  % encoding and therefore it is not subtracted here.
-
-  switch encoder.type
-    case 'bovw'
-      [words,distances] = vl_kdtreequery(encoder.kdtree, encoder.words, ...
-                                         encoder.projection * descriptors(:,ok), ...
-                                         'MaxComparisons', 15) ;
-      z = vl_binsum(zeros(encoder.numWords,1), 1, double(words)) ;
-
-    case 'fv'
-      z = vl_fisher(encoder.projection * descriptors(:,ok), ...
-                    encoder.means, ...
-                    encoder.covariances, ...
-                    encoder.priors) ;
-    case 'vlad'
-      [words,distances] = vl_kdtreequery(encoder.kdtree, encoder.words, ...
-                                         encoder.projection * descriptors(:,ok), ...
-                                         'MaxComparisons', 15) ;
-      assign = zeros(encoder.numWords, numel(words), 'single') ;
-      assign(sub2ind(size(assign), double(words), 1:numel(words))) = 1 ;
-      z = vl_vlad(encoder.projection * descriptors(:,ok), ...
-                  encoder.words, ...
-                  assign, 'normalizecomponents') ;
-                   z = vl_vlad(encoder.projection * descriptors(:,ok), ...
-                  encoder.words, ...
-                  assign) ;
-  end
-  psi{i} = z(:) ;
-end
-psi = cat(1, psi{:}) ;
+im_ = bsxfun(@minus, 255*im, encoder.averageColor) ;
+res = vl_simplenn(encoder.net, im_) ;
+psi = mean(reshape(res(end).x, [], 128), 1)' ;
 
 % --------------------------------------------------------------------
 function psi = getFromCache(name, cache)
