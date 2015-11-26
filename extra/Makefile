@@ -1,6 +1,6 @@
 name = practical-category-recognition-cnn-2015b
 DST = vgg@login.robots.ox.ac.uk:WWW/share
-DSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/category-recognition
+DSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/category-recognition-cnn
 
 .PHONY: prepack, pack, pack-data, pack-code, post, clean, distclean
 

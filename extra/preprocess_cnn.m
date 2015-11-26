@@ -1,6 +1,8 @@
-% PREPROCESS    Build vocabulary and compute histograms
-%   PREPROCESS() download an image dataset into 'data/', VLFeat into
-%   'vlfeat/', and precompute the histograms for the dataset.
+function preprocess_cnn()
+% PREPROCESS_CNN  Prepare data for the practical
+%   PREPROCESS_CNN() downloads an image dataset into 'data/', VLFeat
+%   into 'vlfeat/', MatConvNet into 'matconvnet/', and precomputes the
+%   image features.
 
 % --------------------------------------------------------------------
 %                                                      Download VLFeat
@@ -47,27 +49,35 @@ subsets = {...
 %                                                  Compute descriptors
 % --------------------------------------------------------------------
 
-encoderType = 'vggm128' ;
-encoder = loadEncoder(encoderType) ;
+encoders = {'vggm128-fc7', 'vggm128-conv4', 'vggm128-conv5'} ;
+transforms = {'none', 'flip'} ;
+[i,j,k] = ndgrid(1:numel(subsets),1:numel(encoders),1:numel(transforms)) ;
 
-for transform = {'none', 'flip'}
-  for subset = subsets
-    switch char(transform)
-      case 'none', suffix = '' ;
-      case 'zoom', suffix = '_zoom' ;
-      case 'flip', suffix = '_flip' ;
-    end
-    if ~strcmp(suffix, '')
-      if regexp(char(subset), '_val')
-        continue ;
-      end
-    end
-    outPath = fullfile('data',sprintf('%s_%s%s.mat', char(subset), char(encoderType), suffix)) ;
-    fprintf('Processing %s\n', outPath) ;
-    if exist(outPath); continue ; end
-    names = textread(fullfile('data', [char(subset) '.txt']), '%s') ;
-    names = strcat(names, suffix) ;
-    descriptors = encodeImage(encoder, names) ;
-    save(outPath, 'names', 'descriptors') ;
+cases = vertcat(subsets(i(:)), encoders(j(:)), transforms(k(:)));
+
+parfor p = 1:size(cases,2)
+  doOne(cases{1,p}, cases{2,p}, cases{3,p}) ;
+end
+
+% --------------------------------------------------------------------
+function doOne(subset, encoderType, transform)
+% --------------------------------------------------------------------
+switch char(transform)
+  case 'none', suffix = '' ;
+  case 'zoom', suffix = '_zoom' ;
+  case 'flip', suffix = '_flip' ;
+end
+if ~strcmp(suffix, '')
+  if regexp(char(subset), '_val')
+    return ;
   end
 end
+outPath = fullfile('data',sprintf('%s_%s%s.mat', char(subset), char(encoderType), suffix)) ;
+fprintf('Processing %s\n', outPath) ;
+if exist(outPath) ; return ; end
+encoder = loadEncoder(encoderType) ;
+names = textread(fullfile('data', [char(subset) '.txt']), '%s') ;
+names = strcat(names, suffix) ;
+descriptors = encodeImage(encoder, names) ;
+save(outPath, 'names', 'descriptors') ;
+

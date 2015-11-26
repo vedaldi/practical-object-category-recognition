@@ -5,13 +5,13 @@ if nargin < 1
 end
 
 encoder.type = encoderType ;
-encoder.net = load('data/cnn/imagenet-vgg-m-128.mat') ;
+encoder.net = vl_simplenn_tidy(load('data/cnn/imagenet-vgg-m-128.mat')) ;
 switch encoderType
   case 'vggm128-fc7'
     encoder.net.layers(end-2:end) = [] ;
-  case 'vggm-conv5'
+  case 'vggm128-conv5'
     encoder.net.layers(16:end) = [] ;
-  case 'vggm-conv4'
+  case 'vggm128-conv4'
     encoder.net.layers(13:end) = [] ;
 end
 

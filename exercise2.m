@@ -13,7 +13,7 @@ encoding = 'vggm128-conv4' ;
 %encoding = 'vggm128-fc7' ;
 
 % Whether to use data augmentation or not
-augmentation = true ;
+augmentation = false ;
 
 % Compute positive descriptors from your own images
 encoder = loadEncoder(encoding) ;
