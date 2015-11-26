@@ -2,7 +2,7 @@
 
 This is an [Oxford Visual Geometry Group](http://www.robots.ox.ac.uk/~vgg) computer vision practical, authored by [Andrea Vedaldi](http://www.robots.ox.ac.uk/~vedaldi/) and Andrew Zisserman (Release 2015).
 
-<img height=400px src="images/cover.jpeg" alt="cover"/>
+<img width=100% src="images/cover.jpeg" alt="cover"/>
 
 This practical is on image classification, where an image is classified according to its visual content. For example, does it contain an airplane or not. Important applications are image retrieval - searching through an image dataset to obtain (or retrieve) those images with particular visual content, and image annotatvion - adding tags to images if they contain particular object categories.
 
@@ -41,7 +41,7 @@ An image is represented by a single vector descriptor. Mapping the visual conten
 
 We will use a Convolutional Neural Network (CNN) encoding. The process of constructing the CNN descriptor starting from an image is summarized next: 
 
-<img height=200px src="images/encoding.png" alt="cover"/>
+<img width=100% src="images/encoding.png" alt="cover"/>
 
 First, the network is pre-trained on the ImageNet dataset to classify an image into one of a thousand categories. This determines all the parameters of the CNN, such as the weights of the convolutional filters. Then, for a new image, the trained network is used to generate a descriptor vector from the response of the final fully connected layer of the network with this image as input. For this practical we will use the VGG-M network, which produces a 128 dimensional descriptor vector.
 
@@ -73,7 +73,7 @@ Now apply the learnt classifier to the test images. Again, you can look at the q
 
 Now we will measure the retrieval performance quantitatively by computing a Precision-Recall curve. Recall the definitions of Precision and Recall:
 
-<img height=400px src="images/pr1.png" alt="pr1"/>
+<img width=100% src="images/pr1.png" alt="pr1"/>
 
 The Precision-Recall curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the Average Precision (AP, the area under the curve) is often computed.
  Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results
