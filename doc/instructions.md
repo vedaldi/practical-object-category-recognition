@@ -14,7 +14,7 @@ The goal of this session is to get basic practical experience with image classif
 
 Read and understand the [requirements and installation instructions](../overview/index.html#installation). The download links for this practical are:
 
-* Code and data: [practical-category-recognition-cnn-2015b.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-cnn-recognition-2015b.tar.gz) 914MB
+* Code and data: [practical-category-recognition-cnn-2015b.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b.tar.gz) 914MB
 * Code only: [practical-category-recognition-2015b-code-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-code-only.tar.gz) 12MB
 * Data only: [practical-category-recognition-2015b-data-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-data-only.tar.gz) 902MB
 * [Git repository](https://github.com/vedaldi/practical-object-category-recognition) (for lab setters and developers)

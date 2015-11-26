@@ -45,6 +45,9 @@ pack: $(TMPDIR)/$(name).tar.gz
 pack-data: $(TMPDIR)/$(name)-data-only.tar.gz
 pack-code: $(TMPDIR)/$(name)-code-only.tar.gz
 
+.PHONY: doc
+doc: doc/instructions.html
+
 $(TMPDIR)/$(name).tar.gz: $(deps)
 	rm -rf $(TMPDIR)/$(name)
 	mkdir -p $(TMPDIR)/$(name)/{doc,data}
