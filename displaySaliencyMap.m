@@ -28,11 +28,13 @@ res = vl_simplenn(encoder.net, im_, w)  ;
 
 % Get saliency map
 saliency = sum(abs(res(1).dzdx),3) ;
-saliency = vl_imsmooth(saliency, 2) ;
+saliency = vl_imsmooth(saliency, 5) ;
 saliency = saliency / max(saliency(:)) ;
 
 % Visualize the map
-figure(100) ; clf ;
+figure(5) ; set(gcf, 'name', 'Saliency map') ; clf ; 
 subplot(3,1,1) ; imagesc(im) ; axis image off ; title('original image') 
 subplot(3,1,2) ; imagesc(saliency) ; axis image off ; title('saliency') 
-subplot(3,1,3) ; imagesc(bsxfun(@times, im, saliency)) ; axis image off ; title('product')
+subplot(3,1,3) ; 
+imagesc(bsxfun(@plus,bsxfun(@times, im_, saliency),encoder.averageColor)/255) ;
+axis image off ; title('product')

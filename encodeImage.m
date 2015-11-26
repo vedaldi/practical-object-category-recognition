@@ -50,7 +50,7 @@ function psi = encodeOne(encoder, im)
 im = standardizeImage(im) ;
 im_ = bsxfun(@minus, 255*im, encoder.averageColor) ;
 res = vl_simplenn(encoder.net, im_) ;
-psi = mean(reshape(res(end).x, [], 128), 1)' ;
+psi = mean(reshape(res(end).x, [], size(res(end).x,3)), 1)' ;
 
 % --------------------------------------------------------------------
 function psi = getFromCache(name, cache)

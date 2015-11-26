@@ -22,12 +22,7 @@ else
 end
 for i = 1:length(perm)
   vl_tightsubplot(length(perm),i,'box','inner') ;
-  if exist(names{perm(i)}, 'file')
-    fullPath = names{perm(i)} ;
-  else
-    fullPath = fullfile('data','images',[names{perm(i)} '.jpg']) ;
-  end
-  imagesc(imread(fullPath)) ;
+  imagesc(standardizeImage(names{perm(i)})) ;
   text(10,10,sprintf('score: %.2f', scores(perm(i))),...
        'background','w',...
        'verticalalignment','top', ...

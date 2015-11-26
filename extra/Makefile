@@ -1,4 +1,4 @@
-name = practical-category-recognition-2015a
+name = practical-category-recognition-cnn-2015b
 DST = vgg@login.robots.ox.ac.uk:WWW/share
 DSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/category-recognition
 
@@ -8,32 +8,31 @@ pack-all: pack-data pack-code pack
 
 code=\
 computeFeatures.m \
-trainEncoder.m \
 encodeImage.m \
 displayRankedImageList.m \
-displayRelevantVisualWords.m \
+displaySaliencyMap.m \
 exercise1.m \
 exercise2.m \
 getImageSet.m \
-removeSpatialInformation.m \
 setup.m \
 standardizeImage.m \
 trainLinearSVM.m \
 README.md \
-vlfeat
+vlfeat \
+matconvnet
 
 doc=\
 doc/images \
 doc/instructions.html
 
 data=\
-data/{aeroplane,background,car,horse,motorbike,person}_train_{bovw,vlad,fv}.mat \
+data/{aeroplane,background,car,horse,motorbike,person}_train_vggm128.mat \
 data/{aeroplane,background,car,horse,motorbike,person}_train.txt \
-data/{aeroplane,background,car,horse,motorbike,person}_val_{bovw,vlad,fv}.mat \
+data/{aeroplane,background,car,horse,motorbike,person}_val_vggm128.mat \
 data/{aeroplane,background,car,horse,motorbike,person}_val.txt \
 data/images \
 data/myImages \
-data/encoder_{bovw,vlad,fv}.mat
+data/cnn/imagenet-vgg-m-128.mat
 
 tarflags=--exclude='.git*'
 

@@ -7,58 +7,59 @@ setup ;
 % Stage A: Data Preparation
 % --------------------------------------------------------------------
 
-% Load training data
-encoding = 'vggm128' ;
-
-category = 'motorbike' ;
 %category = 'aeroplane' ;
+category = 'motorbike' ;
+%category = 'car' ;
 %category = 'person' ;
 
-pos = load(['data/' category '_train_' encoding '.mat']) ;
-neg = load(['data/background_train_' encoding '.mat']) ;
+% For stage G: choose the number of training samples (set to +inf to use
+% all)
+numPos = +inf ;
+numNeg = +inf ;
 
-names = {pos.names{:}, neg.names{:}};
-descriptors = [pos.descriptors, neg.descriptors] ;
-labels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
+% For stage X: choose which data augmentation to use
+transforms = {'none'} ;
+%transforms = {'none', 'flip'} ;
+
+% Load the training data
+names = {} ;
+descriptors = [] ;
+labels = [] ;
+encoding = 'vggm128' ;
+for transform = transforms
+  switch char(transform)
+    case 'none', suffix = '' ;
+    case 'zoom', suffix = '_zoom' ;
+    case 'flip', suffix = '_flip' ;
+  end
+  pos = load(['data/' category '_train_' encoding suffix '.mat']) ;
+  neg = load(['data/background_train_' encoding suffix '.mat']) ;
+  selp = vl_colsubset(1:numel(pos.names),numPos,'beginning') ;
+  seln = vl_colsubset(1:numel(neg.names),numNeg,'beginning') ;
+  names = horzcat(names, pos.names(selp)', neg.names(seln)') ;
+  descriptors = horzcat(descriptors, pos.descriptors(:,selp), neg.descriptors(:,seln)) ;
+  labels = horzcat(labels, ones(1,numel(selp)), - ones(1,numel(seln))) ;
+end
 clear pos neg ;
 
 % Load testing data
 pos = load(['data/' category '_val_' encoding '.mat']) ;
 neg = load(['data/background_val_' encoding '.mat']) ;
-
 testNames = {pos.names{:}, neg.names{:}};
-testdescriptors = [pos.descriptors, neg.descriptors] ;
+testDescriptors = [pos.descriptors, neg.descriptors] ;
 testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
 clear pos neg ;
 
-% For stage G: throw away part of the training data
-% fraction = .1 ;
-% fraction = .5 ;
-fraction = +inf ;
-
-sel = vl_colsubset(1:numel(labels), fraction, 'uniform') ;
-names = names(sel) ;
-descriptors = descriptors(:,sel) ;
-labels = labels(:,sel) ;
-clear sel ;
-
-% count how many images are there
+% Count how many images are there
 fprintf('Number of training images: %d positive, %d negative\n', ...
         sum(labels > 0), sum(labels < 0)) ;
 fprintf('Number of testing images: %d positive, %d negative\n', ...
         sum(testLabels > 0), sum(testLabels < 0)) ;
-
-% For Stage E: Vary the image representation
-% descriptors = removeSpatialInformation(descriptors) ;
-% testdescriptors = removeSpatialInformation(testdescriptors) ;
-
-% For Stage F: Vary the classifier (Hellinger kernel)
-% ** insert code here for the Hellinger kernel using  **
-% ** the training descriptors and testdescriptors       **
-
+            
+% For Stage E: Vary the classifier (Hellinger kernel)
 % L2 normalize the descriptors before running the linear SVM
 descriptors = bsxfun(@times, descriptors, 1./sqrt(sum(descriptors.^2,1))) ;
-testdescriptors = bsxfun(@times, testdescriptors, 1./sqrt(sum(testdescriptors.^2,1))) ;
+testDescriptors = bsxfun(@times, testDescriptors, 1./sqrt(sum(testDescriptors.^2,1))) ;
 
 % --------------------------------------------------------------------
 % Stage B: Training a classifier
@@ -67,7 +68,7 @@ testdescriptors = bsxfun(@times, testdescriptors, 1./sqrt(sum(testdescriptors.^2
 % Train the linear SVM. The SVM paramter C should be
 % cross-validated. Here for simplicity we pick a valute that works
 % well with all kernels.
-C = 10 ;
+C = 1 ;
 [w, bias] = trainLinearSVM(descriptors, labels, C) ;
 
 % Evaluate the scores on the training data
@@ -78,7 +79,7 @@ figure(1) ; clf ; set(1,'name','Ranked training images (subset)') ;
 displayRankedImageList(names, scores)  ;
 
 % Visualize the precision-recall curve
-figure(2) ; clf ; set(2,'name','Precision-recall on train data') ;
+figure(2) ; clf ; set(2,'name','Precision-recall on training data') ;
 vl_pr(labels, scores) ;
 
 % --------------------------------------------------------------------
@@ -86,7 +87,7 @@ vl_pr(labels, scores) ;
 % --------------------------------------------------------------------
 
 % Test the linear SVM
-testScores = w' * testdescriptors + bias ;
+testScores = w' * testDescriptors + bias ;
 
 % Visualize the ranked list of images
 figure(3) ; clf ; set(3,'name','Ranked test images (subset)') ;
@@ -95,7 +96,7 @@ displayRankedImageList(testNames, testScores)  ;
 % Visualize the salinecy map
 encoder = loadEncoder() ;
 [~,best] = max(testScores) ;
-displaySaliencyMap(testNames{best},encoder,w)
+displaySaliencyMap(testNames{best},encoder,w) ;
 
 % Visualize the precision-recall curve
 figure(4) ; clf ; set(4,'name','Precision-recall on test data') ;

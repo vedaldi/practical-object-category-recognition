@@ -1,2 +1,5 @@
 data/
 vlfeat/
+data.old
+matconvnet/
+matconvnet

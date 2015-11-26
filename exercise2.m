@@ -7,21 +7,20 @@ setup ;
 % Stage A: Data Preparation
 % --------------------------------------------------------------------
 
+% Whether to use data augmentation or not
+augmentation = true ;
+
+% Compute positive descriptors from your own images
 encoding = 'vggm128' ;
-%encoding = 'vlad' ;
-%encoding = 'fv' ;
-
-encoder = load(sprintf('data/encoder_%s.mat',encoding)) ;
-
-% Compute positive histograms from your own images
-pos.names = getImageSet('data/myImages') ;
+encoder = loadEncoder(encoding) ;
+pos.names = getImageSet('data/myImages', augmentation) ;
 if numel(pos.names) == 0, error('Please add some images to data/myImages before running this exercise') ; end
-pos.histograms = encodeImage(encoder, pos.names, ['data/cache_' encoding]) ;
+pos.descriptors = encodeImage(encoder, pos.names, ['data/cache_' encoding]) ;
 
 % Add default background images
 neg = load(sprintf('data/background_train_%s.mat',encoding)) ;
 names = {pos.names{:}, neg.names{:}};
-histograms = [pos.histograms, neg.histograms] ;
+descriptors = [pos.descriptors, neg.descriptors] ;
 labels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
 clear pos neg ;
 
@@ -30,7 +29,7 @@ pos = load(sprintf('data/horse_val_%s.mat',encoding)) ;
 %pos = load(sprintf('data/car_val_%s.mat',encoding)) ;
 neg = load(sprintf('data/background_val_%s.mat',encoding)) ;
 testNames = {pos.names{:}, neg.names{:}};
-testHistograms = [pos.histograms, neg.histograms] ;
+testDescriptors = [pos.descriptors, neg.descriptors] ;
 testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
 clear pos neg ;
 
@@ -40,13 +39,9 @@ fprintf('Number of training images: %d positive, %d negative\n', ...
 fprintf('Number of testing images: %d positive, %d negative\n', ...
         sum(testLabels > 0), sum(testLabels < 0)) ;
 
-% Hellinger's kernel
-histograms = sign(histograms).*sqrt(abs(histograms)) ;
-testHistograms = sign(testHistograms).*sqrt(abs(testHistograms)) ;
-
-% L2 normalize the histograms before running the linear SVM
-histograms = bsxfun(@times, histograms, 1./sqrt(sum(histograms.^2,1))) ;
-testHistograms = bsxfun(@times, testHistograms, 1./sqrt(sum(testHistograms.^2,1))) ;
+% L2 normalize the descriptors before running the linear SVM
+descriptors = bsxfun(@times, descriptors, 1./sqrt(sum(descriptors.^2,1))) ;
+testDescriptors = bsxfun(@times, testDescriptors, 1./sqrt(sum(testDescriptors.^2,1))) ;
 
 % --------------------------------------------------------------------
 % Stage B: Training a classifier
@@ -54,10 +49,10 @@ testHistograms = bsxfun(@times, testHistograms, 1./sqrt(sum(testHistograms.^2,1)
 
 % Train the linear SVM
 C = 10 ;
-[w, bias] = trainLinearSVM(histograms, labels, C) ;
+[w, bias] = trainLinearSVM(descriptors, labels, C) ;
 
 % Evaluate the scores on the training data
-scores = w' * histograms + bias ;
+scores = w' * descriptors + bias ;
 
 % Visualize the ranked list of images
 % figure(1) ; clf ; set(1,'name','Ranked training images (subset)') ;
@@ -72,7 +67,7 @@ scores = w' * histograms + bias ;
 % --------------------------------------------------------------------
 
 % Test the linar SVM
-testScores = w' * testHistograms + bias ;
+testScores = w' * testDescriptors + bias ;
 
 % Visualize the ranked list of images
 figure(3) ; clf ; set(3,'name','Ranked test images (subset)') ;
