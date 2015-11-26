@@ -66,6 +66,13 @@ $(TMPDIR)/$(name)-code-only.tar.gz: $(deps)
 	ln -sf $(code) $(TMPDIR)/$(name)/
 	tar -C $(TMPDIR) -czvhf $(TMPDIR)/$(name)-code-only.tar.gz $(tarflags) $(name)/
 
+doc/instructions.html : doc/instructions.md doc/base.html extra/Makefile
+	cp doc/base.html "$@"
+	python -m markdown \
+	  -x toc -x footnotes -x tables \
+	  "$<" >> "$@"
+	cat doc/end.html >> "$@"
+
 post-doc:
 	rsync -rvt doc/images $(DSTDOC)/
 	rsync -vt doc/instructions.html $(DSTDOC)/index.html
