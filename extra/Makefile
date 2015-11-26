@@ -74,8 +74,8 @@ doc/instructions.html : doc/instructions.md doc/base.html extra/Makefile
 	cat doc/end.html >> "$@"
 
 post-doc:
-	rsync -rvt doc/images $(DSTDOC)/
-	rsync -vt doc/instructions.html doc/base.css $(DSTDOC)/index.html
+	rsync -rvt doc/images doc/base.css $(DSTDOC)/
+	rsync -vt doc/instructions.html $(DSTDOC)/index.html
 
 post: pack-all
 	rsync -vt $(TMPDIR)/$(name).tar.gz $(DST)/

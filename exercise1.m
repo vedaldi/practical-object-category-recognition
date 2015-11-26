@@ -99,7 +99,7 @@ figure(3) ; clf ; set(3,'name','Ranked test images (subset)') ;
 displayRankedImageList(testNames, testScores)  ;
 
 % Visualize the salinecy map
-encoder = loadEncoder() ;
+encoder = loadEncoder(encoding) ;
 [~,best] = max(testScores) ;
 displaySaliencyMap(testNames{best},encoder,w) ;
 
