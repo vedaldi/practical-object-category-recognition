@@ -1,6 +1,7 @@
 name = practical-category-recognition-cnn-2015b
 DST = vgg@login.robots.ox.ac.uk:WWW/share
 DSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/category-recognition-cnn
+TMPDIR = /tmp
 
 .PHONY: prepack, pack, pack-data, pack-code, post, clean, distclean
 
@@ -74,7 +75,7 @@ doc/instructions.html : doc/instructions.md doc/base.html extra/Makefile
 
 post-doc:
 	rsync -rvt doc/images $(DSTDOC)/
-	rsync -vt doc/instructions.html $(DSTDOC)/index.html
+	rsync -vt doc/instructions.html doc/base.css $(DSTDOC)/index.html
 
 post: pack-all
 	rsync -vt $(TMPDIR)/$(name).tar.gz $(DST)/
