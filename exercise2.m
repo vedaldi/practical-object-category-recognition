@@ -7,11 +7,15 @@ setup ;
 % Stage A: Data Preparation
 % --------------------------------------------------------------------
 
+% Choose an encoding
+encoding = 'vggm128-conv4' ;
+%encoding = 'vggm128-conv5' ;
+%encoding = 'vggm128-fc7' ;
+
 % Whether to use data augmentation or not
 augmentation = true ;
 
 % Compute positive descriptors from your own images
-encoding = 'vggm128' ;
 encoder = loadEncoder(encoding) ;
 pos.names = getImageSet('data/myImages', augmentation) ;
 if numel(pos.names) == 0, error('Please add some images to data/myImages before running this exercise') ; end

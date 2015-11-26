@@ -14,17 +14,18 @@ The goal of this session is to get basic practical experience with image classif
 
 Read and understand the [requirements and installation instructions](../overview/index.html#installation). The download links for this practical are:
 
-AZ -- need to update links and file names -- AZ
-* Code and data: [practical-category-recognition-2015a.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2015a.tar.gz) 914MB
-* Code only: [practical-category-recognition-2015a-code-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2015a-code-only.tar.gz) 12MB
-* Data only: [practical-category-recognition-2015a-data-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-2015a-data-only.tar.gz) 902MB
+* Code and data: [practical-category-recognition-cnn-2015b.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-cnn-recognition-2015b.tar.gz) 914MB
+* Code only: [practical-category-recognition-2015b-code-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-code-only.tar.gz) 12MB
+* Data only: [practical-category-recognition-2015b-data-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-data-only.tar.gz) 902MB
 * [Git repository](https://github.com/vedaldi/practical-object-category-recognition) (for lab setters and developers)
 
 After the installation is complete, open and edit the script `exercise1.m` in the MATLAB editor. The script contains commented code and a description for all steps of this exercise, relative to [Part I](#part1) of this document. You can cut and paste this code into the MATLAB window to run it, and will need to modify it as you go through the session. Other files such as `exercise2.m`, contain the code for other parts of the practical, as indicated below.
 
 Note: the student packages contain only the code required to run the practical. The complete package, including code to preprocess the data, is available on GitHub.
 
-## Part 1: Training and testing an Image Classifier {#part1}
+<a id='part1'></a>
+
+## Part 1: Training and testing an Image Classifier 
 
 ### Stage 1.A: Data Preparation
 
@@ -34,7 +35,7 @@ The data provided in the directory data consists of images and pre-computed desc
 |--------|-----------|-----------|--------|------------|
 | train  | 112       | 120       | 1025   | 1019       |
 | test   | 126       | 125       | 983    | 1077       |
-| total	 | 238       | 245       | 2008   | 2096       |
+| total  | 238       | 245       | 2008   | 2096       |
 
 An image is represented by a single vector descriptor. Mapping the visual content of an image to a single descriptor vector is often regarded as an encoding step, and the resulting descriptor is sometimes called a code. The main benefit of working with fixed length vectors is that they can be compared by simple vectorial metrics such as Euclidean distance. For the same reason, they are a natural representation to use in learning an image classifier.
 

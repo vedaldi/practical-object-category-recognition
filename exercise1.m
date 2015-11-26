@@ -7,6 +7,12 @@ setup ;
 % Stage A: Data Preparation
 % --------------------------------------------------------------------
 
+% Choose an encoding
+encoding = 'vggm128-conv4' ;
+%encoding = 'vggm128-conv5' ;
+%encoding = 'vggm128-fc7' ;
+
+% Choose an object category
 %category = 'aeroplane' ;
 category = 'motorbike' ;
 %category = 'car' ;
@@ -25,7 +31,6 @@ transforms = {'none'} ;
 names = {} ;
 descriptors = [] ;
 labels = [] ;
-encoding = 'vggm128' ;
 for transform = transforms
   switch char(transform)
     case 'none', suffix = '' ;
