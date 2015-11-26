@@ -7,7 +7,6 @@ DSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/category-recognition-cnn
 pack-all: pack-data pack-code pack
 
 code=\
-computeFeatures.m \
 encodeImage.m \
 displayRankedImageList.m \
 displaySaliencyMap.m \
