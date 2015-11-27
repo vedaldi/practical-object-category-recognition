@@ -111,10 +111,10 @@ testScores = w' * testDescriptors + bias ;
 figure(3) ; clf ; set(3,'name','Ranked test images (subset)') ;
 displayRankedImageList(testNames, testScores)  ;
 
-% Visualize the salinecy map
-encoder = loadEncoder(encoding) ;
-[~,best] = max(testScores) ;
-displaySaliencyMap(testNames{best},encoder,max(w,0)) ;
+% For stage J: Visualize the salinecy map
+% encoder = loadEncoder(encoding) ;
+% [~,best] = max(testScores) ;
+% displaySaliencyMap(testNames{best},encoder,max(w,0)) ;
 
 % Visualize the precision-recall curve
 figure(4) ; clf ; set(4,'name','Precision-recall on test data') ;

@@ -10,7 +10,7 @@ function displayRankedImageList(names, scores, varargin)
 
 % Author: Andrea Vedaldi
 
-opts.numImages = 6*6 ;
+opts.numImages = 7*7 ;
 opts.uniform = false ;
 opts = vl_argparse(opts,varargin) ;
 
@@ -23,7 +23,7 @@ end
 for i = 1:length(perm)
   vl_tightsubplot(length(perm),i,'box','inner') ;
   imagesc(standardizeImage(names{perm(i)})) ;
-  text(10,10,sprintf('score: %.2f', scores(perm(i))),...
+  text(10,10,sprintf('%d score: %.2f', i, scores(perm(i))),...
        'background','w',...
        'verticalalignment','top', ...
        'fontsize', 8) ;
