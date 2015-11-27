@@ -20,33 +20,28 @@
   <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
 </head>
 <body>
-<h1 id="image-classification-practical">Image classification practical</h1>
-<p>This is an <a href="http://www.robots.ox.ac.uk/~vgg">Oxford Visual Geometry Group</a> computer vision practical, authored by <a href="http://www.robots.ox.ac.uk/~vedaldi/">Andrea Vedaldi</a> and Andrew Zisserman (Release 2015).</p>
+<h1 id="image-classification-practical-cnn-version">Image classification practical (CNN version)</h1>
+<p>This is an <a href="http://www.robots.ox.ac.uk/~vgg">Oxford Visual Geometry Group</a> computer vision practical, authored by <a href="http://www.robots.ox.ac.uk/~vedaldi/">Andrea Vedaldi</a> and Andrew Zisserman (Release 2015b).</p>
 <p><img width=100% src="images/cover.jpeg" alt="cover"/></p>
 <p>This practical is on image classification, where an image is classified according to its visual content. For example, does it contain an airplane or not. Important applications are image retrieval - searching through an image dataset to obtain (or retrieve) those images with particular visual content, and image annotatvion - adding tags to images if they contain particular object categories.</p>
 <p>The goal of this session is to get basic practical experience with image classification. It includes: (i) training a visual classifier for five different image classes (airplanes, motorbikes, people, horses and cars); (ii) assessing the performance of the classifier by computing a precision-recall curve; (iii) training set and testing set augmentation; and (iv) obtaining training data for new classifiers using Bing image search and using the classifiers to retrieve images from a dataset.</p>
 <div class="toc">
 <ul>
-<li><a href="#image-classification-practical">Image classification practical</a><ul>
+<li><a href="#image-classification-practical-cnn-version">Image classification practical (CNN version)</a><ul>
 <li><a href="#getting-started">Getting started</a></li>
 <li><a href="#part-1-training-and-testing-an-image-classifier">Part 1: Training and testing an Image Classifier</a><ul>
 <li><a href="#stage-1a-data-preparation">Stage 1.A: Data Preparation</a></li>
 <li><a href="#stage-1b-train-a-classifier-for-images-containing-motorbikes">Stage 1.B: Train a classifier for images containing motorbikes</a></li>
 <li><a href="#stage-1c-classify-the-test-images-and-assess-the-performance">Stage 1.C: Classify the test images and assess the performance</a></li>
-<li><a href="#stage-1d-setting-the-hyper-parameter-c-of-the-svm">Stage 1.D: Setting the hyper-parameter C of the SVM</a></li>
-<li><a href="#stage-1e-learn-a-classifier-for-the-other-classes-and-assess-its-performance">Stage 1.E: Learn a classifier for the other classes and assess its performance</a></li>
-<li><a href="#stage-1f-vary-the-image-representation">Stage 1.F: Vary the image representation</a></li>
-<li><a href="#stage-1g-vary-the-classifier">Stage 1.G: Vary the classifier</a></li>
-<li><a href="#stage-1h-vary-the-number-of-training-images">Stage 1.H: Vary the number of training images</a></li>
-<li><a href="#stage-1i-data-augmentation">Stage 1.I: Data augmentation</a></li>
+<li><a href="#stage-1d-increase-the-number-of-training-images-by-data-augmentation">Stage 1.D: Increase the number of training images by data augmentation</a></li>
+<li><a href="#stage-1e-vary-the-number-of-training-images">Stage 1.E: Vary the number of training images</a></li>
+<li><a href="#stage-1f-setting-the-hyper-parameter-c-of-the-svm">Stage 1.F: Setting the hyper-parameter C of the SVM</a></li>
+<li><a href="#stage-1g-learn-a-classifier-for-the-other-classes-and-assess-its-performance">Stage 1.G: Learn a classifier for the other classes and assess its performance</a></li>
+<li><a href="#stage-1h-vary-the-image-representation">Stage 1.H: Vary the image representation</a></li>
+<li><a href="#stage-1i-vary-the-cnn-representation">Stage 1.I: Vary the CNN representation</a></li>
 </ul>
 </li>
 <li><a href="#part-2-training-an-image-classifier-for-retrieval-using-bing-images">Part 2: Training an Image Classifier for Retrieval using Bing images</a></li>
-<li><a href="#part-3-advanced-encoding-methods">Part 3: Advanced Encoding Methods</a><ul>
-<li><a href="#stage-2j-first-order-methods">Stage 2.J: First order methods</a></li>
-<li><a href="#stage-2k-second-order-methods">Stage 2.K: Second order methods</a></li>
-</ul>
-</li>
 <li><a href="#links-and-further-work">Links and further work</a></li>
 <li><a href="#acknowledgements">Acknowledgements</a></li>
 <li><a href="#history">History</a></li>
@@ -103,9 +98,14 @@
 </tbody>
 </table>
 <p>An image is represented by a single vector descriptor. Mapping the visual content of an image to a single descriptor vector is often regarded as an encoding step, and the resulting descriptor is sometimes called a code. The main benefit of working with fixed length vectors is that they can be compared by simple vectorial metrics such as Euclidean distance. For the same reason, they are a natural representation to use in learning an image classifier.</p>
-<p>We will use a Convolutional Neural Network (CNN) encoding. The process of constructing the CNN descriptor starting from an image is summarized next: </p>
+<p>We will use a <em>Convolutional Neural Network</em> (CNN) encoding. The process of constructing the CNN descriptor starting from an image is summarized next: </p>
 <p><img width=100% src="images/encoding.png" alt="cover"/></p>
-<p>First, the network is pre-trained on the ImageNet dataset to classify an image into one of a thousand categories. This determines all the parameters of the CNN, such as the weights of the convolutional filters. Then, for a new image, the trained network is used to generate a descriptor vector from the response of the final fully connected layer of the network with this image as input. For this practical we will use the VGG-M network, which produces a 128 dimensional descriptor vector.</p>
+<p>First, the network is pre-trained on the ImageNet dataset to classify an image into one of a thousand categories. This determines all the parameters of the CNN, such as the weights of the convolutional filters. Then, for a new image, the trained network is used to generate a descriptor vector from the response of the response of a layer in the architecture this image as input. For this practical we will use the VGG-M-128 network, which produces a 128 dimensional descriptor vector at the last fully-connected layer before classification, called <em>fc7</em>. We also consider computationally cheaper but weaker features extracted from the convolutional layers. In particular, we consider the following <strong>encodings</strong>:</p>
+<ol>
+<li><code>vggm128-conv4</code>: the fourth convolutional layer output, containing 512 feature channels.</li>
+<li><code>vggm128-conv5</code>: the fifith convolutional layer output, also containing 512 feature channels.</li>
+<li><code>vggm128-fc7</code>: the last fully-connected layer output, containing 128 feature channels.</li>
+</ol>
 <h3 id="stage-1b-train-a-classifier-for-images-containing-motorbikes">Stage 1.B: Train a classifier for images containing motorbikes</h3>
 <p>We will start by training a classifier for images that contain motorbikes. The files <code>data/motorbike_train.txt</code> and <code>data/motorbike_val.txt</code> list images that contain motorbikes. </p>
 <blockquote>
@@ -121,31 +121,50 @@ images as negatives. The classifier is a linear Support Vector Machine (SVM). </
 <p><strong>Question:</strong> What do you expect to happen? 
 <strong>Task:</strong> View the ranked list using the provided function <code>displayRankedImageList</code> as shown in <code>excercise1.m</code>.</p>
 </blockquote>
-<p>You can use the function <code>**displayRelevantVisualWords**</code> to visualize the areas of the image that the classifier thinks are most related to the class (see the example embedded in <code>exercise1.m</code>).</p>
+<p>You can use the function <code>displaySaliencyMap</code> to visualize the areas of the image that the classifier thinks are most related to the class (see the example embedded in <code>exercise1.m</code>).</p>
 <blockquote>
 <p><strong>Queston:</strong> Do the words correspond to patches you would expect to be selected?</p>
 </blockquote>
 <h3 id="stage-1c-classify-the-test-images-and-assess-the-performance">Stage 1.C: Classify the test images and assess the performance</h3>
-<p>Now apply the learnt classifier to the test images. Again, you can look at the qualitative performance by using the classifier score to rank all the test images. Note the bias term is not needed for this ranking, only the classification vector w.</p>
+<p>Now apply the learnt classifier to the test images. Again, you can look at the qualitative performance by using the classifier score to rank all the test images. Note the bias term is not needed for this ranking, only the classification vector <code>w</code>.</p>
 <blockquote>
 <p><strong>Question:</strong> Why is the bias term not needed?</p>
 </blockquote>
-<p>Now we will measure the retrieval performance quantitatively by computing a Precision-Recall curve. Recall the definitions of Precision and Recall:</p>
+<p>Now we will measure the retrieval performance quantitatively by computing a Precision-Recall curve. Recall the definitions of <strong>precision</strong> and <strong>recall</strong>:</p>
 <p><img width=100% src="images/pr1.png" alt="pr1"/></p>
-<p>The Precision-Recall curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the Average Precision (AP, the area under the curve) is often computed.
- Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results</p>
-<h3 id="stage-1d-setting-the-hyper-parameter-c-of-the-svm">Stage 1.D: Setting the hyper-parameter C of the SVM</h3>
-<p><em>Skip to <a href="#stage1f">Stage 1.F</a> on fast track</em></p>
+<p>The <em>precision-recall</em> (PR) curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the <em>Average Precision</em> (AP, the area under the curve) is often computed. Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results</p>
+<h3 id="stage-1d-increase-the-number-of-training-images-by-data-augmentation">Stage 1.D: Increase the number of training images by data augmentation</h3>
+<p>Up to this point the descriptor vector has been computed from the image as is. We now consider representing each image multiple times by generating a descriptor for both the original image and for the image after `flipping' (a mirror reflectance about a vertical axis). This data augmentation will be used in a different manner at training and test time. In training, the descriptors from the flipped images will be used as additional training samples (i.e. each original image generates two data samples for training). In testing, the descriptors for the original and flipped image will be averaged resulting in, again, a single vector representing the test image.</p>
+<p>Edit <code>exercise1.m</code> to include the training and test augmentation as specified above. Note, the change in classification performance if: (i) only training data augmentation is used, (ii) only testing data augmentation is used; and (iii) both training and test data are augmented.</p>
+<blockquote>
+<p><strong>Question:</strong> Is classifying the average vector for the test image the same as classifying each vector independently and then averaging the classifying score?
+<strong>Question:</strong> When would you expect flipping augmentation to be detrimental to performance?
+<strong>Question:</strong> How could additional descriptors be obtained from each image?</p>
+</blockquote>
+<p><strong>Note:</strong> when learning the SVM, to save training time we are not changing the $C$ parameter. This parameter influences the generalization error and should be relearnt on a validation set when the training setting is changed (see stage <a href="#stage1f">Stage 1.F</a>). However, in this case the influence of $C$ is small as can be verified experimentally.</p>
+<h3 id="stage-1e-vary-the-number-of-training-images">Stage 1.E: Vary the number of training images</h3>
+<p>So far we have used only 20 positive images and 1019 negative images for training the motorbike classifier the classifier. Change the parameters <code>numPos</code> and <code>numNeg</code> to decrease and increase the number of training images, particularly for the positive class.</p>
+<blockquote>
+<p><strong>Questions:</strong> </p>
+<ul>
+<li>How much does the performance vary as <code>numPos</code> is changed from 1 to <code>+inf</code> (indicating that all available positive images are used)?</li>
+<li>Compare doubiling the number of training images by either including fresh samples or generating new samples using augmentation. Which performs better? Why?</li>
+</ul>
+</blockquote>
+<p><a name=stage1f></a></p>
+<h3 id="stage-1f-setting-the-hyper-parameter-c-of-the-svm">Stage 1.F: Setting the hyper-parameter C of the SVM</h3>
+<p><em>Skip to <a href="#stage1h">Stage 1.H</a> on fast track</em></p>
 <p>If there is a significant difference between the training and test performance, then that indicates over fitting. The difference can often be reduced, and the test performance (generalization), improved by changing the SVM C parameter. </p>
-<p>Edit <code>exercise1.m</code> to vary the $C$ parameter in the range 0.1 to 1000 (the default is $C=100$), and plot the AP on the training and test data as C varies.</p>
+<p>Edit <code>exercise1.m</code> to vary the $C$ parameter in the range 0.1 to 1000 (the default is $C=10$), and plot the AP on the training and test data as $C$ varies.</p>
 <p><strong>Note:</strong> hyper-parameters and performance should actually be assessed on a validation set that is held out from the training set. They should not be assessed on the test set. In this practical we are not enforcing this good practice, but don't optimize on the test set once you move on from this practical and start to classify your own data.</p>
-<h3 id="stage-1e-learn-a-classifier-for-the-other-classes-and-assess-its-performance">Stage 1.E: Learn a classifier for the other classes and assess its performance</h3>
-<p><em>Skip to <a href="#stage1f">Stage 1.F</a> on fast track</em></p>
+<h3 id="stage-1g-learn-a-classifier-for-the-other-classes-and-assess-its-performance">Stage 1.G: Learn a classifier for the other classes and assess its performance</h3>
+<p><em>Skip to <a href="#stage1h">Stage 1.H</a> on fast track</em></p>
 <p>Now repeat Stage B and C for each of the other two classes: airplanes and people. To do this you can simply rerun <code>exercise1.m</code> after changing the dataset loaded at the beginning in stage (A). Remember to change both the training and test data. In each case record the AP performance measure.</p>
 <blockquote>
 <p><strong>Question:</strong> Does the AP performance match your expectations based on the variation of the class images?</p>
 </blockquote>
-<h3 id="stage-1f-vary-the-image-representation">Stage 1.F: Vary the image representation</h3>
+<p><a name=stage1h></a></p>
+<h3 id="stage-1h-vary-the-image-representation">Stage 1.H: Vary the image representation</h3>
 <p>An important practical aspect of image descriptors is their normalization. For example, if we regard the CNN descriptor as a discrete probability distribution it would seem natural that its elements should sum to 1. This is the same as normalizing the descriptor vectors in L1 norm. However, in <code>exercise1.m</code> L2 normalization (sum of squares) is used instead.</p>
 <blockquote>
 <p><strong>Task:</strong> Modify <code>exercise1.m</code> to use L1 normalization and no normalization and measure the performance change.</p>
@@ -167,49 +186,24 @@ to measure the similarity between pair of objects $h$ and $h'$ (in this case pai
 </ul>
 </blockquote>
 <p>A useful rule of thumb is that better performance is obtained if the vectors that are ultimately fed to a linear SVM (after any intermediate processing) are L2 normalized.</p>
-<h3 id="stage-1g-vary-the-classifier">Stage 1.G: Vary the classifier</h3>
-<p>Up to this point we have used a linear SVM, treating the descriptors representing each image as vectors normalized to a unit Euclidean norm. Now we will use a Hellinger kernel classifier but instead of computing kernel values we will explicitly compute the feature map, so that the classifier remains linear (in the new feature space). The definition of the Hellinger kernel (also known as the Bhattacharyya coefficient) is
-$$
- K(\mathbf{h},\mathbf{h}') = \sum_{i=1}^d \sqrt{h_i h'_i}
-$$
-where $\mathbf{h}$ and $\mathbf{h}'$ are normalized descriptors. Compare this with the expression of the linear kernel given above: all that is involved in computing the feature map is taking the square root of the descriptor values.</p>
+<h3 id="stage-1i-vary-the-cnn-representation">Stage 1.I: Vary the CNN representation</h3>
+<p>The CNN image features are very strong because they are pretrained on millions on images on the ImageNet data. So far, we have experimented with the <code>vggm128-conv3</code> features. Try now to extract features from a different layer in the architecture and observe how the performance changes:</p>
 <blockquote>
-<p><strong>Questions:</strong></p>
+<p><strong>Tasks</strong>:</p>
 <ul>
-<li>Based on the rule of thumb introduced above, how should the descriptors $\mathbf{h}$ and $\mathbf{h}'$ be normalized?</li>
-<li>Should you apply this normalization before or after taking the square root?</li>
+<li>Restore L2 normalization for the image representation (see the previous stage) and choose a category.</li>
+<li>Rerun classification using only 10 training images (set <code>numPos=10</code>) by setting the <code>encoding</code> to <code>vggm128-conv1</code>, <code>vggm128-conv2</code>, <code>vggm128-conv3</code>, <code>vggm128-conv4</code>, <code>vggm128-conv5</code> and <code>vggm128-fc7</code>.</li>
+<li>Annotate the resulting preformance.</li>
 </ul>
+<p><strong>Question:</strong> How much the choice of feature detph affects classification performance?</p>
 </blockquote>
-<p>Now we will again learn the image classifier using the Hellinger kernel instead of the linear one.</p>
+<p>Now make the setup even more extreme by considreing the so-called one-shot learning problem, i.e. learning an object category from a single training image. Thus, set <code>numPos=1</code> and rerun the experiments.</p>
 <blockquote>
-<p><strong>Tasks:</strong></p>
+<p><strong>Questions::</strong></p>
 <ul>
-<li>Edit <code>exercise1.m</code> so that the square root of the descriptors are used for the feature vectors. Make sure that the proper normalization is used. In practice this involves writing one line of MATLAB code for the training and one for the test descriptors.</li>
-<li>Retrain the classifier for the motorbike class, and measure its performance on the test data.</li>
-<li>Try the other descriptor normalization options and check that your choice yields optimal performance.</li>
+<li>Can you get good performance using a single training images and the deeper features?</li>
+<li>If so, how is it possible that the system can learn to recognize an object from a single example?</li>
 </ul>
-<p><strong>Questions:</strong></p>
-<ul>
-<li>Why is this procedure equivalent to using the Hellinger kernel in the SVM classifier?</li>
-<li>Why is it an advantage to keep the classifier linear, rather than using a non-linear kernel?</li>
-</ul>
-</blockquote>
-<p><strong>Note:</strong> when learning the SVM, to save training time we are not changing the $C$ parameter. This parameter influences the generalization error and should be relearnt on a validation set when the kernel is changed (see stage <a href="#stage1d">Stage 1.D</a>). However, in this case the influence of $C$ is small as can be verified experimentally.</p>
-<h3 id="stage-1h-vary-the-number-of-training-images">Stage 1.H: Vary the number of training images</h3>
-<p><strong>Skip to Part 2 on fast track</strong></p>
-<p>Up to this point we have used all the available training images. Now edit <code>exercise1.m</code> and change the fraction variable to use 10% and 50% of the training data.</p>
-<blockquote>
-<p><strong>Question:</strong> What performance do you get with the linear kernel? And with the Hellinger kernel?
-<strong>Question:</strong> Do you think the performance has `saturated' if all the training images are used, or would adding more training images give an improvement?</p>
-</blockquote>
-<h3 id="stage-1i-data-augmentation">Stage 1.I: Data augmentation</h3>
-<p><strong>Skip to Part 2 on fast track</strong></p>
-<p>Up to this point the descriptor vector has been computed from a single central crop of the image. We now consider representing each image multiple times  by generating a descriptor for both the original image and for the image after `flipping' (a mirror reflectance about a vertical axis). This data augmentation will be used in a different manner at training and test time. In training, the descriptors from the flipped images will be used as additional training samples (i.e. each original image generates two data samples for training). In testing, the descriptors for the original and flipped image will be averaged resulting in, again, a single vector representing the test image.</p>
-<p>Edit <code>exercise1.m</code> to include the training and test augmentation as specified above. Note, the change in classification performance if: (i) only training data augmentation is used, (ii) only testing data augmentation is used; and (iii) both training and test data are augmented.</p>
-<blockquote>
-<p><strong>Question:</strong> Is classifying the average vector for the test image the same as classifying each vector independently and then averaging the classifying score??
-<strong>Question:</strong> When would you expect flipping augmentation to be detrimental to performance?
-<strong>Question:</strong> How could additional descriptors be obtained from each image?</p>
 </blockquote>
 <h2 id="part-2-training-an-image-classifier-for-retrieval-using-bing-images">Part 2: Training an Image Classifier for Retrieval using Bing images</h2>
 <p>In Part 1 of this practical the training data was provided and all the feature vectors pre-computed. The goal of this second part is to choose the training data yourself in order to optimize the classifier performance. The task is the following: you are given a large corpus of images and asked to retrieve images of a certain class, e.g. those containing a bicycle. You then need to obtain training images, e.g. using Bing Image Search, in order to train a classifier for images containing bicycles and optimize its retrieval performance.</p>
@@ -232,31 +226,6 @@ where $\mathbf{h}$ and $\mathbf{h}'$ are normalized descriptors. Compare this wi
 </ul>
 </blockquote>
 <p><strong>Note:</strong> all images are automatically normalized to a standard size, and descriptors are saved for each new image added in the data/cache directory. The test data also contains the category car. Train classifiers for it and compare the difficulty of this and the horse class.</p>
-<h2 id="part-3-advanced-encoding-methods">Part 3: Advanced Encoding Methods</h2>
-<p><strong>Skip to end on fast track</strong></p>
-<p>Up to this point we have used a BoVW representation of the original dense SIFT description of the image, together with spatial information coded by a spatial tiling of the image. The BoVW representation is simply a histogram of the number of SIFT vectors assigned to each visual word. The histogram has K bins, where K is the size of the vocabulary created by K-means, and each bin corresponds to a count of the SIFT vectors lying in the Voronoi cell associated with that visual word.</p>
-<p>The BoVW is an encoding of the dense SIFTs into a feature vector. One way to think about the encoding is that it aims to best represent the distribution of SIFT vectors of that image (in a manner that is useful for discriminative classification). BoVW is a hard-assignment of SIFTs to visual words, and alternative soft-assignment methods are possible where the count for a SIFT vector is distributed across several histogram bins. </p>
-<p>In this section we investigate a different encoding that records more than a simple count as a representation of the distribution of SIFT vectors. In particular we consider two encodings: one that records first moment information (such as the mean) of the distribution assigned to each Voronoi cell, and a second that records both the first and second moment (e.g. the mean and covariance of the distribution). The MATLAB code for computing these encodings in the file <code>exercise1.m</code>.</p>
-<h3 id="stage-2j-first-order-methods">Stage 2.J: First order methods</h3>
-<p>The vector of locally aggregated descriptors (VLAD) is an example of a first order encoding. It records the residuals of vectors within each Voronoi cell (i.e. the  difference between the SIFT vectors and the cluster centre (from the k-means) as illustrated below:</p>
-<p><img height=200px src="images/vor.png" alt="vor" /></p>
-<p>Suppose the SIFT descriptors have dimension $D$, then the total size of the VLAD vector is $K \times D$ (since a D-dimensional residual is recorded for each Voronoi cell). Typically, $K$ is  between 16 and 512, and D is 128 or less.</p>
-<blockquote>
-<p><strong>Question:</strong> Compare the dimension of VLAD and BoVW vectors for a given value of K. What should be the relation of the K in VLAD to the K in BoVW in order to obtain descriptors of the same dimension?
-<strong>Task:</strong> Replace the encoding used in exercise1 with the VLAD encoding, and repeat the classification experiments for the three classes of Part I.</p>
-</blockquote>
-<p>Note, the performance improvement obtained simply by changing the feature encoding.</p>
-<h3 id="stage-2k-second-order-methods">Stage 2.K: Second order methods</h3>
-<p>The Fisher Vector (FV) is an example of second order encoding. It records both the residuals (as in VLAD) and also the covariance of the SIFTs assigned to each Voronoi cell. Its implementation uses a Gaussian Mixture Model (GMM) (instead of k-means) and consequently SIFTs are softly assigned to mixture components (rather than a hard assignment as in BoVW). Suppose there are k mixture components and the covariance is restricted to a diagonal matrix (i.e. only the variance of each component is recorded) then the total size of the Fisher vector is $2K \times d$.</p>
-<p>Look through the computation of the FV</p>
-<blockquote>
-<p><strong>Task:</strong> Replace the encoding used in exercise1 with the FV encoding, and repeat the classification experiments for the three classes of Part I.</p>
-</blockquote>
-<p>Note, the performance improvement obtained (over BoVW and VLAD) </p>
-<blockquote>
-<p><strong>Question:</strong> What are the advantages or disadvantages of FV compared to VLAD in terms of computation time and storage/memory footprint - especially for a large number (hundreds of millions) of images.</p>
-</blockquote>
-<p>That completes this practical.</p>
 <h2 id="links-and-further-work">Links and further work</h2>
 <ul>
 <li>The code for this practical is written using the software package <a href="http://www.vlfeat.org">VLFeat</a>. This is a software library written in MATLAB and C, and is freely available as source code and binary.</li>
