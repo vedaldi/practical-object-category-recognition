@@ -87,9 +87,11 @@ Up to this point the descriptor vector has been computed from the image as is. W
 
 Edit `exercise1.m` to include the training and test augmentation as specified above. Note, the change in classification performance if: (i) only training data augmentation is used, (ii) only testing data augmentation is used; and (iii) both training and test data are augmented.
 
-> **Question:** Is classifying the average vector for the test image the same as classifying each vector independently and then averaging the classifying score?
-> **Question:** When would you expect flipping augmentation to be detrimental to performance?
-> **Question:** How could additional descriptors be obtained from each image?
+> **Questions:**
+> 
+> * Is classifying the average vector for the test image the same as classifying each vector independently and then averaging the classifying score?
+> * When would you expect flipping augmentation to be detrimental to performance?
+> * How could additional descriptors be obtained from each image?
 
 **Note:** when learning the SVM, to save training time we are not changing the $C$ parameter. This parameter influences the generalization error and should be relearnt on a validation set when the training setting is changed (see stage [Stage 1.F](#stage1f)). However, in this case the influence of $C$ is small as can be verified experimentally.
 
@@ -105,8 +107,6 @@ So far we have used only 20 positive images and 1019 negative images for trainin
 <a name=stage1f></a>
 
 ### Stage 1.F: Setting the hyper-parameter C of the SVM
-
-*Skip to [Stage 1.H](#stage1h) on fast track*
 
 If there is a significant difference between the training and test performance, then that indicates over fitting. The difference can often be reduced, and the test performance (generalization), improved by changing the SVM C parameter. 
 
