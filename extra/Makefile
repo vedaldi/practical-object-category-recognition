@@ -26,9 +26,9 @@ doc/images \
 doc/instructions.html
 
 data=\
-data/{aeroplane,background,car,horse,motorbike,person}_train_vggm128-{fc7,conv5,conv4}.mat \
+data/{aeroplane,background,car,horse,motorbike,person}_train_vggm128-{fc7,conv5,conv4,conv3,conv2,conv1}{,_flip}.mat \
 data/{aeroplane,background,car,horse,motorbike,person}_train.txt \
-data/{aeroplane,background,car,horse,motorbike,person}_val_vggm128-{fc7,conv5,conv4}.mat \
+data/{aeroplane,background,car,horse,motorbike,person}_val_vggm128-{fc7,conv5,conv4,conv3,conv2,conv1}{,_flip}.mat \
 data/{aeroplane,background,car,horse,motorbike,person}_val.txt \
 data/images \
 data/myImages \

@@ -7,25 +7,28 @@ setup ;
 % Stage A: Data Preparation
 % --------------------------------------------------------------------
 
-% Choose an encoding
-encoding = 'vggm128-conv4' ;
+% For stage G: Change the encoding
+%encoding = 'vggm128-conv1' ;
+%encoding = 'vggm128-conv2' ;
+encoding = 'vggm128-conv3' ;
+%encoding = 'vggm128-conv4' ;
 %encoding = 'vggm128-conv5' ;
 %encoding = 'vggm128-fc7' ;
 
-% Choose an object category
-%category = 'aeroplane' ;
+% For stage E: Change the object category
 category = 'motorbike' ;
-%category = 'car' ;
+%category = 'aeroplane' ;
 %category = 'person' ;
 
-% For stage G: choose the number of training samples (set to +inf to use
-% all)
-numPos = +inf ;
+% For stage G: Change the number of training samples
+numPos = 20 ;
 numNeg = +inf ;
 
-% For stage X: choose which data augmentation to use
+% For stage I: Change the data augmentation
 transforms = {'none'} ;
 %transforms = {'none', 'flip'} ;
+testTransforms = {'none'} ;
+%testTransforms = {'none', 'flip'} ;
 
 % Load the training data
 names = {} ;
@@ -34,7 +37,6 @@ labels = [] ;
 for transform = transforms
   switch char(transform)
     case 'none', suffix = '' ;
-    case 'zoom', suffix = '_zoom' ;
     case 'flip', suffix = '_flip' ;
   end
   pos = load(['data/' category '_train_' encoding suffix '.mat']) ;
@@ -44,36 +46,47 @@ for transform = transforms
   names = horzcat(names, pos.names(selp)', neg.names(seln)') ;
   descriptors = horzcat(descriptors, pos.descriptors(:,selp), neg.descriptors(:,seln)) ;
   labels = horzcat(labels, ones(1,numel(selp)), - ones(1,numel(seln))) ;
+  clear pos neg ;
 end
-clear pos neg ;
 
 % Load testing data
-pos = load(['data/' category '_val_' encoding '.mat']) ;
-neg = load(['data/background_val_' encoding '.mat']) ;
-testNames = {pos.names{:}, neg.names{:}};
-testDescriptors = [pos.descriptors, neg.descriptors] ;
-testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
-clear pos neg ;
+testNames = {} ;
+testDescriptors = [] ;
+testLabels = [] ;
+for transform = testTransforms
+  switch char(transform)
+    case 'none', suffix = '' ;
+    case 'flip', suffix = '_flip' ;
+  end
+  pos = load(['data/' category '_val_' encoding suffix '.mat']) ;
+  neg = load(['data/background_val_' encoding suffix '.mat']) ;
+  testNames = {pos.names{:}, neg.names{:}};
+  testLabels = [ones(1,numel(pos.names)), - ones(1,numel(neg.names))] ;
+  testDescriptors = cat(3, testDescriptors, [pos.descriptors, neg.descriptors]) ;
+  clear pos neg ;
+end
+testDescriptors = mean(testDescriptors,3) ;
 
 % Count how many images are there
 fprintf('Number of training images: %d positive, %d negative\n', ...
         sum(labels > 0), sum(labels < 0)) ;
 fprintf('Number of testing images: %d positive, %d negative\n', ...
         sum(testLabels > 0), sum(testLabels < 0)) ;
-            
-% For Stage E: Vary the classifier (Hellinger kernel)
-% L2 normalize the descriptors before running the linear SVM
+
+% For stage H: Change the descriptor normalization
 descriptors = bsxfun(@times, descriptors, 1./sqrt(sum(descriptors.^2,1))) ;
 testDescriptors = bsxfun(@times, testDescriptors, 1./sqrt(sum(testDescriptors.^2,1))) ;
+
+%descriptors = bsxfun(@times, descriptors, 1./sum(abs(descriptors),1)) ;
+%testDescriptors = bsxfun(@times, testDescriptors, 1./sum(abs(testDescriptors),1)) ;
 
 % --------------------------------------------------------------------
 % Stage B: Training a classifier
 % --------------------------------------------------------------------
 
-% Train the linear SVM. The SVM paramter C should be
-% cross-validated. Here for simplicity we pick a valute that works
-% well with all kernels.
-C = 1 ;
+% For stage F: change the value of the C parameter in the SVM (this
+% parameter should be cross-validated).
+C = 10 ;
 [w, bias] = trainLinearSVM(descriptors, labels, C) ;
 
 % Evaluate the scores on the training data
@@ -101,7 +114,7 @@ displayRankedImageList(testNames, testScores)  ;
 % Visualize the salinecy map
 encoder = loadEncoder(encoding) ;
 [~,best] = max(testScores) ;
-displaySaliencyMap(testNames{best},encoder,w) ;
+displaySaliencyMap(testNames{best},encoder,max(w,0)) ;
 
 % Visualize the precision-recall curve
 figure(4) ; clf ; set(4,'name','Precision-recall on test data') ;

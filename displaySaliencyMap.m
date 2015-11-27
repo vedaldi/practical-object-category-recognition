@@ -32,9 +32,9 @@ saliency = vl_imsmooth(saliency, 5) ;
 saliency = saliency / max(saliency(:)) ;
 
 % Visualize the map
-figure(5) ; set(gcf, 'name', 'Saliency map') ; clf ; 
-subplot(3,1,1) ; imagesc(im) ; axis image off ; title('original image') 
-subplot(3,1,2) ; imagesc(saliency) ; axis image off ; title('saliency') 
-subplot(3,1,3) ; 
+figure(5) ; set(gcf, 'name', 'Saliency map') ; clf ;
+subplot(3,1,1) ; imagesc(im) ; axis image off ; title('original image') ;
+subplot(3,1,2) ; imagesc(saliency) ; axis image off ; title('saliency') ;
+subplot(3,1,3) ;
 imagesc(bsxfun(@plus,bsxfun(@times, im_, saliency),encoder.averageColor)/255) ;
 axis image off ; title('product')

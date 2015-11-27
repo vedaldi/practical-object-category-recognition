@@ -6,13 +6,20 @@ end
 
 encoder.type = encoderType ;
 encoder.net = vl_simplenn_tidy(load('data/cnn/imagenet-vgg-m-128.mat')) ;
+
 switch encoderType
-  case 'vggm128-fc7'
-    encoder.net.layers(end-2:end) = [] ;
-  case 'vggm128-conv5'
-    encoder.net.layers(16:end) = [] ;
+  case 'vggm128-conv1'
+    encoder.net.layers(3:end) = [] ;
+  case 'vggm128-conv2'
+    encoder.net.layers(7:end) = [] ;
+  case 'vggm128-conv3'
+    encoder.net.layers(11:end) = [] ;
   case 'vggm128-conv4'
     encoder.net.layers(13:end) = [] ;
+  case 'vggm128-conv5'
+    encoder.net.layers(15:end) = [] ;
+  case 'vggm128-fc7'
+    encoder.net.layers(20:end) = [] ;
 end
 
 encoder.averageColor = ...

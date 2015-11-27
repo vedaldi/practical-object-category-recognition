@@ -10,7 +10,7 @@ zoom = false ;
 if isstr(im)
   tokens = regexp(im, '^(.*?)((_flip|_zoom)?)$', 'tokens') ;
   im = tokens{1}{1} ;
-  flip = strcmp(tokens{1}{2},'_flip') ;  
+  flip = strcmp(tokens{1}{2},'_flip') ;
   zoom = strcmp(tokens{1}{2},'_zoom') ;
   if exist(im, 'file')
     fullPath = im ;
