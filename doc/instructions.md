@@ -14,9 +14,9 @@ The goal of this session is to get basic practical experience with classificatio
 
 Read and understand the [requirements and installation instructions](../overview/index.html#installation). The download links for this practical are:
 
-* Code and data: [practical-category-recognition-cnn-2015b.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b.tar.gz) 914MB
-* Code only: [practical-category-recognition-2015b-code-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-code-only.tar.gz) 12MB
-* Data only: [practical-category-recognition-2015b-data-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-data-only.tar.gz) 902MB
+* Code and data: [practical-category-recognition-cnn-2015b.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b.tar.gz) 797MB
+* Code only: [practical-category-recognition-2015b-code-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-code-only.tar.gz) 16MB
+* Data only: [practical-category-recognition-2015b-data-only.tar.gz](http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-data-only.tar.gz) 781MB
 * [Git repository](https://github.com/vedaldi/practical-object-category-recognition) (for lab setters and developers)
 
 After the installation is complete, open and edit the script `exercise1.m` in the MATLAB editor. The script contains commented code and a description for all steps of this exercise, relative to [Part I](#part1) of this document. You can cut and paste this code into the MATLAB window to run it, and will need to modify it as you go through the session. Other files such as `exercise2.m`, contain the code for other parts of the practical, as indicated below.
