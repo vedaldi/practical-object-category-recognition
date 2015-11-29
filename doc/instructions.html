@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Category recognition practical (CNN version)</title>
+  <title>Image classification practical (CNN version)</title>
   <link rel="stylesheet" href="base.css" />
   <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
@@ -24,7 +24,7 @@
 <p>This is an <a href="http://www.robots.ox.ac.uk/~vgg">Oxford Visual Geometry Group</a> computer vision practical, authored by <a href="http://www.robots.ox.ac.uk/~vedaldi/">Andrea Vedaldi</a> and Andrew Zisserman (Release 2015b).</p>
 <p><img width=100% src="images/cover.jpeg" alt="cover"/></p>
 <p>This practical is on image classification, where an image is classified according to its visual content. For example, does it contain an airplane or not. Important applications are image retrieval - searching through an image dataset to obtain (or retrieve) those images with particular visual content, and image annotatvion - adding tags to images if they contain particular object categories.</p>
-<p>The goal of this session is to get basic practical experience with image classification. It includes: (i) training a visual classifier for five different image classes (airplanes, motorbikes, people, horses and cars); (ii) assessing the performance of the classifier by computing a precision-recall curve; (iii) training set and testing set augmentation; and (iv) obtaining training data for new classifiers using Bing image search and using the classifiers to retrieve images from a dataset.</p>
+<p>The goal of this session is to get basic practical experience with classification. It includes: (i) training a visual classifier for five different image classes (airplanes, motorbikes, people, horses and cars); (ii) assessing the performance of the classifier by computing a precision-recall curve; (iii) training set and testing set augmentation; and (iv) obtaining training data for new classifiers using Bing image search and using the classifiers to retrieve images from a dataset.</p>
 <div class="toc">
 <ul>
 <li><a href="#image-classification-practical-cnn-version">Image classification practical (CNN version)</a><ul>
@@ -36,9 +36,10 @@
 <li><a href="#stage-1d-increase-the-number-of-training-images-by-data-augmentation">Stage 1.D: Increase the number of training images by data augmentation</a></li>
 <li><a href="#stage-1e-vary-the-number-of-training-images">Stage 1.E: Vary the number of training images</a></li>
 <li><a href="#stage-1f-setting-the-hyper-parameter-c-of-the-svm">Stage 1.F: Setting the hyper-parameter C of the SVM</a></li>
-<li><a href="#stage-1g-learn-a-classifier-for-the-other-classes-and-assess-its-performance">Stage 1.G: Learn a classifier for the other classes and assess its performance</a></li>
+<li><a href="#stage-1g-learn-a-classifier-for-the-other-categories-and-assess-its-performance">Stage 1.G: Learn a classifier for the other categories and assess its performance</a></li>
 <li><a href="#stage-1h-vary-the-image-representation">Stage 1.H: Vary the image representation</a></li>
 <li><a href="#stage-1i-vary-the-cnn-representation">Stage 1.I: Vary the CNN representation</a></li>
+<li><a href="#stage-1j-visualize-class-saliency">Stage 1.J: Visualize class saliency</a></li>
 </ul>
 </li>
 <li><a href="#part-2-training-an-image-classifier-for-retrieval-using-bing-images">Part 2: Training an Image Classifier for Retrieval using Bing images</a></li>
@@ -100,7 +101,7 @@
 <p>An image is represented by a single vector descriptor. Mapping the visual content of an image to a single descriptor vector is often regarded as an encoding step, and the resulting descriptor is sometimes called a code. The main benefit of working with fixed length vectors is that they can be compared by simple vectorial metrics such as Euclidean distance. For the same reason, they are a natural representation to use in learning an image classifier.</p>
 <p>We will use a <em>Convolutional Neural Network</em> (CNN) encoding. The process of constructing the CNN descriptor starting from an image is summarized next: </p>
 <p><img width=100% src="images/encoding.png" alt="cover"/></p>
-<p>First, the network is pre-trained on the ImageNet dataset to classify an image into one of a thousand categories. This determines all the parameters of the CNN, such as the weights of the convolutional filters. Then, for a new image, the trained network is used to generate a descriptor vector from the response of the response of a layer in the architecture this image as input. For this practical we will use the VGG-M-128 network, which produces a 128 dimensional descriptor vector at the last fully-connected layer before classification, called <em>fc7</em>. We also consider computationally cheaper but weaker features extracted from the convolutional layers. In particular, we consider the following <strong>encodings</strong>:</p>
+<p>First, the network is pre-trained on the ImageNet dataset to classify an image into one of a thousand categories. This determines all the parameters of the CNN, such as the weights of the convolutional filters. Then, for a new image, the trained network is used to generate a descriptor vector from the response of a layer in the architecture with this image as input. For this practical we will use the VGG-M-128 network, which produces a 128 dimensional descriptor vector at the last fully-connected layer before classification, called <em>fc7</em>. We also consider computationally cheaper but weaker features extracted from the convolutional layers. In particular, we consider the following <strong>encodings</strong>:</p>
 <ol>
 <li><code>vggm128-conv4</code>: the fourth convolutional layer output, containing 512 feature channels.</li>
 <li><code>vggm128-conv5</code>: the fifith convolutional layer output, also containing 512 feature channels.</li>
@@ -111,19 +112,14 @@
 <blockquote>
 <p><strong>Task:</strong> Look through example images of the motorbike class and the background images by browsing the image files in the data directory.</p>
 </blockquote>
-<p>The motorbike training images will be used as the positives, and the background 
-images as negatives. The classifier is a linear Support Vector Machine (SVM). </p>
+<p>The motorbike training images will be used as the positives, and the background images as negatives. The classifier is a linear Support Vector Machine (SVM). </p>
 <blockquote>
 <p><strong>Task:</strong> Train the classifier by following the steps in <code>exercise1.m</code>.</p>
 </blockquote>
 <p>We will first assess qualitatively how well the classifier works by using it to rank all the training images. </p>
 <blockquote>
-<p><strong>Question:</strong> What do you expect to happen? 
-<strong>Task:</strong> View the ranked list using the provided function <code>displayRankedImageList</code> as shown in <code>excercise1.m</code>.</p>
-</blockquote>
-<p>You can use the function <code>displaySaliencyMap</code> to visualize the areas of the image that the classifier thinks are most related to the class (see the example embedded in <code>exercise1.m</code>).</p>
-<blockquote>
-<p><strong>Queston:</strong> Do the words correspond to patches you would expect to be selected?</p>
+<p><strong>Question:</strong> What do you expect to happen? </p>
+<p><strong>Task:</strong> View the ranked list using the provided function <code>displayRankedImageList</code> as shown in <code>excercise1.m</code>.</p>
 </blockquote>
 <h3 id="stage-1c-classify-the-test-images-and-assess-the-performance">Stage 1.C: Classify the test images and assess the performance</h3>
 <p>Now apply the learnt classifier to the test images. Again, you can look at the qualitative performance by using the classifier score to rank all the test images. Note the bias term is not needed for this ranking, only the classification vector <code>w</code>.</p>
@@ -137,29 +133,33 @@ images as negatives. The classifier is a linear Support Vector Machine (SVM). </
 <p>Up to this point the descriptor vector has been computed from the image as is. We now consider representing each image multiple times by generating a descriptor for both the original image and for the image after `flipping' (a mirror reflectance about a vertical axis). This data augmentation will be used in a different manner at training and test time. In training, the descriptors from the flipped images will be used as additional training samples (i.e. each original image generates two data samples for training). In testing, the descriptors for the original and flipped image will be averaged resulting in, again, a single vector representing the test image.</p>
 <p>Edit <code>exercise1.m</code> to include the training and test augmentation as specified above. Note, the change in classification performance if: (i) only training data augmentation is used, (ii) only testing data augmentation is used; and (iii) both training and test data are augmented.</p>
 <blockquote>
-<p><strong>Question:</strong> Is classifying the average vector for the test image the same as classifying each vector independently and then averaging the classifying score?
-<strong>Question:</strong> When would you expect flipping augmentation to be detrimental to performance?
-<strong>Question:</strong> How could additional descriptors be obtained from each image?</p>
+<p><strong>Questions:</strong></p>
+<ul>
+<li>Is classifying the average vector for the test image the same as classifying each vector independently and then averaging the classifying score?</li>
+<li>When would you expect flipping augmentation to be detrimental to performance?</li>
+<li>How could additional descriptors be obtained from each image?</li>
+</ul>
 </blockquote>
 <p><strong>Note:</strong> when learning the SVM, to save training time we are not changing the $C$ parameter. This parameter influences the generalization error and should be relearnt on a validation set when the training setting is changed (see stage <a href="#stage1f">Stage 1.F</a>). However, in this case the influence of $C$ is small as can be verified experimentally.</p>
 <h3 id="stage-1e-vary-the-number-of-training-images">Stage 1.E: Vary the number of training images</h3>
-<p>So far we have used only 20 positive images and 1019 negative images for training the motorbike classifier the classifier. Change the parameters <code>numPos</code> and <code>numNeg</code> to decrease and increase the number of training images, particularly for the positive class.</p>
+<p>So far we have used only 20 positive images and 1019 negative images for training the classifier. Change the parameters <code>numPos</code> and <code>numNeg</code> to decrease and increase the number of training images, particularly for the positive images.</p>
 <blockquote>
 <p><strong>Questions:</strong> </p>
 <ul>
 <li>How much does the performance vary as <code>numPos</code> is changed from 1 to <code>+inf</code> (indicating that all available positive images are used)?</li>
-<li>Compare doubiling the number of training images by either including fresh samples or generating new samples using augmentation. Which performs better? Why?</li>
+<li>Compare doubling the number of training images by either including fresh samples or generating new samples using augmentation. Which performs better? Why?</li>
 </ul>
 </blockquote>
 <p><a name=stage1f></a></p>
 <h3 id="stage-1f-setting-the-hyper-parameter-c-of-the-svm">Stage 1.F: Setting the hyper-parameter C of the SVM</h3>
-<p><em>Skip to <a href="#stage1h">Stage 1.H</a> on fast track</em></p>
 <p>If there is a significant difference between the training and test performance, then that indicates over fitting. The difference can often be reduced, and the test performance (generalization), improved by changing the SVM C parameter. </p>
-<p>Edit <code>exercise1.m</code> to vary the $C$ parameter in the range 0.1 to 1000 (the default is $C=10$), and plot the AP on the training and test data as $C$ varies.</p>
+<blockquote>
+<p><strong>Task:</strong> Edit <code>exercise1.m</code> to vary the $C$ parameter in the range 0.1 to 1000 (the default is $C=10$), and plot the AP on the training and test data as $C$ varies.</p>
+</blockquote>
 <p><strong>Note:</strong> hyper-parameters and performance should actually be assessed on a validation set that is held out from the training set. They should not be assessed on the test set. In this practical we are not enforcing this good practice, but don't optimize on the test set once you move on from this practical and start to classify your own data.</p>
-<h3 id="stage-1g-learn-a-classifier-for-the-other-classes-and-assess-its-performance">Stage 1.G: Learn a classifier for the other classes and assess its performance</h3>
+<h3 id="stage-1g-learn-a-classifier-for-the-other-categories-and-assess-its-performance">Stage 1.G: Learn a classifier for the other categories and assess its performance</h3>
 <p><em>Skip to <a href="#stage1h">Stage 1.H</a> on fast track</em></p>
-<p>Now repeat Stage B and C for each of the other two classes: airplanes and people. To do this you can simply rerun <code>exercise1.m</code> after changing the dataset loaded at the beginning in stage (A). Remember to change both the training and test data. In each case record the AP performance measure.</p>
+<p>Now repeat Stage B and C for each of the other two object categories: airplanes and people. To do this you can simply rerun <code>exercise1.m</code> after changing the dataset loaded at the beginning in stage (A). Remember to change both the training and test data. In each case record the AP performance measure.</p>
 <blockquote>
 <p><strong>Question:</strong> Does the AP performance match your expectations based on the variation of the class images?</p>
 </blockquote>
@@ -187,24 +187,39 @@ to measure the similarity between pair of objects $h$ and $h'$ (in this case pai
 </blockquote>
 <p>A useful rule of thumb is that better performance is obtained if the vectors that are ultimately fed to a linear SVM (after any intermediate processing) are L2 normalized.</p>
 <h3 id="stage-1i-vary-the-cnn-representation">Stage 1.I: Vary the CNN representation</h3>
-<p>The CNN image features are very strong because they are pretrained on millions on images on the ImageNet data. So far, we have experimented with the <code>vggm128-conv3</code> features. Try now to extract features from a different layer in the architecture and observe how the performance changes:</p>
+<p>The CNN image features are very strong because they are pretrained on millions of images from the ImageNet data. So far, we have experimented with the <code>vggm128-conv3</code> features. Try now to extract features from a different layer in the architecture and observe how the performance changes:</p>
 <blockquote>
 <p><strong>Tasks</strong>:</p>
 <ul>
 <li>Restore L2 normalization for the image representation (see the previous stage) and choose a category.</li>
 <li>Rerun classification using only 10 training images (set <code>numPos=10</code>) by setting the <code>encoding</code> to <code>vggm128-conv1</code>, <code>vggm128-conv2</code>, <code>vggm128-conv3</code>, <code>vggm128-conv4</code>, <code>vggm128-conv5</code> and <code>vggm128-fc7</code>.</li>
-<li>Annotate the resulting preformance.</li>
+<li>Note the resulting performance.</li>
 </ul>
-<p><strong>Question:</strong> How much the choice of feature detph affects classification performance?</p>
+<p><strong>Question:</strong> How much does the choice of feature depth affect classification performance?</p>
 </blockquote>
-<p>Now make the setup even more extreme by considreing the so-called one-shot learning problem, i.e. learning an object category from a single training image. Thus, set <code>numPos=1</code> and rerun the experiments.</p>
+<p>Now make the setup even more extreme by considreing the so-called one-shot learning problem, i.e. learning an image classifier from a single training image. Thus, set <code>numPos=1</code> and rerun the experiments.</p>
 <blockquote>
-<p><strong>Questions::</strong></p>
+<p><strong>Questions:</strong></p>
 <ul>
 <li>Can you get good performance using a single training images and the deeper features?</li>
 <li>If so, how is it possible that the system can learn to recognize an object from a single example?</li>
 </ul>
 </blockquote>
+<h3 id="stage-1j-visualize-class-saliency">Stage 1.J: Visualize class saliency</h3>
+<p>You can use the function <code>displaySaliencyMap</code> to visualize the areas of the image that the classifier thinks are most related to the class (see the example embedded in <code>exercise1.m</code>).</p>
+<p>Use this function first to visualize the class saliency using <code>vggm128-fc7</code> features for an image containing the object category.</p>
+<blockquote>
+<p><strong>Question:</strong> Do the areas correspond to the regions that you would expect to be selected?</p>
+</blockquote>
+<p><em>Skip to <a href="#part2">Part 2</a> on fast track</em></p>
+<blockquote>
+<p><strong>Tasks</strong>:</p>
+<ul>
+<li>Visualize the class saliency using features from other layers: <code>vggm128-conv4</code>, <code>vggm128-conv3</code>, <code>vggm128-conv2</code>, <code>vggm128-conv1</code></li>
+<li>Rerun the visualizations for an image not containing the object category.</li>
+</ul>
+</blockquote>
+<p><a name=part2></a></p>
 <h2 id="part-2-training-an-image-classifier-for-retrieval-using-bing-images">Part 2: Training an Image Classifier for Retrieval using Bing images</h2>
 <p>In Part 1 of this practical the training data was provided and all the feature vectors pre-computed. The goal of this second part is to choose the training data yourself in order to optimize the classifier performance. The task is the following: you are given a large corpus of images and asked to retrieve images of a certain class, e.g. those containing a bicycle. You then need to obtain training images, e.g. using Bing Image Search, in order to train a classifier for images containing bicycles and optimize its retrieval performance.</p>
 <p>The MATLAB code <code>exercise2.m</code> provides the following functionality: it uses the images in the directory data/myImages and the default negative list data/background_train.txt to train a classifier and rank the test images. To get started, we will train a classifier for horses:</p>
