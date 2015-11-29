@@ -24,6 +24,7 @@ vlfeat
 
 doc=\
 doc/images \
+doc/base.css \
 doc/instructions.html
 
 data=\
