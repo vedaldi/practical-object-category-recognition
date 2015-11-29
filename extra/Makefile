@@ -33,9 +33,9 @@ data/{aeroplane,background,car,horse,motorbike,person}_val_vggm128-{fc7,conv5,co
 data/{aeroplane,background,car,horse,motorbike,person}_val.txt \
 data/images \
 data/myImages \
-data/cnn/imagenet-vgg-m-128.mat
+data/cnn
 
-tarflags=--exclude='.git*' --exclude='.build*'
+tarflags=--exclude='.git*' --exclude='.build*' --exclude='matconvnet/doc/site'
 
 code:=$(addprefix $(CURDIR)/,$(code))
 data:=$(addprefix $(CURDIR)/,$(data))

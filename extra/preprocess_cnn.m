@@ -73,4 +73,3 @@ names = textread(fullfile('data', [char(subset) '.txt']), '%s') ;
 names = strcat(names, suffix) ;
 descriptors = encodeImage(encoder, names) ;
 save(outPath, 'names', 'descriptors') ;
-
