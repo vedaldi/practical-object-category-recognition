@@ -23,7 +23,7 @@
 <h1 id="image-classification-practical-cnn-version">Image classification practical (CNN version)</h1>
 <p>This is an <a href="http://www.robots.ox.ac.uk/~vgg">Oxford Visual Geometry Group</a> computer vision practical, authored by <a href="http://www.robots.ox.ac.uk/~vedaldi/">Andrea Vedaldi</a> and Andrew Zisserman (Release 2015b).</p>
 <p><img width=100% src="images/cover.jpeg" alt="cover"/></p>
-<p>This practical is on image classification, where an image is classified according to its visual content. For example, does it contain an airplane or not. Important applications are image retrieval - searching through an image dataset to obtain (or retrieve) those images with particular visual content, and image annotatvion - adding tags to images if they contain particular object categories.</p>
+<p>This practical is on image classification, where an image is classified according to its visual content. For example, does it contain an airplane or not. Important applications are image retrieval - searching through an image dataset to obtain (or retrieve) those images with particular visual content, and image annotation - adding tags to images if they contain particular object categories.</p>
 <p>The goal of this session is to get basic practical experience with classification. It includes: (i) training a visual classifier for five different image classes (airplanes, motorbikes, people, horses and cars); (ii) assessing the performance of the classifier by computing a precision-recall curve; (iii) training set and testing set augmentation; and (iv) obtaining training data for new classifiers using Bing image search and using the classifiers to retrieve images from a dataset.</p>
 <div class="toc">
 <ul>
@@ -53,9 +53,9 @@
 <h2 id="getting-started">Getting started</h2>
 <p>Read and understand the <a href="../overview/index.html#installation">requirements and installation instructions</a>. The download links for this practical are:</p>
 <ul>
-<li>Code and data: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b.tar.gz">practical-category-recognition-cnn-2015b.tar.gz</a> 914MB</li>
-<li>Code only: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-code-only.tar.gz">practical-category-recognition-2015b-code-only.tar.gz</a> 12MB</li>
-<li>Data only: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-data-only.tar.gz">practical-category-recognition-2015b-data-only.tar.gz</a> 902MB</li>
+<li>Code and data: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b.tar.gz">practical-category-recognition-cnn-2015b.tar.gz</a> 797MB</li>
+<li>Code only: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-code-only.tar.gz">practical-category-recognition-2015b-code-only.tar.gz</a> 16MB</li>
+<li>Data only: <a href="http://www.robots.ox.ac.uk/~vgg/share/practical-category-recognition-cnn-2015b-data-only.tar.gz">practical-category-recognition-2015b-data-only.tar.gz</a> 781MB</li>
 <li><a href="https://github.com/vedaldi/practical-object-category-recognition">Git repository</a> (for lab setters and developers)</li>
 </ul>
 <p>After the installation is complete, open and edit the script <code>exercise1.m</code> in the MATLAB editor. The script contains commented code and a description for all steps of this exercise, relative to <a href="#part1">Part I</a> of this document. You can cut and paste this code into the MATLAB window to run it, and will need to modify it as you go through the session. Other files such as <code>exercise2.m</code>, contain the code for other parts of the practical, as indicated below.</p>
@@ -104,7 +104,7 @@
 <p>First, the network is pre-trained on the ImageNet dataset to classify an image into one of a thousand categories. This determines all the parameters of the CNN, such as the weights of the convolutional filters. Then, for a new image, the trained network is used to generate a descriptor vector from the response of a layer in the architecture with this image as input. For this practical we will use the VGG-M-128 network, which produces a 128 dimensional descriptor vector at the last fully-connected layer before classification, called <em>fc7</em>. We also consider computationally cheaper but weaker features extracted from the convolutional layers. In particular, we consider the following <strong>encodings</strong>:</p>
 <ol>
 <li><code>vggm128-conv4</code>: the fourth convolutional layer output, containing 512 feature channels.</li>
-<li><code>vggm128-conv5</code>: the fifith convolutional layer output, also containing 512 feature channels.</li>
+<li><code>vggm128-conv5</code>: the fifth convolutional layer output, also containing 512 feature channels.</li>
 <li><code>vggm128-fc7</code>: the last fully-connected layer output, containing 128 feature channels.</li>
 </ol>
 <h3 id="stage-1b-train-a-classifier-for-images-containing-motorbikes">Stage 1.B: Train a classifier for images containing motorbikes</h3>
@@ -128,7 +128,7 @@
 </blockquote>
 <p>Now we will measure the retrieval performance quantitatively by computing a Precision-Recall curve. Recall the definitions of <strong>precision</strong> and <strong>recall</strong>:</p>
 <p><img width=100% src="images/pr1.png" alt="pr1"/></p>
-<p>The <em>precision-recall</em> (PR) curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the <em>Average Precision</em> (AP, the area under the curve) is often computed. Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results</p>
+<p>The <em>precision-recall</em> (PR) curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the <em>Average Precision</em> (AP, the area under the curve) is often computed. Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results.</p>
 <h3 id="stage-1d-increase-the-number-of-training-images-by-data-augmentation">Stage 1.D: Increase the number of training images by data augmentation</h3>
 <p>Up to this point the descriptor vector has been computed from the image as is. We now consider representing each image multiple times by generating a descriptor for both the original image and for the image after `flipping' (a mirror reflectance about a vertical axis). This data augmentation will be used in a different manner at training and test time. In training, the descriptors from the flipped images will be used as additional training samples (i.e. each original image generates two data samples for training). In testing, the descriptors for the original and flipped image will be averaged resulting in, again, a single vector representing the test image.</p>
 <p>Edit <code>exercise1.m</code> to include the training and test augmentation as specified above. Note, the change in classification performance if: (i) only training data augmentation is used, (ii) only testing data augmentation is used; and (iii) both training and test data are augmented.</p>
@@ -142,7 +142,7 @@
 </blockquote>
 <p><strong>Note:</strong> when learning the SVM, to save training time we are not changing the $C$ parameter. This parameter influences the generalization error and should be relearnt on a validation set when the training setting is changed (see stage <a href="#stage1f">Stage 1.F</a>). However, in this case the influence of $C$ is small as can be verified experimentally.</p>
 <h3 id="stage-1e-vary-the-number-of-training-images">Stage 1.E: Vary the number of training images</h3>
-<p>So far we have used only 20 positive images and 1019 negative images for training the classifier. Change the parameters <code>numPos</code> and <code>numNeg</code> to decrease and increase the number of training images, particularly for the positive images.</p>
+<p>So far we have used only 20 (of the 120) positive images and 1019 negative images for training the classifier. Change the parameters <code>numPos</code> and <code>numNeg</code> to decrease and increase the number of training images, particularly for the positive images.</p>
 <blockquote>
 <p><strong>Questions:</strong> </p>
 <ul>
@@ -165,7 +165,7 @@
 </blockquote>
 <p><a name=stage1h></a></p>
 <h3 id="stage-1h-vary-the-image-representation">Stage 1.H: Vary the image representation</h3>
-<p>An important practical aspect of image descriptors is their normalization. For example, if we regard the CNN descriptor as a discrete probability distribution it would seem natural that its elements should sum to 1. This is the same as normalizing the descriptor vectors in L1 norm. However, in <code>exercise1.m</code> L2 normalization (sum of squares) is used instead.</p>
+<p>An important practical aspect of image descriptors is their normalization. For example, if we regard the CNN descriptor as a discrete probability distribution it would seem natural that its elements should sum to 1. This is the same as normalizing the descriptor vectors in the L1 norm. However, in <code>exercise1.m</code> L2 normalization (sum of squares) is used instead.</p>
 <blockquote>
 <p><strong>Task:</strong> Modify <code>exercise1.m</code> to use L1 normalization and no normalization and measure the performance change.</p>
 </blockquote>
@@ -197,7 +197,7 @@ to measure the similarity between pair of objects $h$ and $h'$ (in this case pai
 </ul>
 <p><strong>Question:</strong> How much does the choice of feature depth affect classification performance?</p>
 </blockquote>
-<p>Now make the setup even more extreme by considreing the so-called one-shot learning problem, i.e. learning an image classifier from a single training image. Thus, set <code>numPos=1</code> and rerun the experiments.</p>
+<p>Now make the setup even more extreme by considering the so-called one-shot learning problem, i.e. learning an image classifier from a single training image. Thus, set <code>numPos=1</code> and rerun the experiments.</p>
 <blockquote>
 <p><strong>Questions:</strong></p>
 <ul>
