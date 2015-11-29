@@ -8,18 +8,19 @@ TMPDIR = /tmp
 pack-all: pack-data pack-code pack
 
 code=\
-encodeImage.m \
+README.md \
 displayRankedImageList.m \
 displaySaliencyMap.m \
+encodeImage.m \
 exercise1.m \
 exercise2.m \
 getImageSet.m \
+loadEncoder.m \
 setup.m \
 standardizeImage.m \
 trainLinearSVM.m \
-README.md \
-vlfeat \
-matconvnet
+matconvnet \
+vlfeat
 
 doc=\
 doc/images \
