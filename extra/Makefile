@@ -35,7 +35,7 @@ data/images \
 data/myImages \
 data/cnn/imagenet-vgg-m-128.mat
 
-tarflags=--exclude='.git*'
+tarflags=--exclude='.git*' --exclude='.build*'
 
 code:=$(addprefix $(CURDIR)/,$(code))
 data:=$(addprefix $(CURDIR)/,$(data))
@@ -55,20 +55,20 @@ $(TMPDIR)/$(name).tar.gz: $(deps)
 	ln -sf $(data) $(TMPDIR)/$(name)/data/
 	ln -sf $(doc) $(TMPDIR)/$(name)/doc/
 	ln -sf $(code) $(TMPDIR)/$(name)/
-	tar -C $(TMPDIR) -czvhf $(TMPDIR)/$(name).tar.gz $(tarflags) $(name)/
+	-tar -C $(TMPDIR) -czvhf $(TMPDIR)/$(name).tar.gz $(tarflags) $(name)/
 
 $(TMPDIR)/$(name)-data-only.tar.gz: $(deps)
 	rm -rf $(TMPDIR)/$(name)
 	mkdir -p $(TMPDIR)/$(name)/{doc,data}
 	ln -sf $(data) $(TMPDIR)/$(name)/
-	tar -C $(TMPDIR) -czvhf $(TMPDIR)/$(name)-data-only.tar.gz $(tarflags) $(name)/
+	-tar -C $(TMPDIR) -czvhf $(TMPDIR)/$(name)-data-only.tar.gz $(tarflags) $(name)/
 
 $(TMPDIR)/$(name)-code-only.tar.gz: $(deps)
 	rm -rf $(TMPDIR)/$(name)
 	mkdir -p $(TMPDIR)/$(name)/{doc,data}
 	ln -sf $(doc) $(TMPDIR)/$(name)/doc/
 	ln -sf $(code) $(TMPDIR)/$(name)/
-	tar -C $(TMPDIR) -czvhf $(TMPDIR)/$(name)-code-only.tar.gz $(tarflags) $(name)/
+	-tar -C $(TMPDIR) -czvhf $(TMPDIR)/$(name)-code-only.tar.gz $(tarflags) $(name)/
 
 doc/instructions.html : doc/instructions.md doc/base.html extra/Makefile
 	cp doc/base.html "$@"

@@ -1,55 +1,52 @@
-# Object category recognition practical
+# Object category recognition practical (CNN version)
 
 > A computer vision practical by the Oxford Visual Geometry group,
 > authored by Andrea Vedaldi and Andrew Zisserman.
 
 Start from `doc/instructions.html`.
 
+> This practical is related to the older
+> `practical-category-recognition` which uses hand-crafted features
+> (SIFT, Fisher Vectors, VLAD, etc.), but is based on CNN features
+> instead.
+
 Package contents
 ----------------
 
 The package contains three exercises:
 
-* `exercise1.m`: learns and test an image classifier on benchmark data
-* `exercise2.m`: learns your own classifier
-* `exercise3.m`: experiment with different image  encoding methods
+* `exercise1.m`: learn and test an image classifier on benchmark data
+* `exercise2.m`: learn your own classifier
 
-The computer vision algorithms are implemented by
-[VLFeat](http://www.vlfeat.org). This package contains the following
-MATLAB functions:
+The practical is based on [VLFeat](http://www.vlfeat.org) and
+[MatConvNet](http://www.vlfeat.org/matconvnet). This package contains
+the following MATLAB functions:
 
 * `standardizeImage.m`: Rescale an image to a standard size.
-* `computeFeatures.m`: Compute dense SIFT keypoints and descriptors.
-* `encodeImage.m`: Compute an image encoding: BoVW, VLAD, FV.
-* `removeSpatialInformation.m`: Reduces and encoding using spatial
-  subdivisions to a simple one.
-* `trainLinearSVM.m`: Learn a linear support vector machine.
 * `displayRankedImagelist.m`: Visualize a subset of a ranked list of images.
+* `displaySaliencyMap.m`: Display a classifier saliency map.
+* `encodeImage.m`: Encode an image using CNN features.
 * `getImageSet.m`: Scan a directory for images.
-* `sampleLocalFeatures.m`: Sample local features from a set of images in order to train and encoder.
-* `trainEncoder.m`: Train a BoVW, VLAD, or FV encoder (i.e., learn visual word dictionary).
+* `loadEncoder.m`: Load a CNN-based encoder.
+* `trainLinearSVM.m`: Learn a linear support vector machine.
 
 Appendix: Installing from scratch
 ---------------------------------
 
 1. From Bash, run `./extras/download.sh`. This will download the
-   PASCAL VOC data and extract a subsetof it.
+   PASCAL VOC data and extract a subset of it.
 2. From MATLAB, run `addpath extras ; preprocess.m`. This will download VLFeat
-   and precompute the data for the practical.
+   and MatConvNet and precompute the data for the practical.
 
 Changes
 -------
 
-* *2015a* - Switches to VLFeat 0.9.20 (bugfixes).
-* *2014a* - Switches to VLFeat 0.9.18. Redone packaging and doc.
-* *2013a* - Switches to VLFeat 0.9.17. Adds VLAD and FV.
-* *2012* - Minor cleanups.
-* *2011* - Initial version.
+* *2015b* - First version.
 
 License
 -------
 
-    Copyright (c) 2011-13 Andrea Vedaldi
+    Copyright (c) 2015 Andrea Vedaldi and Andrew Zisserman.
 
     Permission is hereby granted, free of charge, to any person
     obtaining a copy of this software and associated documentation

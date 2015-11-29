@@ -1,5 +1,25 @@
 #!/bin/bash
 
+# Download software
+wget http://www.vlfeat.org/sandbox-matconvnet/models/imagenet-vgg-verydeep-16.mat \
+    --output-document=data/cnn/imagenet-vgg-verydeep-16.mat --continue
+
+if test ! -e vlfeat
+then
+    wget http://www.vlfeat.org/download/vlfeat-0.9.20-bin.tar.gz --output-document=data/vlfeat-0.9.20-bin.tar.gz --continue
+    tar xzvf data/vlfeat-0.9.20-bin.tar.gz
+    mv vlfeat-0.9.20 vlfeat
+fi
+
+if test ! -e matconvnet
+then
+    wget http://www.vlfeat.org/sandbox-matconvnet/download/matconvnet-1.0-beta17.tar.gz \
+         --output-document=data/matconvnet.tar.gz --continue
+    tar xzvf data/matconvnet.tar.gz
+    mv matconvnet-1.0-beta17 matconvnet
+fi
+
+# Download images
 voc=data/tmp/VOCdevkit/VOC2007
 
 mkdir -p data/tmp
@@ -16,7 +36,7 @@ fi
 
 for j in train val
 do
-    for i in aeroplane person car motorbike horse 
+    for i in aeroplane person car motorbike horse
     do
         grep -E '.*\ 1$' $voc/ImageSets/Main/${i}_${j}.txt | \
             cut -f1 -d\  > data/${i}_${j}.txt

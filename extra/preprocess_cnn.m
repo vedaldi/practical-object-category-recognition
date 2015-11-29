@@ -1,19 +1,7 @@
 function preprocess_cnn()
 % PREPROCESS_CNN  Prepare data for the practical
-%   PREPROCESS_CNN() downloads an image dataset into 'data/', VLFeat
-%   into 'vlfeat/', MatConvNet into 'matconvnet/', and precomputes the
-%   image features.
-
-% --------------------------------------------------------------------
-%                                                      Download VLFeat
-% --------------------------------------------------------------------
-
-if ~exist('vlfeat', 'dir')
-  from = 'http://www.vlfeat.org/download/vlfeat-0.9.20-bin.tar.gz' ;
-  fprintf('Downloading vlfeat from %s\n', from) ;
-  untar(from, 'data') ;
-  movefile('data/vlfeat-0.9.20', 'vlfeat') ;
-end
+%   PREPROCESS_CNN() downloads an image dataset into 'data/'. Use th
+%   `download.sh` script to dowlonad auxiliary software libraries.
 
 % --------------------------------------------------------------------
 %                                     Compute a visual word vocabulary
