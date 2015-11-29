@@ -4,7 +4,7 @@ This is an [Oxford Visual Geometry Group](http://www.robots.ox.ac.uk/~vgg) compu
 
 <img width=100% src="images/cover.jpeg" alt="cover"/>
 
-This practical is on image classification, where an image is classified according to its visual content. For example, does it contain an airplane or not. Important applications are image retrieval - searching through an image dataset to obtain (or retrieve) those images with particular visual content, and image annotatvion - adding tags to images if they contain particular object categories.
+This practical is on image classification, where an image is classified according to its visual content. For example, does it contain an airplane or not. Important applications are image retrieval - searching through an image dataset to obtain (or retrieve) those images with particular visual content, and image annotation - adding tags to images if they contain particular object categories.
 
 The goal of this session is to get basic practical experience with classification. It includes: (i) training a visual classifier for five different image classes (airplanes, motorbikes, people, horses and cars); (ii) assessing the performance of the classifier by computing a precision-recall curve; (iii) training set and testing set augmentation; and (iv) obtaining training data for new classifiers using Bing image search and using the classifiers to retrieve images from a dataset.
 
@@ -46,7 +46,7 @@ We will use a *Convolutional Neural Network* (CNN) encoding. The process of cons
 First, the network is pre-trained on the ImageNet dataset to classify an image into one of a thousand categories. This determines all the parameters of the CNN, such as the weights of the convolutional filters. Then, for a new image, the trained network is used to generate a descriptor vector from the response of a layer in the architecture with this image as input. For this practical we will use the VGG-M-128 network, which produces a 128 dimensional descriptor vector at the last fully-connected layer before classification, called *fc7*. We also consider computationally cheaper but weaker features extracted from the convolutional layers. In particular, we consider the following **encodings**:
 
 1. `vggm128-conv4`: the fourth convolutional layer output, containing 512 feature channels.
-2. `vggm128-conv5`: the fifith convolutional layer output, also containing 512 feature channels.
+2. `vggm128-conv5`: the fifth convolutional layer output, also containing 512 feature channels.
 3. `vggm128-fc7`: the last fully-connected layer output, containing 128 feature channels.
 
 ### Stage 1.B: Train a classifier for images containing motorbikes
@@ -75,7 +75,7 @@ Now we will measure the retrieval performance quantitatively by computing a Prec
 
 <img width=100% src="images/pr1.png" alt="pr1"/>
 
-The *precision-recall* (PR) curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the *Average Precision* (AP, the area under the curve) is often computed. Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results
+The *precision-recall* (PR) curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the *Average Precision* (AP, the area under the curve) is often computed. Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results.
  
 ### Stage 1.D: Increase the number of training images by data augmentation
 
@@ -93,7 +93,7 @@ Edit `exercise1.m` to include the training and test augmentation as specified ab
 
 ### Stage 1.E: Vary the number of training images
 
-So far we have used only 20 positive images and 1019 negative images for training the classifier. Change the parameters `numPos` and `numNeg` to decrease and increase the number of training images, particularly for the positive images.
+So far we have used only 20 (of the 120) positive images and 1019 negative images for training the classifier. Change the parameters `numPos` and `numNeg` to decrease and increase the number of training images, particularly for the positive images.
 
 > **Questions:** 
 > 
@@ -122,7 +122,7 @@ Now repeat Stage B and C for each of the other two object categories: airplanes 
 
 ### Stage 1.H: Vary the image representation
 
-An important practical aspect of image descriptors is their normalization. For example, if we regard the CNN descriptor as a discrete probability distribution it would seem natural that its elements should sum to 1. This is the same as normalizing the descriptor vectors in L1 norm. However, in `exercise1.m` L2 normalization (sum of squares) is used instead.
+An important practical aspect of image descriptors is their normalization. For example, if we regard the CNN descriptor as a discrete probability distribution it would seem natural that its elements should sum to 1. This is the same as normalizing the descriptor vectors in the L1 norm. However, in `exercise1.m` L2 normalization (sum of squares) is used instead.
 
 > **Task:** Modify `exercise1.m` to use L1 normalization and no normalization and measure the performance change.
 
@@ -155,7 +155,7 @@ The CNN image features are very strong because they are pretrained on millions o
 
 > **Question:** How much does the choice of feature depth affect classification performance?
 
-Now make the setup even more extreme by considreing the so-called one-shot learning problem, i.e. learning an image classifier from a single training image. Thus, set `numPos=1` and rerun the experiments.
+Now make the setup even more extreme by considering the so-called one-shot learning problem, i.e. learning an image classifier from a single training image. Thus, set `numPos=1` and rerun the experiments.
 
 > **Questions:**
 > 
