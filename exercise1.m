@@ -7,7 +7,7 @@ setup ;
 % Stage A: Data Preparation
 % --------------------------------------------------------------------
 
-% For stage G: Change the encoding
+% For stage I: Change the CNN representation
 %encoding = 'vggm128-conv1' ;
 %encoding = 'vggm128-conv2' ;
 encoding = 'vggm128-conv3' ;
@@ -15,16 +15,16 @@ encoding = 'vggm128-conv3' ;
 %encoding = 'vggm128-conv5' ;
 %encoding = 'vggm128-fc7' ;
 
-% For stage E: Change the object category
+% For stage G: Change the object category
 category = 'motorbike' ;
 %category = 'aeroplane' ;
 %category = 'person' ;
 
-% For stage G: Change the number of training samples
+% For stage E: Change the number of training images
 numPos = 20 ;
 numNeg = +inf ;
 
-% For stage I: Change the data augmentation
+% For stage D: Change the data augmentation
 transforms = {'none'} ;
 %transforms = {'none', 'flip'} ;
 testTransforms = {'none'} ;
@@ -73,12 +73,9 @@ fprintf('Number of training images: %d positive, %d negative\n', ...
 fprintf('Number of testing images: %d positive, %d negative\n', ...
         sum(testLabels > 0), sum(testLabels < 0)) ;
 
-% For stage H: Change the descriptor normalization
+% For stage H: Change the image representation
 descriptors = bsxfun(@times, descriptors, 1./sqrt(sum(descriptors.^2,1))) ;
 testDescriptors = bsxfun(@times, testDescriptors, 1./sqrt(sum(testDescriptors.^2,1))) ;
-
-%descriptors = bsxfun(@times, descriptors, 1./sum(abs(descriptors),1)) ;
-%testDescriptors = bsxfun(@times, testDescriptors, 1./sum(abs(testDescriptors),1)) ;
 
 % --------------------------------------------------------------------
 % Stage B: Training a classifier
