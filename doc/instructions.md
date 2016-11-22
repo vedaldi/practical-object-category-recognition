@@ -45,9 +45,10 @@ We will use a *Convolutional Neural Network* (CNN) encoding. The process of cons
 
 First, the network is pre-trained on the ImageNet dataset to classify an image into one of a thousand categories. This determines all the parameters of the CNN, such as the weights of the convolutional filters. Then, for a new image, the trained network is used to generate a descriptor vector from the response of a layer in the architecture with this image as input. For this practical we will use the VGG-M-128 network, which produces a 128 dimensional descriptor vector at the last fully-connected layer before classification, called *fc7*. We also consider computationally cheaper but weaker features extracted from the convolutional layers. In particular, we consider the following **encodings**:
 
-1. `vggm128-conv4`: the fourth convolutional layer output, containing 512 feature channels.
-2. `vggm128-conv5`: the fifth convolutional layer output, also containing 512 feature channels.
-3. `vggm128-fc7`: the last fully-connected layer output, containing 128 feature channels.
+1. `vggm128-conv3`: the third convolutional layer output, containing 512 feature channels.
+2. `vggm128-conv4`: the fourth convolutional layer output, containing 512 feature channels.
+3. `vggm128-conv5`: the fifth convolutional layer output, also containing 512 feature channels.
+4. `vggm128-fc7`: the last fully-connected layer output, containing 128 feature channels.
 
 ### Stage 1.B: Train a classifier for images containing motorbikes
 
@@ -73,7 +74,7 @@ Now apply the learnt classifier to the test images. Again, you can look at the q
 
 Now we will measure the retrieval performance quantitatively by computing a Precision-Recall curve. Recall the definitions of **precision** and **recall**:
 
-<img width=100% src="images/pr1.png" alt="pr1"/>
+<img width=90% src="images/pr1.png" alt="pr1"/>
 
 The *precision-recall* (PR) curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the *Average Precision* (AP, the area under the curve) is often computed. Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results.
  

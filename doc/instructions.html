@@ -91,6 +91,7 @@
 <p><img width=100% src="images/encoding.png" alt="cover"/></p>
 <p>First, the network is pre-trained on the ImageNet dataset to classify an image into one of a thousand categories. This determines all the parameters of the CNN, such as the weights of the convolutional filters. Then, for a new image, the trained network is used to generate a descriptor vector from the response of a layer in the architecture with this image as input. For this practical we will use the VGG-M-128 network, which produces a 128 dimensional descriptor vector at the last fully-connected layer before classification, called <em>fc7</em>. We also consider computationally cheaper but weaker features extracted from the convolutional layers. In particular, we consider the following <strong>encodings</strong>:</p>
 <ol>
+<li><code>vggm128-conv3</code>: the third convolutional layer output, containing 512 feature channels.</li>
 <li><code>vggm128-conv4</code>: the fourth convolutional layer output, containing 512 feature channels.</li>
 <li><code>vggm128-conv5</code>: the fifth convolutional layer output, also containing 512 feature channels.</li>
 <li><code>vggm128-fc7</code>: the last fully-connected layer output, containing 128 feature channels.</li>
@@ -115,7 +116,7 @@
 <p><strong>Question:</strong> Why is the bias term not needed?</p>
 </blockquote>
 <p>Now we will measure the retrieval performance quantitatively by computing a Precision-Recall curve. Recall the definitions of <strong>precision</strong> and <strong>recall</strong>:</p>
-<p><img width=100% src="images/pr1.png" alt="pr1"/></p>
+<p><img width=90% src="images/pr1.png" alt="pr1"/></p>
 <p>The <em>precision-recall</em> (PR) curve is computed by varying the threshold on the classifier (from high to low) and plotting the values of precision against recall for each threshold value. In order to assess the retrieval performance by a single number (rather than a curve), the <em>Average Precision</em> (AP, the area under the curve) is often computed. Make sure you understand how the precision values in the Precision-Recall curve correspond to the ranking of the positives and negatives in the retrieved results.</p>
 <h3 id="stage-1d-increase-the-number-of-training-images-by-data-augmentation">Stage 1.D: Increase the number of training images by data augmentation</h3>
 <p>Up to this point the descriptor vector has been computed from the image as is. We now consider representing each image multiple times by generating a descriptor for both the original image and for the image after `flipping' (a mirror reflectance about a vertical axis). This data augmentation will be used in a different manner at training and test time. In training, the descriptors from the flipped images will be used as additional training samples (i.e. each original image generates two data samples for training). In testing, the descriptors for the original and flipped image will be averaged resulting in, again, a single vector representing the test image.</p>
