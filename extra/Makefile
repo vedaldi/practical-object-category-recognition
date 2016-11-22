@@ -1,11 +1,7 @@
-name = practical-category-recognition-cnn-2015b
-DST = vgg@login.robots.ox.ac.uk:WWW/share
-DSTDOC = vgg@login.robots.ox.ac.uk:WWW/practicals/category-recognition-cnn
-TMPDIR = /tmp
+# Build practical
 
-.PHONY: prepack, pack, pack-data, pack-code, post, clean, distclean
-
-pack-all: pack-data pack-code pack
+name ?= category-recognition-cnn
+ver ?= 2016a
 
 code=\
 README.md \
@@ -36,59 +32,4 @@ data/images \
 data/myImages \
 data/cnn
 
-tarflags=--exclude='.git*' --exclude='.build*' --exclude='matconvnet/doc/site'
-
-code:=$(addprefix $(CURDIR)/,$(code))
-data:=$(addprefix $(CURDIR)/,$(data))
-doc:=$(addprefix $(CURDIR)/,$(doc))
-deps:=$(shell find $(code) $(doc) $(data) -type f | sed "s/ /\\\\ /g")
-
-pack: $(TMPDIR)/$(name).tar.gz
-pack-data: $(TMPDIR)/$(name)-data-only.tar.gz
-pack-code: $(TMPDIR)/$(name)-code-only.tar.gz
-
-.PHONY: doc
-doc: doc/instructions.html
-
-$(TMPDIR)/$(name).tar.gz: $(deps)
-	rm -rf $(TMPDIR)/$(name)
-	mkdir -p $(TMPDIR)/$(name)/{doc,data}
-	ln -sf $(data) $(TMPDIR)/$(name)/data/
-	ln -sf $(doc) $(TMPDIR)/$(name)/doc/
-	ln -sf $(code) $(TMPDIR)/$(name)/
-	-tar -C $(TMPDIR) -czvhf $(TMPDIR)/$(name).tar.gz $(tarflags) $(name)/
-
-$(TMPDIR)/$(name)-data-only.tar.gz: $(deps)
-	rm -rf $(TMPDIR)/$(name)
-	mkdir -p $(TMPDIR)/$(name)/{doc,data}
-	ln -sf $(data) $(TMPDIR)/$(name)/
-	-tar -C $(TMPDIR) -czvhf $(TMPDIR)/$(name)-data-only.tar.gz $(tarflags) $(name)/
-
-$(TMPDIR)/$(name)-code-only.tar.gz: $(deps)
-	rm -rf $(TMPDIR)/$(name)
-	mkdir -p $(TMPDIR)/$(name)/{doc,data}
-	ln -sf $(doc) $(TMPDIR)/$(name)/doc/
-	ln -sf $(code) $(TMPDIR)/$(name)/
-	-tar -C $(TMPDIR) -czvhf $(TMPDIR)/$(name)-code-only.tar.gz $(tarflags) $(name)/
-
-doc/instructions.html : doc/instructions.md doc/base.html extra/Makefile
-	cp doc/base.html "$@"
-	python -m markdown \
-	  -x toc -x footnotes -x tables \
-	  "$<" >> "$@"
-	cat doc/end.html >> "$@"
-
-post-doc:
-	rsync -rvt doc/images doc/base.css $(DSTDOC)/
-	rsync -vt doc/instructions.html $(DSTDOC)/index.html
-
-post: pack-all
-	rsync -vt $(TMPDIR)/$(name).tar.gz $(DST)/
-	rsync -vt $(TMPDIR)/$(name)-data-only.tar.gz $(DST)/
-	rsync -vt $(TMPDIR)/$(name)-code-only.tar.gz $(DST)/
-
-clean:
-	find . -name '*~' -delete
-
-distclean: clean
-	rm -f $(TMPDIR)/$(name)*.tar.gz
+include extra/practical/Makefile

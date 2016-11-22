@@ -3,21 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Image classification practical (CNN version)</title>
+  <title>VGG Practical</title>
   <link rel="stylesheet" href="base.css" />
-  <script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    extensions: ["tex2jax.js"],
-    jax: ["input/TeX", "output/HTML-CSS"],
-    tex2jax: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-      processEscapes: true
-    },
-    "HTML-CSS": { availableFonts: ["TeX"] }
-  });
-  </script>
-  <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
+  <link rel="stylesheet" href="prism.css" />
 </head>
 <body>
 <h1 id="image-classification-practical-cnn-version">Image classification practical (CNN version)</h1>
@@ -170,9 +158,9 @@
 <p><strong>Task:</strong> Modify <code>exercise1.m</code> to use L1 normalization and no normalization and measure the performance change.</p>
 </blockquote>
 <p>A linear SVM can be thought of as using a linear kernel
-$$
+<script type="math/tex; mode=display">
  K(\mathbf{h},\mathbf{h}') = \sum_{i=1}^d h_i h'_i
-$$
+</script>
 to measure the similarity between pair of objects $h$ and $h'$ (in this case pairs of CNN descriptors).</p>
 <blockquote>
 <p><strong>Question:</strong> What can you say about the self-similarity,$K(\mathbf{h},\mathbf{h})$, of a descriptor $\mathbf{h}$ that is L2 normalized?</p>
@@ -256,5 +244,25 @@ to measure the similarity between pair of objects $h$ and $h'$ (in this case pai
 <ul>
 <li>First used in the Oxford AIMS CDT, 2015-16</li>
 <li>Replaces the Image Catgorization practical based on hand-crafted features.</li>
-</ul></body>
+</ul><script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    extensions: ["tex2jax.js"],
+    jax: ["input/TeX", "output/HTML-CSS"],
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
+      processEscapes: true
+    },
+  "HTML-CSS": { availableFonts: ["TeX"] },
+  TeX: { equationNumbers: { autoNumber: "AMS" } }
+  });
+if (typeof MathJaxListener !== 'undefined') {
+  MathJax.Hub.Register.StartupHook('End', function () {
+    MathJaxListener.invokeCallbackForKey_('End');
+  });
+}
+</script>
+<script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+<script type="text/javascript" src="prism.js"></script>
+</body>
 </html>

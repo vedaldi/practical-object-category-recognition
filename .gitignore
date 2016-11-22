@@ -3,3 +3,6 @@ vlfeat/
 data.old
 matconvnet/
 matconvnet
+doc/prism.css
+doc/prism.js
+base.css
