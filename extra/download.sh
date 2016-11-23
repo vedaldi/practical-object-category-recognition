@@ -1,8 +1,13 @@
 #!/bin/bash
 
 # Download software
-wget http://www.vlfeat.org/sandbox-matconvnet/models/imagenet-vgg-verydeep-16.mat \
-    --output-document=data/cnn/imagenet-vgg-verydeep-16.mat --continue
+mkdir -p data/cnn
+
+#wget http://www.vlfeat.org/sandbox-matconvnet/models/imagenet-vgg-verydeep-16.mat \
+#    --output-document=data/cnn/imagenet-vgg-verydeep-16.mat --continue
+
+wget http://www.vlfeat.org/sandbox-matconvnet/models/imagenet-vgg-m-128.mat \
+    --output-document=data/cnn/imagenet-vgg-m-128.mat --continue
 
 if test ! -e vlfeat
 then
