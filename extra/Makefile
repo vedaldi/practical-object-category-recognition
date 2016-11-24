@@ -1,6 +1,6 @@
 # Build practical
 
-name ?= category-recognition-cnn
+name ?= practical-category-recognition-cnn
 ver ?= 2016a
 
 code=\
