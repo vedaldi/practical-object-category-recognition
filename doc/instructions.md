@@ -219,6 +219,7 @@ The test data set contains 148 images with horses. Your goal is to train a class
 
 ## History
 
+* Used in the Oxford AIMS CDT, 2016-17
 * First used in the Oxford AIMS CDT, 2015-16
-* Replaces the Image Catgorization practical based on hand-crafted features.
+* Replaces the Image Categorization practical based on hand-crafted features.
 
