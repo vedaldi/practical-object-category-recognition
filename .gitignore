@@ -1,6 +1,5 @@
 data/
-vlfeat/
-data.old
+vlfeat*/
 matconvnet/
 matconvnet
 doc/prism.css
