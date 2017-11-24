@@ -9,12 +9,12 @@ mkdir -p data/cnn
 wget http://www.vlfeat.org/sandbox-matconvnet/models/imagenet-vgg-m-128.mat \
     --output-document=data/cnn/imagenet-vgg-m-128.mat --continue
 
-# if test ! -e vlfeat
-# then
-#     wget http://www.vlfeat.org/download/vlfeat-0.9.20-bin.tar.gz --output-document=data/vlfeat-0.9.20-bin.tar.gz --continue
-#     tar xzvf data/vlfeat-0.9.20-bin.tar.gz
-#     mv vlfeat-0.9.20 vlfeat
-# fi
+if test ! -e vlfeat
+then
+    wget http://www.vlfeat.org/download/vlfeat-0.9.20-bin.tar.gz --output-document=data/vlfeat-0.9.20-bin.tar.gz --continue
+    tar xzvf data/vlfeat-0.9.20-bin.tar.gz
+    mv vlfeat-0.9.20 vlfeat
+fi
 
 if test ! -e matconvnet
 then

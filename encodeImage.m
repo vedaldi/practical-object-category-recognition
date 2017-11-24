@@ -1,5 +1,5 @@
 function psi = encodeImage(encoder, im, cache)
-% COMPUTEENCODING   Compute a spatial encoding of visual words
+% ENCODEIMAGE   Applies an encoder to an image
 %   PSI = ENCODEIMAGE(ENCODER, IM) applies the specified ENCODER
 %   to image IM, reurning a corresponding code vector PSI.
 %

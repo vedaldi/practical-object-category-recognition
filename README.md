@@ -41,6 +41,7 @@ Appendix: Installing from scratch
 Changes
 -------
 
+* *2017a* - Upgrades MatConvNet and other small fixes.
 * *2015b* - First version.
 
 License

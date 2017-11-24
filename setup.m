@@ -8,6 +8,8 @@ opts.verbose = false ;
 opts.enableImReadJPEG = false ;
 opts = vl_argparse(opts, varargin) ;
 
+run vlfeat/toolbox/vl_setup ;
+
 try
   vl_nnconv(single(1),single(1),[]) ;
 catch
