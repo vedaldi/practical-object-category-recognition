@@ -1,5 +1,8 @@
 function setup(varargin)
 % SETUP  Add the required search paths to MATLAB
+
+run vlfeat/toolbox/vl_setup ;  % Ensure VLFeat's vl_argparse does not shadow MatConvNet's vl_argparse
+
 run matconvnet/matlab/vl_setupnn ;
 addpath matconvnet/examples ;
 
@@ -7,8 +10,6 @@ opts.useGpu = false ;
 opts.verbose = false ;
 opts.enableImReadJPEG = false ;
 opts = vl_argparse(opts, varargin) ;
-
-run vlfeat/toolbox/vl_setup ;
 
 try
   vl_nnconv(single(1),single(1),[]) ;
