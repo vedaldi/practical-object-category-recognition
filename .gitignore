@@ -1,7 +1,10 @@
+__pycache__
+.ipynb_checkpoints
+.ropeproject
+base.css
 data/
-vlfeat*/
-matconvnet/
-matconvnet
 doc/prism.css
 doc/prism.js
-base.css
+matconvnet
+matconvnet/
+vlfeat*/
