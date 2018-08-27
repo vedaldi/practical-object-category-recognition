@@ -6,7 +6,7 @@ ver ?= pytorch-2018a
 code=\
 README.md \
 practical.ipynb \
-lab.ipynb
+lab.py
 
 doc=\
 doc/images \
@@ -22,3 +22,9 @@ data/images \
 data/alexnet.pth
 
 include extra/practical/Makefile
+
+clean: nbstripout
+
+.PHONY: nbstripout
+nbstripout:
+	nbstripout -f practical.ipynb

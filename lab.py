@@ -14,11 +14,25 @@ from PIL import Image
 from matplotlib import pyplot as plt
 
 def t2im(x):
-    "Rearrange the N x K x H x W to have shape (NK) x 1 x H x W."
+    """Rearrange the N x K x H x W to have shape (NK) x 1 x H x W.
+    
+    Arguments:
+        x {torch.Tensor} -- A N x K x H x W tensor.
+    
+    Returns:
+        torch.Tensor -- A (NK) x 1 x H x W tensor.
+    """
     return x.reshape(-1, *x.shape[2:])[:,None,:,:]
 
 def imread(file):
-    """Read the image `file` as a PyTorch tensor."""
+    """Read the image `file` as a PyTorch tensor.
+    
+    Arguments:
+        file {str} -- The path to the image.
+    
+    Returns:
+        torch.Tensor -- The image read as a 3 x H x W tensor in the [0, 1] range.
+    """
     # Read an example image as a NumPy array
     x = Image.open(file)
     x = np.array(x)
@@ -27,7 +41,19 @@ def imread(file):
     return torch.tensor(x, dtype=torch.float32).permute(2,0,1)[None,:]/255
 
 def imsc(im, *args, quiet=False, **kwargs):
-    "Plot the PyTorch tensor `im` with dimension 3 x H x W or 1 x H x W as an image."
+    """Rescale and plot an image represented as a PyTorch tensor.
+    
+     The function scales the input tensor im to the [0 ,1] range.
+    
+    Arguments:
+        im {torch.Tensor} -- A 3 x H x W or 1 x H x W tensor.
+    
+    Keyword Arguments:
+        quiet {bool} -- Do not plot. (default: {False})
+    
+    Returns:
+        torch.Tensor -- The rescaled image tensor.
+    """
     handle = None
     with torch.no_grad():
         im = im - im.min() # make a copy
@@ -42,7 +68,20 @@ def imsc(im, *args, quiet=False, **kwargs):
     return im, handle
 
 def imarraysc(tiles, spacing=0, quiet=False):
-    "Plot the PyTorch tensor `tiles` with dimesion N x C x H x W as a C x (MH) x (NW) mosaic."
+    """Plot the PyTorch tensor `tiles` with dimesion N x C x H x W as a C x (MH) x (NW) mosaic.    
+    
+    The range of each image is individually scaled to the range [0, 1].
+
+    Arguments:
+        tiles {[type]} -- [description]
+    
+    Keyword Arguments:
+        spacing {int} -- Thickness of the border (infilled with zeros) around each tile (default: {0})
+        quiet {bool} -- Do not plot the mosaic. (default: {False})
+    
+    Returns:
+        torch.Tensor -- The mosaic as a PyTorch tensor. 
+    """
     handle = None
     num = tiles.shape[0]
     num_cols = math.ceil(math.sqrt(num))
@@ -59,9 +98,9 @@ def imarraysc(tiles, spacing=0, quiet=False):
         tile = tiles[t]
         mosaic[0:c,
           v*(h+spacing) : v*(h+spacing)+h,
-          u*(w+spacing) : u*(w+spacing)+w] = imsc(tiles[t], quiet=True)
+          u*(w+spacing) : u*(w+spacing)+w] = imsc(tiles[t], quiet=True)[0]
     return imsc(mosaic, quiet=quiet)
-
+    
 def get_image_database():
     "Get the image database `imdb`."
     class_names = ["aeroplane", "motorbike", "person", "background", "horse", "car"]
@@ -108,8 +147,24 @@ def get_image_database():
 
     return imdb
 
-def get_indices(imdb, classes=None, sets=None, jitters=False, minus=None):
-    "Find the indices of the images satisfying the specified criteria."
+def get_indices(imdb, classes=None, sets=None, jitters=0, minus=None):
+    """Find the indices of the images satisfying the specified criteria.
+
+    The function returns the intersection of the specified criteria. Each criterion
+    can be specified as a list of values, which are or-ed.
+    
+    Arguments:
+        imdb {dict} -- The `imdb` database structure.
+    
+    Keyword Arguments:
+        classes {None, str, int, list} -- A list of class names or ids to select (default: {None})
+        sets {None, str, int, list} -- A list of set names or ids to select (default: {None})
+        jitters {None, str, int, list} -- A list of jitter names or ids to select (default: {0})
+        minus {torch.Tensor} -- Indices to exclude (default: {None})
+    
+    Returns:
+        [type] -- [description]
+    """
     with torch.no_grad():
         if not type(classes) in [list, tuple]:
             classes = [classes]
@@ -142,6 +197,7 @@ def get_indices(imdb, classes=None, sets=None, jitters=False, minus=None):
     return torch.nonzero(selection).reshape(-1)
 
 class Encoder(nn.ModuleDict):
+    "A wrapper around AlexNet to encode images."
     def __init__(self, alexnet):
         super(nn.ModuleDict, self).__init__()
         layers = list(alexnet.features.children()) + list(alexnet.classifier.children())
@@ -173,11 +229,29 @@ class Encoder(nn.ModuleDict):
         ])
 
     def encode(im):
+        """Encode an image.
+        
+        Arguments:
+            im {PIL.Image} -- Image in PIL format.
+        
+        Returns:
+            [torch.Tensor] -- A list of tensors, one for each code vector.
+        """
         x = self.normalize(im)
         with torch.no_grads():
             return self(x)
 
     def forward(self, x):
+        """Forwad evaluation.
+
+        Evaluate the encoder forward.
+         
+        Arguments:
+           x {torch.Tensor} -- Image batch as a PyTorch tensor.
+        
+        Returns:
+            [torch.Tensor] -- A list of tensors, one for each code vector.
+        """
         n = len(x)
         output = ()
         x = self['conv1'](x)
@@ -210,6 +284,7 @@ class Encoder(nn.ModuleDict):
         return output
 
 def get_encoder_cnn():
+    "Get the encoder neural network model."
     model_path = os.path.join('data', 'alexnet.pth')
     if not os.path.exists(model_path):
         alexnet = torchvision.models.alexnet(pretrained=True)
@@ -220,18 +295,22 @@ def get_encoder_cnn():
     return model
 
 def get_codes(layer=7):
+    "Get the codes for an image in `imdb` and the specified `layer`."
     data = torch.load(os.path.join('data', f"conv{layer}.pth"))
     return data['codes']
 
 def get_image(imdb, index):
+    "Get an image in `imdb` as a PyTorch tensor."
     image_path = os.path.join('data', 'images', f"{imdb['images'][index]}.jpg")
     return imread(image_path)
 
 def get_pil_image(imdb, index):
+    "Get an image in `imdb` in PIL format."
     image_path = os.path.join('data', 'images', f"{imdb['images'][index]}.jpg")
     return Image.open(image_path)
 
 def svm_sgd(x, c, lam=0.01, learning_rate=0.01, num_epochs=30):
+    "Train an SVM using the SGD algorithm."
     with torch.no_grad():
         xb = 1
         n = x.shape[0]
@@ -274,6 +353,7 @@ def svm_sgd(x, c, lam=0.01, learning_rate=0.01, num_epochs=30):
     return w, b
 
 def svm_sdca(x, c, lam=0.01, epsilon=0.0005, num_epochs=1000):
+    "Train an SVM using the SDCA algorithm."
     with torch.no_grad():
         xb = 1
         n = x.shape[0]
@@ -323,8 +403,8 @@ def svm_sdca(x, c, lam=0.01, epsilon=0.0005, num_epochs=1000):
 
     return w, xb * b
 
-
 def pr(labels, scores):
+    "Plot the precision-recall curve."
     scores, perm = torch.sort(scores, descending=True)
     labels = labels[perm]
     tp = (labels > 0).to(torch.float32)
@@ -338,6 +418,7 @@ def pr(labels, scores):
     return recall, precision, ap
 
 def plot_ranked_list(imdb, pos, neg, perm):
+    "Plot a ranked image list."
     n = 8
     all = torch.cat((pos,neg))
     for t in range(min(len(perm), n * n)):
@@ -351,7 +432,6 @@ def plot_ranked_list(imdb, pos, neg, perm):
         r = matplotlib.patches.Rectangle((ex[0],ex[3]), ex[1]-ex[0], ex[2]-ex[3], 
                                         linewidth=10, edgecolor=col, facecolor='none')
         plt.gca().add_patch(r)
-
 
 def plot_saliency(model, layer, w, im):
     "Plot a saliency map."
