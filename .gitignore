@@ -1,6 +1,7 @@
 __pycache__
 .ipynb_checkpoints
 .ropeproject
+.vscode/tags
 base.css
 data/
 doc/prism.css
