@@ -354,12 +354,12 @@ def plot_ranked_list(imdb, pos, neg, perm):
 
 
 def plot_saliency(model, layer, w, im):
+    "Plot a saliency map."
     im.requires_grad_(True)
     y = model(im[None,:])[layer-1]
-    z = y @ w
-    z.backward()
-    saliency = im.grad.detach() ** 2
-    saliency = torch.sqrt(saliency.mean(0))[None,:]
+    y.backward(w.reshape(1,-1))
+    saliency = torch.abs(im.grad.detach())
+    saliency = torch.max(saliency,dim=0)[0][None,:]
 
     plt.clf()
     plt.gcf().add_subplot(1,2,1)
@@ -371,14 +371,17 @@ def plot_saliency(model, layer, w, im):
     plt.title('class saliency')
 
 class ImageCache():
+    "Cache images from the Internet and compute their codes."
     def __init__(self):
         self.reset()
         self.model = get_encoder_cnn()
 
     def reset(self):
+        "Empty the cache."
         self.cached = dict()
 
     def add(self, url):
+        "Add the image at `url` to the cache."
         response = requests.get(url)
         image_pil = Image.open(io.BytesIO(response.content))
         image = self.model.normalize(image_pil)
@@ -390,9 +393,11 @@ class ImageCache():
         }
     
     def get_codes(self, layer):
+        "Get the codes for the cached images and the specified AlexNet `layer`."
         return torch.cat([x['codes'][layer-1] for x in self],0)
 
     def plot(self):
+        "Plot the cache content."
         plt.clf()
         n = len(self)
         w = math.ceil(math.sqrt(n))
@@ -402,9 +407,11 @@ class ImageCache():
             imsc(item['image'])
 
     def __len__(self):
+        "Get the number of cached images."
         return len(self.cached)
     
     def __iter__(self):
+        "Get an iterator over cached images and their codes."
         return iter(self.cached.values())
 
 
