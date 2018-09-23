@@ -1,4 +1,5 @@
-# Object category recognition practical (PyTorch version)
+Object category recognition practical (PyTorch version)
+=======================================================
 
 > A computer vision practical by the Oxford Visual Geometry group,
 > authored by Andrea Vedaldi and Andrew Zisserman.
@@ -20,9 +21,20 @@ Running the practical on your local machine
 
         jupyter notebook practical.yaml
 
+        
+Package contents
+----------------
+
+The practical consist of a iPython notebook and a supporting file:
+
+* `practical.ipynb` -- The Python Jupyter practical
+* `lab.py` -- Supporting Python code
+
+The distribution also ships with some data and maintenance code.
+
+
 Appendix: Installing from scratch
 ---------------------------------
-
 
 *   Install and setup PyTorch as explained above.
 
@@ -39,58 +51,17 @@ Appendix: Installing from scratch
         python3 -m extra.preprocess
 
 
-Start from `doc/instructions.html`.
-
-> This practical is related to the older
-> `practical-category-recognition` which uses hand-crafted features
-> (SIFT, Fisher Vectors, VLAD, etc.), but is based on CNN features
-> instead.
-
-
-
-Developer setup
----------------
-
-
-
-Package contents
-----------------
-
-The package contains three exercises:
-
-* `exercise1.m`: learn and test an image classifier on benchmark data
-* `exercise2.m`: learn your own classifier
-
-The practical is based on [VLFeat](http://www.vlfeat.org) and
-[MatConvNet](http://www.vlfeat.org/matconvnet). This package contains
-the following MATLAB functions:
-
-* `standardizeImage.m`: Rescale an image to a standard size.
-* `displayRankedImagelist.m`: Visualize a subset of a ranked list of images.
-* `displaySaliencyMap.m`: Display a classifier saliency map.
-* `encodeImage.m`: Encode an image using CNN features.
-* `getImageSet.m`: Scan a directory for images.
-* `loadEncoder.m`: Load a CNN-based encoder.
-* `trainLinearSVM.m`: Learn a linear support vector machine.
-
-Appendix: Installing from scratch
----------------------------------
-
-1. From Bash, run `./extras/download.sh`. This will download the
-   PASCAL VOC data and extract a subset of it.
-2. From MATLAB, run `addpath extras ; preprocess.m`. This will download VLFeat
-   and MatConvNet and precompute the data for the practical.
-
 Changes
 -------
 
+* *2018a* - PyTorch version.
 * *2017a* - Upgrades MatConvNet and other small fixes.
 * *2015b* - First version.
 
 License
 -------
 
-    Copyright (c) 2015 Andrea Vedaldi and Andrew Zisserman.
+    Copyright (c) 2015-18 Andrea Vedaldi and Andrew Zisserman.
 
     Permission is hereby granted, free of charge, to any person
     obtaining a copy of this software and associated documentation
