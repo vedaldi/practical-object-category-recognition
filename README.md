@@ -1,7 +1,43 @@
-# Object category recognition practical (CNN version)
+# Object category recognition practical (PyTorch version)
 
 > A computer vision practical by the Oxford Visual Geometry group,
 > authored by Andrea Vedaldi and Andrew Zisserman.
+
+Running the practical on your local machine
+-------------------------------------------
+
+*   Install the appropriate PyTorch environment. The easiest way is to install [Anaconda](https://www.anaconda.com/download/) or [Miniconda](https://conda.io/miniconda.html) and then crate the environment `practical` using the provided `pratical.yaml` configuration file, as follows:
+
+        conda env create -f practical.yaml
+
+    This step needs to be run only once.
+
+*   Activate the PyTorch environment for the current session:
+
+        conda activate practical
+
+*   Run the pratical
+
+        jupyter notebook practical.yaml
+
+Appendix: Installing from scratch
+---------------------------------
+
+
+*   Install and setup PyTorch as explained above.
+
+*   For **developers**, it is also recommended to install the `nbstripout` command:
+        
+        nbstripout --install
+
+    In this manner Git can strip the output data from the iPython notebook before checking in.
+
+*   For bootstrapping the data for the practical follow these steps:
+
+        cd practical-directory
+        ./extra/download.sh
+        python3 -m extra.preprocess
+
 
 Start from `doc/instructions.html`.
 
@@ -9,6 +45,13 @@ Start from `doc/instructions.html`.
 > `practical-category-recognition` which uses hand-crafted features
 > (SIFT, Fisher Vectors, VLAD, etc.), but is based on CNN features
 > instead.
+
+
+
+Developer setup
+---------------
+
+
 
 Package contents
 ----------------

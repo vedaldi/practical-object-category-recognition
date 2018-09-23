@@ -4,7 +4,6 @@
 voc=data/tmp/VOCdevkit/VOC2007
 
 mkdir -p data/tmp
-mkdir -p data/myImages
 
 if test ! -d data/tmp/VOCdevkit
 then
@@ -26,7 +25,7 @@ do
             cut -f1 -d\  > data/${i}_background_${j}.txt
     done
 
-    # intersect negative sets and create indexes
+    # Intersect negative sets and create indexes
     cp data/aeroplane_background_${j}.txt data/background_${j}.txt
     for i in aeroplane person car motorbike horse
     do
@@ -36,12 +35,12 @@ do
         mv data/background_${j}_inters.txt data/background_${j}.txt
     done
 
-    # make all index
+    # Make the all.txt index
     sort data/*_{train,val}.txt | uniq > data/all.txt
 
-    # copy images
+    # Copy the images in the appropriate location
     mkdir -p data/images
     cat data/all.txt | sed 's/\(.*\)/\1.jpg/' > data/temp.txt
     rsync --delete -v $voc/JPEGImages/ --files-from=data/temp.txt data/images/
-    # rm data/temp.txt
+    rm data/temp.txt
 done
