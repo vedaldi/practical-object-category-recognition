@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Get a default temporary directory
+TMPDIR=${TMPDIR:-/tmp}
+
 # Download images
 voc=${TMPDIR}/VOCdevkit/VOC2007
 
