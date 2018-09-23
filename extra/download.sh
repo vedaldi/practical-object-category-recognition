@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Download images
-voc=data/tmp/VOCdevkit/VOC2007
+voc=${TMPDIR}/VOCdevkit/VOC2007
 
-mkdir -p data/tmp
+mkdir -p ${TMPDIR}
 
-if test ! -d data/tmp/VOCdevkit
+if test ! -d ${TMPDIR}/VOCdevkit
 then
     (
-        cd data/tmp
+        cd ${TMPDIR}
         wget -c -nc http://host.robots.ox.ac.uk:8080/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
         #wget -c -nc http://pascallin.ecs.soton.ac.uk/challenges/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
         tar xvf VOCtrainval_06-Nov-2007.tar
