@@ -47,8 +47,10 @@ Appendix: Installing from scratch
 *   For bootstrapping the data for the practical follow these steps:
 
         cd practical-directory
-        ./extra/download.sh
-        python3 -m extra.preprocess
+        mkdir -p data                    # Make the data/ directory
+        cp -rf extra/figures data/       # Copy the documentation images
+        ./extra/download.sh              # Download the dataset
+        python3 -m extra.preprocess      # Extract the features from the dataset
 
 
 Changes
