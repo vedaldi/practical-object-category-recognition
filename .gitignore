@@ -4,8 +4,3 @@ __pycache__
 .vscode/tags
 base.css
 data/
-doc/prism.css
-doc/prism.js
-matconvnet
-matconvnet/
-vlfeat*/
