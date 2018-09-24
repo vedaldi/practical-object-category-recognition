@@ -4,6 +4,7 @@ ver ?= pytorch-2018a
 
 code=\
 README.md \
+practical.yaml \
 practical.ipynb \
 lab.py
 
