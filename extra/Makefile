@@ -14,6 +14,7 @@ data/all.txt \
 data/{aeroplane,background,car,horse,motorbike,person}_train.txt \
 data/{aeroplane,background,car,horse,motorbike,person}_val.txt \
 data/images \
+data/figures \
 data/alexnet.pth
 
 include extra/practical/Makefile
